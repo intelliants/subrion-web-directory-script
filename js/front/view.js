@@ -4,12 +4,13 @@ $(function()
 	{
 		e.preventDefault();
 
-		if (confirm(_t('do_you_want_report_broken')))
-		{
-			$.post(intelli.config.packages.directory.url + 'listing/read.json', {action: 'report', id: $(this).data('id')}, function(data)
+		var id = $(this).data('id');
+
+		intelli.confirm(_t('do_you_want_report_broken'), '', function(result) {
+			$.post(intelli.config.packages.directory.url + 'listing/read.json', {action: 'report', id: id}, function(data)
 			{
 				intelli.notifFloatBox({msg: _t('you_sent_report'), type: 'success', autohide: true});
 			});
-		}
+		});
 	});
 });
