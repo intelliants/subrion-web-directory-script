@@ -122,7 +122,7 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType())
 		$item['status'] = $iaCore->get('listing_auto_approval') ? iaCore::STATUS_ACTIVE : iaCore::STATUS_APPROVAL;
 		$item['short_description'] = iaSanitize::snippet($_POST['description'], $iaCore->get('directory_summary_length'));
 
-		if ($iaCore->get('listing_crossed', false))
+		if ($iaCore->get('listing_crossed'))
 		{
 			$item['crossed_links'] = $_POST['crossed_links'] ? $_POST['crossed_links'] : false;
 		}

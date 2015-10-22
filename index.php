@@ -181,7 +181,7 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType())
 			}
 			// end
 
-			$children = (empty($category['child']) || empty($category['parents']) || !$iaCore->get('display_children_listing', false))
+			$children = (empty($category['child']) || empty($category['parents']) || !$iaCore->get('display_children_listing'))
 				? $category['id']
 				: $category['id'] . ',' . $category['child'];
 

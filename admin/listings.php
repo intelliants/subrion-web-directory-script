@@ -185,7 +185,7 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType())
 			$data['title_alias'] = !empty($_POST['title_alias']) ? $_POST['title_alias'] : $_POST['title'];
 			$data['title_alias'] = $iaListing->titleAlias($data['title_alias'], !empty($_POST['title_alias']));
 
-			if ($iaCore->get('listing_crossed', false))
+			if ($iaCore->get('listing_crossed'))
 			{
 				$data['crossed_links'] = $_POST['crossed_links'] ? $_POST['crossed_links'] : false;
 			}

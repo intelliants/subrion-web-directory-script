@@ -78,7 +78,7 @@ class iaListing extends abstractDirectoryPackageAdmin
 
 		if ($entryId)
 		{
-			if ($this->iaCore->get('listing_crossed', false))
+			if ($this->iaCore->get('listing_crossed'))
 			{
 				if (isset($crossed) && !empty($crossed))
 				{
@@ -131,7 +131,7 @@ class iaListing extends abstractDirectoryPackageAdmin
 		$status = isset($entryData['status']) ? $entryData['status'] : false;
 		$categ = isset($entryData['category_id']) ? $entryData['category_id'] : $aOldListing['category_id'];
 
-		if ($this->iaCore->get('listing_crossed', false))
+		if ($this->iaCore->get('listing_crossed'))
 		{
 			$crossed = $this->iaDb->onefield('category_id', iaDb::convertIds($id, 'listing_id'), 0, null, self::getTableCrossed());
 
@@ -247,7 +247,7 @@ class iaListing extends abstractDirectoryPackageAdmin
 
 		if ($result)
 		{
-			if ($this->iaCore->get('listing_crossed', false))
+			if ($this->iaCore->get('listing_crossed'))
 			{
 				$stmt = iaDb::convertIds($listingId, 'listing_id');
 				$crossed = $this->iaDb->onefield('category_id', $stmt, 0, null, self::getTableCrossed());

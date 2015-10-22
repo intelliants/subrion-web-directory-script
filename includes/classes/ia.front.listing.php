@@ -171,7 +171,7 @@ class iaListing extends abstractDirectoryPackageFront
 
 		if ($entryData['id'])
 		{
-			if ($this->iaCore->get('listing_crossed', false))
+			if ($this->iaCore->get('listing_crossed'))
 			{
 				if (isset($crossed) && $crossed)
 				{
@@ -339,7 +339,7 @@ class iaListing extends abstractDirectoryPackageFront
 
 		if ($result)
 		{
-			if ($this->iaCore->get('listing_crossed', false))
+			if ($this->iaCore->get('listing_crossed'))
 			{
 				$crossed = $this->iaDb->onefield('category_id', "`listing_id` = '{$listingData['id']}'", 0, null, self::getTableCrossed());
 
