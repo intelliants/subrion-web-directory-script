@@ -341,7 +341,7 @@ VALUES (1, -1, 'ROOT', NOW(), NOW(), 'active', 0, '1')");
 			<![CDATA[
 {if !empty($directory_categories)}
 	<div class="ia-categories">
-		{include file='ia-categories.tpl' categories=$directory_categories item='categs' id='directory-categories' show_amount=$config.directory_show_amount|default:true num_columns=$config.directory_categories_columns icons=true}
+		{include file='ia-categories.tpl' categories=$directory_categories item='categs' id='directory-categories' show_amount=$core.config.directory_show_amount|default:true num_columns=$core.config.directory_categories_columns icons=true}
 	</div>
 {/if}
 			]]>
