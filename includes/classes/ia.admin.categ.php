@@ -4,6 +4,7 @@
 class iaCateg extends abstractDirectoryPackageAdmin
 {
 	protected static $_table = 'categs';
+	protected $_tableFlat = 'categs_flat';
 
 	protected $_activityLog = array('item' => 'category');
 
@@ -86,6 +87,22 @@ class iaCateg extends abstractDirectoryPackageAdmin
 		$entryData['date_modified'] = date(iaDb::DATETIME_FORMAT);
 
 		return parent::update($entryData, $id);
+	}
+
+	public function delete($itemId)
+	{
+		$result = parent::delete($itemId);
+
+		if ($result)
+		{
+			$stmt = sprintf('`id` IN (SELECT `category_id` FROM `%s%s` WHERE `parent_id` = %d)',
+				$this->iaDb->prefix, $this->_tableFlat, $itemId);
+
+			$this->iaDb->delete($stmt, self::getTable());
+			$this->iaDb->delete(iaDb::convertIds($itemId, 'parent_id'), $this->_tableFlat);
+		}
+
+		return $result;
 	}
 
 	public function updateCounters($itemId, array $itemData, $action, $previousData = null)
