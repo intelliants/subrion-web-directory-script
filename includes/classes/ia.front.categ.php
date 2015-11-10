@@ -11,6 +11,11 @@ class iaCateg extends abstractDirectoryPackageFront
 		'default' => ':base:title_alias'
 	);
 
+	public $coreSearchEnabled = true;
+	public $coreSearchOptions = array(
+		'regularSearchStatements' => array("`title` LIKE '%:query%'"),
+	);
+
 
 	public function url($action, $params)
 	{
