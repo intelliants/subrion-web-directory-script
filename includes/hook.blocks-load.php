@@ -18,26 +18,21 @@ $sql .= "AND (acc.`status`='active' OR acc.`status` IS NULL) ";
 
 $limit = $iaCore->get('directory_listings_perblock', 5);
 
-$new_listings_limit = $iaCore->get('directory_new_listings_perblock', 5);
-$popular_listings_limit = $iaCore->get('directory_popular_listings_perblock', 5);
-$random_listings_limit = $iaCore->get('directory_random_listings_perblock', 5);
-
-
 if ($iaView->blockExists('directory_listings_tabs'))
 {
 	if ($iaCore->get('directory_listings_tabs_new'))
 	{
-		$iaView->assign('latest_listings', $iaListing->getLatest($new_listings_limit));
+		$iaView->assign('latest_listings', $iaListing->getLatest($iaCore->get('directory_new_listings_perblock', 5)));
 	}
 
 	if ($iaCore->get('directory_listings_tabs_popular'))
 	{
-		$iaView->assign('popular_listings', $iaListing->getPopular($popular_listings_limit));
+		$iaView->assign('popular_listings', $iaListing->getPopular($iaCore->get('directory_popular_listings_perblock', 5)));
 	}
 
 	if ($iaCore->get('directory_listings_tabs_random'))
 	{
-		$iaView->assign('random_listings', $iaListing->getRandom($random_listings_limit));
+		$iaView->assign('random_listings', $iaListing->getRandom($iaCore->get('directory_random_listings_perblock', 5)));
 	}
 }
 
@@ -58,13 +53,13 @@ if ($iaView->blockExists('sponsored_listings'))
 
 if ($iaView->blockExists('directory_categories_tree'))
 {
-	$iaCateg = $iaCore->factoryPackage('categ', 'directory');
+	$iaCateg = $iaCore->factoryPackage('categ', $iaListing->getPackageName());
 	$iaView->assign('directory_categories_tree', $iaCateg->get('`level` = 1'));
 }
 
 if ($iaView->blockExists('directory_categories') || 'directory_home' == $iaView->name())
 {
-	$iaCateg = $iaCore->factoryPackage('categ', 'directory');
+	$iaCateg = $iaCore->factoryPackage('categ', $iaListing->getPackageName());
 
 	$hide_empty = $iaCore->get('directory_hide_empty_categories');
 	$category = false;
@@ -74,7 +69,7 @@ if ($iaView->blockExists('directory_categories') || 'directory_home' == $iaView-
 		$category = $iaView->getValues('category');
 	}
 
-	$category = $category ? $category : $iaCore->iaDb->row('id', '`level` = 0', iaCateg::getTable());
+	$category = $category ? $category : $iaDb->row('id', '`level` = 0', iaCateg::getTable());
 
 	$condition = "`parent_id` = {$category['id']} AND `status` = 'active'";
 
@@ -101,4 +96,12 @@ if ($iaView->blockExists('directory_categories') || 'directory_home' == $iaView-
 
 	$iaView->assign('directory_categories', $children);
 	unset($children);
+}
+
+if ($iaView->blockExists('filters') && $iaListing->getItemName() == $iaView->get('filtersItemName'))
+{
+	$iaCateg = $iaCore->factoryPackage('categ', $iaListing->getPackageName());
+
+	empty($categories = $iaDb->all(array('id', 'title'), "`status` = 'active' AND `level` = 1 ORDER BY `title`",
+		null, null, $iaCateg::getTable())) || $iaView->assign('directoryFiltersCategories', $categories);
 }

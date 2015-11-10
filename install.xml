@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="utf-8"?>
 <package name="directory">
 	<title>Web Directory</title>
 	<summary>This package is intended to create web directory on your Subrion powered website.</summary>
@@ -275,7 +275,7 @@
 		<phrase category="frontend" key="recently_added_listings">Recently Added Listings</phrase>
 		<phrase category="frontend" key="related_categories">Related Categories</phrase>
 		<phrase category="frontend" key="report_listing">Report Listing</phrase>
-		<phrase category="frontend" key="title">Title</phrase>
+		<phrase category="frontend" key="subcategory">Subcategory</phrase>
 		<phrase category="frontend" key="visit_site">Visit the Site</phrase>
 		<phrase category="frontend" key="you_sent_report">Thanks. A report has been sent to the site administrator.</phrase>
 	</phrases>
@@ -303,6 +303,8 @@
 	<hooks>
 		<hook name="phpCoreUrlRewrite" filename="packages/directory/includes/hook.rewrite-url.php" type="php" page_type="front"><![CDATA[]]></hook>
 		<hook name="phpCoreBeforePageDisplay" filename="packages/directory/includes/hook.blocks-load.php" page_type="front"><![CDATA[]]></hook>
+		<hook name="smartyFrontFiltersBeforeFields" type="smarty" page_type="front" filename="extra:directory/search.filters"><![CDATA[]]></hook>
+		<hook name="smartyFrontSearchSortingListings" type="smarty" page_type="front" filename="extra:directory/search.listings.sorting-header"><![CDATA[]]></hook>
 		<hook name="adminDatabaseConsistency" type="smarty" page_type="admin" filename="packages/directory/templates/admin/hook.db-consistency.tpl"><![CDATA[]]></hook>
 		<hook name="phpAdminDatabaseConsistencyType" type="php" page_type="admin" pages="database_manage">
 			<![CDATA[

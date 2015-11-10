@@ -13,7 +13,11 @@ class iaListing extends abstractDirectoryPackageFront
 	public $coreSearchEnabled = true;
 	public $coreSearchOptions = array(
 		'tableAlias' => 't1',
-		'regularSearchStatements' => array("CONCAT_WS(' ', t1.`title`, t1.`domain`) LIKE '%:query%'")
+		'columnAlias' => array(
+			'date' => 'date_added'
+		),
+		'regularSearchStatements' => array("t1.`title` LIKE '%:query%' OR t1.`domain` LIKE '%:query%'"),
+		'customColumns' => array('c', 'sc')
 	);
 
 	private $_urlPatterns = array(
@@ -38,8 +42,7 @@ class iaListing extends abstractDirectoryPackageFront
 		$data['category_alias'] = (!isset($data['category_alias']) ? '' : $data['category_alias']);
 		$data['title_alias'] = (!isset($data['title_alias']) ? '' : '-' . $data['title_alias']);
 
-		unset($data['title']);
-		unset($data['category']);
+		unset($data['title'], $data['category']);
 
 		if (!isset($this->_urlPatterns[$action]))
 		{
@@ -65,11 +68,27 @@ class iaListing extends abstractDirectoryPackageFront
 		return $this->iaDb->getAll($sql);
 	}
 
-	public function coreSearch($stmt, $start, $limit, array $sorting)
+	public function coreSearch($stmt, $start, $limit, $order)
 	{
-		$rows = $this->get($stmt, $start, $limit, $sorting ? sprintf('`%s` %s', $sorting[0], $sorting[1]) : false);
+		$rows = $this->get($stmt, $start, $limit, $order);
 
 		return array($this->iaDb->foundRows(), $rows);
+	}
+
+	public function coreSearchTranslateColumn($column, $value)
+	{
+		switch ($column)
+		{
+			case 'c':
+				$iaCateg = $this->iaCore->factoryPackage('categ', $this->getPackageName());
+
+				$sql = sprintf('SELECT `id` FROM `%s` WHERE `parent_id` = %d', $iaCateg::getTable(true), $value);
+
+				return array('col' => ':column', 'cond' => 'IN', 'val' => '(' . $sql . ')', 'field' => 'category_id');
+
+			case 'sc':
+				return array('col' => ':column', 'cond' => '=', 'val' => (int)$value, 'field' => 'category_id');
+		}
 	}
 
 	public function accountActions($params)

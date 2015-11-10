@@ -66,7 +66,7 @@
 			{/if}
 
 			<input type="hidden" id="author-id" name="author_id" value="{$author.id}">
-			<input type="hidden" id="regarding-page" name="regarding" value="{$page.title|escape:'html'}">
+			<input type="hidden" id="regarding-page" name="regarding" value="{$core.page.title|escape:'html'}">
 		</div>
 
 		<div class="modal-footer">
