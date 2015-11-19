@@ -80,7 +80,11 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType())
 	{
 		$iaCateg = $iaCore->factoryPackage('categ', $iaListing->getPackageName());
 
-		empty($categories = $iaDb->all(array('id', 'title'), "`status` = 'active' AND `level` = 1 ORDER BY `title`",
-			null, null, $iaCateg::getTable())) || $iaView->assign('directoryFiltersCategories', $categories);
+		$categories = $iaDb->all(array('id', 'title'), "`status` = 'active' AND `level` = 1 ORDER BY `title`", null, null, $iaCateg::getTable());
+
+		if (!empty($categories))
+		{
+			$iaView->assign('directoryFiltersCategories', $categories);
+		}
 	}
 }
