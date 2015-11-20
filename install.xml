@@ -4,9 +4,9 @@
 	<summary>This package is intended to create web directory on your Subrion powered website.</summary>
 	<author>Intelliants LLC</author>
 	<contributor>Intelliants LLC</contributor>
-	<version>3.3.0</version>
-	<date>2015-03-31</date>
-	<compatibility>3.3</compatibility>
+	<version>4.0.0</version>
+	<date>2015-11-20</date>
+	<compatibility>4.0</compatibility>
 	<url>dir</url>
 
 	<screenshots>
@@ -288,8 +288,8 @@
 
 	<blocks>
 		<block name="directory_categories_tree" title="Top categories" position="left" type="smarty" collapsible="1" sticky="0" pages="directory_home" filename="block.categories-tree"><![CDATA[]]></block>
-		<block name="featured_listings" title="Featured listings" position="right" type="smarty" header="1" sticky="0" pages="directory_home,index" filename="block.featured-listings"><![CDATA[]]></block>
-		<block name="sponsored_listings" title="Sponsored listings" position="right" type="smarty" header="1" sticky="0" pages="directory_home,index" filename="block.sponsored-listings" added="3.1.2"><![CDATA[]]></block>
+		<block name="featured_listings" title="Featured listings" position="right" type="smarty" header="1" sticky="0" pages="directory_home,index" filename="block.featured-listings" classname="box--featured"><![CDATA[]]></block>
+		<block name="sponsored_listings" title="Sponsored listings" position="right" type="smarty" header="1" sticky="0" pages="directory_home,index" filename="block.sponsored-listings" added="3.1.2" classname="box--sponsored"><![CDATA[]]></block>
 		<block name="recent_listings" title="Recently added listings" position="bottom" type="smarty" header="0" sticky="0" order="2" pages="index" filename="block.recent-listings"><![CDATA[]]></block>
 		<block name="directory_listings_tabs" title="Directory listings tabs" position="right" type="smarty" sticky="1" header="0" order="0" filename="block.listings-tabs"><![CDATA[]]></block>
 		<block name="directory_author" title="Author" position="right" type="smarty" sticky="0" header="1" pages="view_listing" collapsible="1" order="3" filename="block.author"><![CDATA[]]></block>

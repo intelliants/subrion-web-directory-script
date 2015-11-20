@@ -1,20 +1,20 @@
 <div class="ia-items directory-latest-listings">
 	{foreach $latest_listings as $listing name=latest_listings}
-		<div class="media ia-item ia-item-bordered-bottom">
-			<div class="media-body">
-				<h5 class="media-heading">
+		<div class="ia-item ia-item--border-bottom">
+			<div class="ia-item__content">
+				<div class="ia-item__title">
 					{if !$core.config.directory_redirect_to_site}
 						{ia_url type='link' item='listings' data=$listing text=$listing.title}
 					{else}
 						<a href="{$listing.url}" target="_blank">{$listing.title}</a>
 					{/if}
-				</h5>
+				</div>
 				<p>{$listing.url}</p>
-				<p class="ia-item-date">
-					<i class="icon-calendar"></i> 
+				<p>
+					<span class="fa fa-calendar"></span> 
 					{$listing.date_added|date_format:$core.config.date_format}
 					{if 0 != $listing.rank}
-						<br>{section name=star loop=$listing.rank}<i class="icon-star icon-orange"></i> {/section}
+						{section name=star loop=$listing.rank}<span class="fa fa-star text-warning"></span> {/section}
 					{/if}
 				</p>
 			</div>
