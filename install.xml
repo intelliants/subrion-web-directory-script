@@ -5,7 +5,7 @@
 	<author>Intelliants LLC</author>
 	<contributor>Intelliants LLC</contributor>
 	<version>4.0.0</version>
-	<date>2015-11-20</date>
+	<date>2015-11-30</date>
 	<compatibility>4.0</compatibility>
 	<url>dir</url>
 
@@ -188,7 +188,7 @@
 			page="advsearch,add_listing,edit_listing,view_member,view_listing,favorites,rss_listings">URL</field>
 		<field name="description" item="listings" type="textarea" group="general" editor="1" searchable="1" required="1" length="" default=""
 			page="advsearch,add_listing,edit_listing,view_listing,rss_listings">Description</field>
-		<field name="reciprocal" item="listings" type="text" group="general" length="70" searchable="1" required="0" default="http://"
+		<field name="reciprocal" item="listings" type="text" group="general" length="70" required="0" default="http://"
 			page="add_listing,edit_listing,view_listing,favorites">Reciprocal URL</field>
 		<field name="meta_description" item="listings" type="textarea" group="general" editor="0" required="0" adminonly="1" length="" default=""
 			page="advsearch">Meta-Description</field>
@@ -496,11 +496,4 @@ $iaCategs->rebuildRelation();
 		<sql><![CDATA[DROP TABLE IF EXISTS `{prefix}listings_categs`;]]></sql>
 		<sql><![CDATA[DROP TABLE IF EXISTS `{prefix}listings`;]]></sql>
 	</uninstall>
-
-	<upgrade>
-		<sql version="3.2.1">
-			<![CDATA[
-ALTER TABLE `{prefix}listings` ADD `reported_as_broken` smallint(3) unsigned NOT NULL;
-		]]></sql>
-	</upgrade>
 </package>
