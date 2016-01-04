@@ -301,12 +301,12 @@
 	</blocks>
 
 	<hooks>
-		<hook name="phpCoreUrlRewrite" filename="packages/directory/includes/hook.rewrite-url.php" type="php" page_type="front"><![CDATA[]]></hook>
+		<hook name="phpCoreUrlRewrite" filename="packages/directory/includes/hook.rewrite-url.php" page_type="front"><![CDATA[]]></hook>
 		<hook name="phpCoreBeforePageDisplay" filename="packages/directory/includes/hook.blocks-load.php" page_type="front"><![CDATA[]]></hook>
-		<hook name="smartyFrontFiltersBeforeFields" type="smarty" page_type="front" filename="extra:directory/search.filters"><![CDATA[]]></hook>
-		<hook name="smartyFrontSearchSortingListings" type="smarty" page_type="front" filename="extra:directory/search.listings.sorting-header"><![CDATA[]]></hook>
-		<hook name="adminDatabaseConsistency" type="smarty" page_type="admin" filename="packages/directory/templates/admin/hook.db-consistency.tpl"><![CDATA[]]></hook>
-		<hook name="phpAdminDatabaseConsistencyType" type="php" page_type="admin" pages="database_manage">
+		<hook name="smartyFrontFiltersBeforeFields" type="smarty" page_type="front" filename="search.filters"><![CDATA[]]></hook>
+		<hook name="smartyFrontSearchSortingListings" type="smarty" page_type="front" filename="search.listings.sorting-header"><![CDATA[]]></hook>
+		<hook name="adminDatabaseConsistency" type="smarty" page_type="admin" filename="hook.db-consistency"><![CDATA[]]></hook>
+		<hook name="phpAdminDatabaseConsistencyType" page_type="admin" pages="database_manage">
 			<![CDATA[
 if ('repair_directorycats' == $type)
 {
@@ -316,13 +316,13 @@ if ('repair_directorycats' == $type)
 }
 			]]>
 		</hook>
-		<hook name="phpAdminDatabaseBeforeAll" type="php" page_type="admin">
+		<hook name="phpAdminDatabaseBeforeAll" page_type="admin">
 			<![CDATA[
 $reset_options['listings'] = iaLanguage::get('reset_listings');
 $reset_options['categs'] = iaLanguage::get('reset_categs');
 			]]>
 		</hook>
-		<hook name="phpDbControlBeforeReset" type="php" page_type="admin">
+		<hook name="phpDbControlBeforeReset" page_type="admin">
 			<![CDATA[
 $iaDBControl = $iaCore->factory('dbcontrol', iaCore::ADMIN);
 switch ($option)
@@ -348,7 +348,7 @@ VALUES (1, -1, 'ROOT', NOW(), NOW(), 'active', 0, '1')");
 {/if}
 			]]>
 		</hook>
-		<hook name="populateCommonStatisticsBlock" type="php" page_type="front">
+		<hook name="populateCommonStatisticsBlock" page_type="front">
 			<![CDATA[
 $condition = iaDb::printf("`status` = ':status'", array('status' => iaCore::STATUS_ACTIVE));
 $statistics['directory'] = array(
@@ -363,7 +363,7 @@ $statistics['directory'] = array(
 );
 			]]>
 		</hook>
-		<hook name="adminQuickSearch" type="php" page_type="admin">
+		<hook name="adminQuickSearch" page_type="admin">
 			<![CDATA[
 $items['listings'] = array('title' => iaLanguage::get('listings'), 'url' => 'directory/listings/');
 $items['categs'] = array('title' => iaLanguage::get('categories'), 'url' => 'directory/categories/');
