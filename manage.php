@@ -176,21 +176,21 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType())
 			}
 
 			// check if listing already exists
-			if (iaCore::ACTION_ADD == $pageAction && $iaCore->get('duplicate_checking'))
-			{
-				$check = $iaCore->get('duplicate_type') == 'domain' ? $item['domain'] : $item['url'];
-				$status = $iaListing->checkDuplicateListings($check, $iaCore->get('duplicate_type'));
-				if ($status == 'banned')
-				{
-					$error = true;
-					$messages[] = iaLanguage::get('error_banned');
-				}
-				elseif ($status)
-				{
-					$error = true;
-					$messages[] = iaLanguage::get('error_listing_present');
-				}
-			}
+            if (iaCore::ACTION_ADD == $pageAction && $iaCore->get('duplicate_checking'))
+            {
+                $check = $iaCore->get('duplicate_type') == 0 ? $item['domain'] : $item['url'];
+                $countDuplicateList = $iaListing->checkDuplicateListings($item['domain'], $check);
+                if ($countDuplicateList > 0)
+                {
+                    $error = true;
+                    $messages[] = iaLanguage::get('error_banned');
+                }
+                elseif ($countDuplicateList)
+                {
+                    $error = true;
+                    $messages[] = iaLanguage::get('error_listing_present');
+                }
+            }
 		}
 
 		if (!$error)

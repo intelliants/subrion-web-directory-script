@@ -160,15 +160,14 @@ class iaListing extends abstractDirectoryPackageFront
 		return false;
 	}
 
-	public function checkDuplicateListings($aUrl, $aType = 'exact')
-	{
-		$sql = "SELECT `status` ";
-		$sql .= "FROM " . self::getTable(true) . " ";
-		$cause = ('domain' == $aType) ? "WHERE `domain` = '{$aUrl}'" : "WHERE `listing_url` = '{$aUrl}'";
-		$sql .= ('contain' == $aType) ? "WHERE `url` LIKE '%{$aUrl}%'" : $cause;
-
-		return $this->iaDb->getOne($sql);
-	}
+    public function checkDuplicateListings($domain, $aUrl)
+    {
+        $sql = "SELECT COUNT(`id`) ";
+        $sql .= "FROM " . self::getTable(true) . " ";
+        $cause = ('domain' == $aUrl) ? "WHERE `domain` = '{$aUrl}'" : "WHERE `url` = '{$aUrl}'";
+        $sql .= ('contain' == $domain) ? "WHERE `url` LIKE '%{$aUrl}%'" : $cause;
+        return $this->iaDb->getOne($sql);
+    }
 
 	public function insert(array $entryData)
 	{

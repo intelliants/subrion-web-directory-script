@@ -98,7 +98,9 @@
 	<config group="directory" name="directory_listings_perpage" type="text" description="Listings on page">10</config>
 	<config group="directory" name="directory_summary_length" type="text" description="Summary length">700</config>
 	<config group="directory" name="directory_listing_limit" type="text" description="Listing limit for each member" show="listing_add_guest|0">6</config>
-
+    <config group="directory" name="duplicate_checking" type="radio" description="Duplicate checking">0</config>
+    <config group="directory" name="duplicate_type" type="radio" description="Duplicate Type" show="duplicate_checking|1">0</config>
+    
 	<config group="directory" name="directory_div3" type="divider">Blocks</config>
 	<config group="directory" name="directory_listings_tabs_new" type="radio" values="1,0" description="Display New Listings tab">1</config>
 	<config group="directory" name="directory_listings_tabs_popular" type="radio" values="1,0" description="Display Popular Listings tab">1</config>
