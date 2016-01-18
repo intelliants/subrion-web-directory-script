@@ -61,8 +61,7 @@ class iaListing extends abstractDirectoryPackageFront
 		$sql .= "LEFT JOIN `{$this->iaDb->prefix}categs` cat ON t1.`category_id` = cat.`id` ";
 		$sql .= "LEFT JOIN `{$this->iaDb->prefix}members` t3 ON t1.`member_id` = t3.`id` ";
 
-		$sql .= $aWhere ? "WHERE $aWhere " : '';
-        $sql .= "AND t1.`status` != 'banned' ";
+		$sql .= $aWhere ? "WHERE ($aWhere) " . " AND t1.`status` != 'banned'" : "WHERE t1.`status` != 'banned'";
 		$sql .= $aOrder ? " ORDER BY $aOrder " : '';
 		$sql .= $aStart || $aLimit ? " LIMIT $aStart,$aLimit " : '';
 
