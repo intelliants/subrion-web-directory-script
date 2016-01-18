@@ -73,6 +73,7 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType())
 
 			if (iaCore::ACTION_DELETE == $pageAction)
 			{
+                
 				$iaView->disableLayout();
 
 				$iaListing->delete($listing)

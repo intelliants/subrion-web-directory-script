@@ -56,7 +56,7 @@
 		<page group="directory" url="|PACKAGE|" name="directory_home" menus="main,directory" suburl="manage/categs" fields_item="listings">Directory</page>
 		<page group="directory" url="|PACKAGE|add/" name="add_listing" filename="manage" parent="view_listing" action="add" menus="directory" fields_item="listings">Add Listing</page>
 		<page group="directory" url="|PACKAGE|edit/" name="edit_listing" filename="manage" parent="view_listing" action="edit" readonly="1" fields_item="listings">Edit Listing</page>
-		<page group="directory" url="|PACKAGE|delete/" name="delete_listing" filename="manage" action="delete" readonly="1">Delete Listing</page>
+		<page group="directory" url="|PACKAGE|delete/" name="delete_listing" filename="manage" parent="view_listing" action="delete" readonly="1" fields_item="listings">Delete Listing</page>
 		<page group="directory" url="|PACKAGE|listing/" name="view_listing" filename="view" suburl="manage/categs" readonly="1" nofollow="1" fields_item="listings">View Listing</page>
 		<page group="directory" url="|PACKAGE|rss/" name="rss_listings" service="1">RSS Listings</page>
 		<page group="directory" url="|PACKAGE|new/" name="new_listings" menus="directory" fields_item="listings">New Listings</page>
@@ -69,6 +69,7 @@
 	<permissions>
 		<object id="view_listing" action="add" access="1">Add Listing</object>
 		<object id="view_listing" action="edit" access="1">Edit Listing</object>
+		<object id="view_listing" action="delete" access="1">Delete Listing</object>
 		<object meta_object="admin_pages" id="manage_listings" action="add" access="1">Add Listing</object>
 		<object meta_object="admin_pages" id="manage_listings" action="edit" access="1">Edit Listing</object>
 
@@ -280,6 +281,7 @@
 		<phrase category="frontend" key="subcategory">Subcategory</phrase>
 		<phrase category="frontend" key="visit_site">Visit the Site</phrase>
 		<phrase category="frontend" key="you_sent_report">Thanks. A report has been sent to the site administrator.</phrase>
+        <phrase category="frontend" key="do_you_really_want_to_delete_listing">Do you really want to remove the listing?</phrase>
 	</phrases>
 
 	<cron name="listings_expiration">0 * * * * packages/directory/includes/cron/expiration.php</cron>
