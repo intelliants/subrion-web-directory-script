@@ -80,7 +80,7 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType())
 			'icon' => 'icon-remove',
 			'title' => iaLanguage::get('remove'),
 			'url' => $iaListing->url(iaCore::ACTION_DELETE, $listing),
-			'classes' => 'btn-danger'
+			'classes' => 'btn-danger js-delete-listing'
 		);
 
 		$iaView->set('actions', $pageActions);
