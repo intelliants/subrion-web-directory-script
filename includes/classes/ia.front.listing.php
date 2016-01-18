@@ -16,7 +16,7 @@ class iaListing extends abstractDirectoryPackageFront
 		'columnAlias' => array(
 			'date' => 'date_added'
 		),
-		'regularSearchStatements' => array("t1.`title` LIKE '%:query%' OR t1.`domain` LIKE '%:query%'"),
+		'regularSearchStatements' => array("(t1.`title` LIKE '%:query%' OR t1.`domain` LIKE '%:query%') AND t1.`status` != 'banned'"),
 		'customColumns' => array('c', 'sc')
 	);
 
@@ -62,6 +62,7 @@ class iaListing extends abstractDirectoryPackageFront
 		$sql .= "LEFT JOIN `{$this->iaDb->prefix}members` t3 ON t1.`member_id` = t3.`id` ";
 
 		$sql .= $aWhere ? "WHERE $aWhere " : '';
+        $sql .= "AND t1.`status` != 'banned' ";
 		$sql .= $aOrder ? " ORDER BY $aOrder " : '';
 		$sql .= $aStart || $aLimit ? " LIMIT $aStart,$aLimit " : '';
 
@@ -70,6 +71,7 @@ class iaListing extends abstractDirectoryPackageFront
 
 	public function coreSearch($stmt, $start, $limit, $order)
 	{
+
 		$rows = $this->get($stmt, $start, $limit, $order);
 
 		return array($this->iaDb->foundRows(), $rows);
