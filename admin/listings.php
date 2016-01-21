@@ -171,13 +171,16 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType())
 
 			list($data, $error, $messages, $errorFields) = $iaField->parsePost($fields, $listing);
 
-			if (isset($data['url']) && $data['url'])
+			if (isset($data['url']) && $data['url'] && !iaValidate::isUrl($data['url']))
 			{
-				if (!iaValidate::isUrl($data['url']))
-				{
-					$error = true;
-					$messages[] = iaLanguage::get('error_url');
-				}
+				$error = true;
+				$messages[] = iaLanguage::get('error_url');
+			}
+
+			if (isset($data['email']) && $data['email'] && !iaValidate::isEmail($data['email']))
+			{
+				$error = true;
+				$messages[] = iaLanguage::get('error_email_incorrect');
 			}
 
 			$data['rank'] = min(5, max(0, (int)$_POST['rank']));

@@ -89,6 +89,7 @@
 	<config group="directory" name="directory_hide_empty_categories" type="radio" values="1,0" description="Hide empty categories">0</config>
 	<config group="directory" name="listing_auto_approval" type="radio" values="1,0" description="Listings auto approval">1</config>
 	<config group="directory" name="listing_add_guest" type="radio" values="1,0" description="Allow to add listing for guest">1</config>
+	<config group="directory" name="listing_tie_to_member" type="radio" values="1,0" description="Tie listings to registered members">1</config>
 	<config group="directory" name="directory_redirect_to_site" type="radio" values="1,0" description="Redirect to a website by clicking on a title" private="0">0</config>
 	<config group="directory" name="directory_lowercase_urls" type="radio" values="1,0" description="Transform page URLs to lowercase" private="0">1</config>
 	<config group="directory" name="display_children_listing" type="radio" values="1,0" description="Display listings from child categories">0</config>
@@ -193,6 +194,8 @@
 			page="advsearch,add_listing,edit_listing,view_listing,rss_listings">Description</field>
 		<field name="reciprocal" item="listings" type="text" group="general" length="70" required="0" default="http://"
 			page="add_listing,edit_listing,view_listing,favorites">Reciprocal URL</field>
+		<field name="email" item="listings" type="text" group="general" length="70" required="0" default=""
+			page="add_listing,edit_listing">Email</field>
 		<field name="meta_description" item="listings" type="textarea" group="general" editor="0" required="0" adminonly="1" length="" default=""
 			page="advsearch">Meta-Description</field>
 		<field name="meta_keywords" item="listings" type="text" group="general" length="70" required="0" adminonly="1"
@@ -288,6 +291,7 @@
 
 	<tooltips>
 		<tooltip key="display_children_listing">If this options is turned ON your visitors will see listings from inner children categories during categories browsing.</tooltip>
+		<tooltip key="listing_tie_to_member">Members will own newly submitted listings that have same email addresses as registered members</tooltip>
 	</tooltips>
 
 	<blocks>

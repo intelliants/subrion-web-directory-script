@@ -224,6 +224,12 @@ class iaListing extends abstractDirectoryPackageAdmin
 				$entryData['category_alias'] = $aOldListing['category_alias'];
 			}
 
+			if (isset($aOldListing['title']) && !isset($entryData['title']))
+			{
+				$entryData['title'] = $aOldListing['title'];
+			}
+			$entryData['email'] = (isset($aOldListing['email']) && $aOldListing['email']) ? $aOldListing['email'] : '';
+
 			if ($crossed)
 			{
 				$diff = (iaCore::STATUS_ACTIVE == $status) ? 1 : -1;
@@ -284,7 +290,7 @@ class iaListing extends abstractDirectoryPackageAdmin
 	{
 		if ($this->iaCore->get('listing_' . $listingData['status']))
 		{
-			$email = $this->iaDb->one('email', iaDb::convertIds($listingData['member_id']), iaUsers::getTable());
+			$email = ($listingData['email']) ? $listingData['email'] : $this->iaDb->one('email', iaDb::convertIds($listingData['member_id']), iaUsers::getTable());
 
 			if ($email)
 			{

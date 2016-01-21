@@ -108,17 +108,37 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType())
 			$messages[] = iaLanguage::get('confirmation_code_incorrect');
 		}
 
-		if (isset($item['url']) && $item['url'])
+		if (isset($item['url']) && $item['url'] && !iaValidate::isUrl($item['url']))
 		{
-			if (!iaValidate::isUrl($item['url']))
-			{
-				$error = true;
-				$messages[] = iaLanguage::get('error_url');
-			}
+			$error = true;
+			$messages[] = iaLanguage::get('error_url');
+		}
+
+		if (isset($item['email']) && $item['email'] && !iaValidate::isEmail($item['email']))
+		{
+			$error = true;
+			$messages[] = iaLanguage::get('error_email_incorrect');
+		}
+		elseif (!iaUsers::hasIdentity() && (!isset($item['email']) || empty($item['email'])))
+		{
+			$error = true;
+			$messages[] = iaLanguage::getf('field_is_empty', array('field' => iaLanguage::get('email')));
 		}
 
 		$item['ip'] = $iaUtil->getIp();
-		$item['member_id'] = iaUsers::hasIdentity() ? iaUsers::getIdentity()->id : 0;
+		$item['member_id'] = 0;
+		if (iaUsers::hasIdentity())
+		{
+			$item['member_id'] = iaUsers::getIdentity()->id;
+		}
+		elseif($iaCore->get('listing_tie_to_member'))
+		{
+			$iaUsers = $iaCore->factory('users');
+			$member = $iaUsers->getInfo($item['email'], 'email');
+
+			$item['member_id'] = ($member) ? $member['id'] : 0;
+		}
+
 		$item['category_id'] = (int)$_POST['category_id'];
 		$item['status'] = $iaCore->get('listing_auto_approval') ? iaCore::STATUS_ACTIVE : iaCore::STATUS_APPROVAL;
 		$item['short_description'] = iaSanitize::snippet($_POST['description'], $iaCore->get('directory_summary_length'));
@@ -177,21 +197,21 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType())
 			}
 
 			// check if listing already exists
-            if (iaCore::ACTION_ADD == $pageAction && $iaCore->get('duplicate_checking'))
-            {
-                $check = $iaCore->get('duplicate_type') == 0 ? $item['domain'] : $item['url'];
-                $countDuplicateList = $iaListing->checkDuplicateListings($item['domain'], $check);
-                if ($countDuplicateList > 0)
-                {
-                    $error = true;
-                    $messages[] = iaLanguage::get('error_banned');
-                }
-                elseif ($countDuplicateList)
-                {
-                    $error = true;
-                    $messages[] = iaLanguage::get('error_listing_present');
-                }
-            }
+			if (iaCore::ACTION_ADD == $pageAction && $iaCore->get('duplicate_checking'))
+			{
+				$check = $iaCore->get('duplicate_type') == 0 ? $item['domain'] : $item['url'];
+				$countDuplicateList = $iaListing->checkDuplicateListings($item['domain'], $check);
+				if ($countDuplicateList > 0)
+				{
+					$error = true;
+					$messages[] = iaLanguage::get('error_banned');
+				}
+				elseif ($countDuplicateList)
+				{
+					$error = true;
+					$messages[] = iaLanguage::get('error_listing_present');
+				}
+			}
 		}
 
 		if (!$error)
