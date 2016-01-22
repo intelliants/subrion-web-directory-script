@@ -100,9 +100,9 @@
 	<config group="directory" name="directory_listings_perpage" type="text" description="Listings on page">10</config>
 	<config group="directory" name="directory_summary_length" type="text" description="Summary length">700</config>
 	<config group="directory" name="directory_listing_limit" type="text" description="Listing limit for each member" show="listing_add_guest|0">6</config>
-    <config group="directory" name="duplicate_checking" type="radio" description="Duplicate checking">0</config>
-    <config group="directory" name="duplicate_type" type="radio" description="Duplicate Type" show="duplicate_checking|1">0</config>
-    
+	<config group="directory" name="duplicate_checking" type="radio" description="Duplicate checking">0</config>
+	<config group="directory" name="duplicate_type" type="radio" description="Duplicate Type" show="duplicate_checking|1">0</config>
+
 	<config group="directory" name="directory_div3" type="divider">Blocks</config>
 	<config group="directory" name="directory_listings_tabs_new" type="radio" values="1,0" description="Display New Listings tab">1</config>
 	<config group="directory" name="directory_listings_tabs_popular" type="radio" values="1,0" description="Display Popular Listings tab">1</config>
@@ -122,7 +122,7 @@
 <p>For more details check the url: <a href="{%URL%}">{%URL%}</a></p>
 		]]>
 	</config>
-	
+
 	<!-- E-mail template for listing activation notification -->
 	<config group="email_templates" type="divider" name="directory_divider" description="Directory"><![CDATA[]]></config>
 	<config group="email_templates" name="listing_active" type="radio" values="1,0" description="Listing is active">1</config>
@@ -175,7 +175,8 @@
 		<![CDATA[
 <p>Greetings,</p>
 <p>Listing "{%TITLE%}" marked as broken.</p>
-<p>Status of listing changed to 'Reported as broken'.</p>
+<p>Comments:</p>
+<p>{%COMMENTS%}</p>
 		]]>
 	</config>
 
@@ -232,6 +233,7 @@
 		<phrase category="admin" key="recount_directory_listings">Recount Directory Listings</phrase>
 		<phrase category="admin" key="recount_directory_listings_success">Directory Listings have been successfully recounted.</phrase>
 		<phrase category="admin" key="reported_as_broken">Reported as Broken</phrase>
+		<phrase category="admin" key="reported_as_broken_comments">Broken report comments</phrase>
 
 		<phrase category="common" key="alexa_rank">Alexa Rank</phrase>
 		<phrase category="common" key="all_listings_num">Number of all listings</phrase>
@@ -261,9 +263,10 @@
 		<phrase category="frontend" key="ascending">Ascending</phrase>
 		<phrase category="frontend" key="author_activity">Author Activity</phrase>
 		<phrase category="frontend" key="cant_remove_listing">Unable to remove the listing.</phrase>
+		<phrase category="frontend" key="comment">Comment</phrase>
 		<phrase category="frontend" key="date">Date</phrase>
 		<phrase category="frontend" key="descending">Descending</phrase>
-		<phrase category="frontend" key="do_you_want_report_broken">Do you want report this listing as broken?</phrase>
+		<phrase category="frontend" key="do_you_want_report_broken">Do you want to report this listing as broken?</phrase>
 		<phrase category="frontend" key="error_update_listing">Unknown error occured during listing editing. Please contact the site administrator if you have this error again.</phrase>
 		<phrase category="frontend" key="error_add_listing">Unknown error occured during listing submission. Please contact the site administrator if you have this error again.</phrase>
 		<phrase category="frontend" key="error_locked_category">You are not allowed to submit into a locked category.</phrase>
@@ -284,7 +287,7 @@
 		<phrase category="frontend" key="subcategory">Subcategory</phrase>
 		<phrase category="frontend" key="visit_site">Visit the Site</phrase>
 		<phrase category="frontend" key="you_sent_report">Thanks. A report has been sent to the site administrator.</phrase>
-        <phrase category="frontend" key="do_you_really_want_to_delete_listing">Do you really want to remove the listing?</phrase>
+		<phrase category="frontend" key="do_you_really_want_to_delete_listing">Do you really want to remove the listing?</phrase>
 	</phrases>
 
 	<cron name="listings_expiration">0 * * * * packages/directory/includes/cron/expiration.php</cron>
@@ -377,6 +380,34 @@ $items['listings'] = array('title' => iaLanguage::get('listings'), 'url' => 'dir
 $items['categs'] = array('title' => iaLanguage::get('categories'), 'url' => 'directory/categories/');
 			]]>
 		</hook>
+		<hook name="smartyViewListingBeforeFooter" type="smarty" page_type="front">
+			<![CDATA[
+{if (isset($item.item) && 'listings' == $item.item)}
+<div class="modal fade" id="report-listing-modal" tabindex="-1" role="dialog" aria-labelledby="report-listing">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<form id="report-listing-form" class="ia-form">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+					<h4 class="modal-title" id="myModalLabel">{lang key='do_you_want_report_broken'}</h4>
+				</div>
+				<div class="modal-body">
+						<div class="form-group">
+							<label for="report-listing-comment">{lang key='comment'}:</label>
+							<textarea name="report-listing-comment" id="report-listing-comment" class="form-control" rows="5" required></textarea>
+						</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">{lang key='cancel'}</button>
+					<button type="submit" class="btn btn-primary">{lang key='submit'}</button>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+{/if}
+			]]>
+		</hook>
 	</hooks>
 
 	<install>
@@ -465,7 +496,8 @@ CREATE TABLE IF NOT EXISTS `{prefix}listings`(
 	`sponsored_start` datetime NULL,
 	`sponsored_end` datetime NULL,
 	`sponsored_plan_id` smallint(5) unsigned NULL,
-	`reported_as_broken` int(3) unsigned NOT NULL,
+	`reported_as_broken` tinyint(1) unsigned NOT NULL,
+	`reported_as_broken_comments` TEXT NOT NULL,
 	PRIMARY KEY (`id`),
 	KEY `CATEGORY` (`category_id`),
 	KEY `date_added` (`date_added`),
@@ -504,4 +536,8 @@ $iaCategs->rebuildRelation();
 		<sql><![CDATA[DROP TABLE IF EXISTS `{prefix}listings_categs`;]]></sql>
 		<sql><![CDATA[DROP TABLE IF EXISTS `{prefix}listings`;]]></sql>
 	</uninstall>
+
+	<upgrade>
+		<sql version="4.0.1" external="1">includes{DS}dumps{DS}upgrades{DS}4.0.1.sql</sql>
+	</upgrade>
 </package>

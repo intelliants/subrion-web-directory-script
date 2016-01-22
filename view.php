@@ -8,17 +8,54 @@ if (iaView::REQUEST_JSON == $iaView->getRequestType())
 	if ('report' == $_POST['action'])
 	{
 		$id = (int)$_POST['id'];
+		$comment = '';
+		if ((isset($_POST['comments']) && $_POST['comments']))
+		{
+			$time = date('Y-m-d H:i:s');
+			$iaCore->factory('util');
+			$ip = iaUtil::getIp(false);
+			$comment = <<<COMMENT
+Date: {$time}
+IP: {$ip}
+Comment: {$_POST['comments']}
+
+
+COMMENT;
+		}
 
 		$listing = $iaListing->getById($id);
 
 		$iaMailer = $iaCore->factory('mailer');
 		$iaMailer->loadTemplate('reported_as_broken');
 		$iaMailer->setReplacements(array(
-			'title' => $listing['title']
+			'title' => $listing['title'],
+			'comments' => $comment,
 		));
 		$iaMailer->sendToAdministrators();
 
-		$iaDb->update(array('reported_as_broken' => 1), iaDb::convertIds($id), null, iaListing::getTable());
+		$email = (isset($listing['email']) && $listing['email']) ? $listing['email'] : $iaDb->one('email', iaDb::convertIds($listing['member_id']), iaUsers::getTable());
+
+		if ($email)
+		{
+			$iaMailer->loadTemplate('reported_as_broken');
+			$iaMailer->setReplacements(array(
+				'title' => $listing['title'],
+				'comments' => $comment,
+			));
+			$iaMailer->addAddress($email);
+
+			$iaMailer->send();
+		}
+		$fields = array('reported_as_broken' => 1);
+		if ($comment)
+		{
+			if (isset($listing['reported_as_broken_comments']) && $listing['reported_as_broken_comments'])
+			{
+				$comment = $listing['reported_as_broken_comments'] . $comment;
+			}
+			$fields['reported_as_broken_comments'] = $comment;
+		}
+		$iaDb->update($fields, iaDb::convertIds($id), null, iaListing::getTable());
 	}
 }
 

@@ -26,6 +26,12 @@ $(function()
 		nodeOpened: [{$category.parents}],
 		nodeSelected: {$item.category_id}
 	});
+	$('input[name=reported_as_broken]').change(function() {
+		var comments = $('#reported-as-broken-comments');
+		if (comments.length > 0) {
+			comments.toggle();
+		}
+	});
 });
 		{/ia_add_js}
 		{ia_add_media files='tree'}
@@ -75,6 +81,22 @@ $(function()
 				</select>
 			</div>
 		</div>
+		{if iaCore::ACTION_EDIT == $pageAction}
+		<div id="reported-as-broken" class="row">
+			<label class="col col-lg-2 control-label">{lang key='reported_as_broken'}</label>
+			<div class="col col-lg-4">
+				{html_radio_switcher name='reported_as_broken' value=$item.reported_as_broken}
+			</div>
+		</div>
+			{if $item.reported_as_broken && isset($item.reported_as_broken_comments) && $item.reported_as_broken_comments}
+				<div id="reported-as-broken-comments" class="row">
+					<label class="col col-lg-2 control-label">{lang key='reported_as_broken_comments'}</label>
+					<div class="col col-lg-4">
+						{$item.reported_as_broken_comments|strip_tags|nl2br}
+					</div>
+				</div>
+			{/if}
+		{/if}
 	{/capture}
 
 	{ia_hooker name='smartyAdminSubmitItemBeforeFields'}

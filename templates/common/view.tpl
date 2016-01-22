@@ -52,10 +52,10 @@
 
 {ia_add_js}
 $(function() {
-    $('.js-delete-listing').on('click', function(e) {
-        e.preventDefault();
+	$('.js-delete-listing').on('click', function(e) {
+		e.preventDefault();
 
-        intelli.confirm(_t('do_you_really_want_to_delete_listing'), { url: $(this).attr('href') });
-    });
+		intelli.confirm(_t('do_you_really_want_to_delete_listing'), { url: $(this).attr('href') });
+	});
 });
 {/ia_add_js}

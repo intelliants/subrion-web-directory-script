@@ -170,6 +170,14 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType())
 			}
 
 			list($data, $error, $messages, $errorFields) = $iaField->parsePost($fields, $listing);
+			if (isset($_POST['reported_as_broken']))
+			{
+				$data['reported_as_broken'] = $_POST['reported_as_broken'];
+				if (!$_POST['reported_as_broken'])
+				{
+					$data['reported_as_broken_comments'] = '';
+				}
+			}
 
 			if (isset($data['url']) && $data['url'] && !iaValidate::isUrl($data['url']))
 			{

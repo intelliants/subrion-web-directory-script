@@ -1,16 +1,25 @@
 $(function()
 {
+	var modal = $('#report-listing-modal');
 	$('#js-cmd-report-listing').on('click', function(e)
 	{
 		e.preventDefault();
 
-		var id = $(this).data('id');
+		listingId = $(this).data('id');
+		modal.modal();
+	});
+	$('#report-listing-form').on('submit', function(e){
+		e.preventDefault();
 
-		intelli.confirm(_t('do_you_want_report_broken'), '', function(result) {
-			$.post(intelli.config.packages.directory.url + 'listing/read.json', {action: 'report', id: id}, function(data)
-			{
-				intelli.notifFloatBox({msg: _t('you_sent_report'), type: 'success', autohide: true});
-			});
+		var comment = $('#report-listing-comment');
+		var commentText = comment.val();
+
+		$.post(intelli.config.packages.directory.url + 'listing/read.json',{
+			action: 'report', id: listingId, comments: commentText
+		}, function() {
+			comment.val('');
+			modal.modal('hide');
+			intelli.notifFloatBox({msg: _t('you_sent_report'), type: 'success', autohide: true});
 		});
 	});
 });
