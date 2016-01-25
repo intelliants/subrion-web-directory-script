@@ -29,7 +29,7 @@ $iaPage = $iaCore->factory('page', iaCore::FRONT);
 
 if ($listingId = (int)$url)
 {
-	if ($listingData = $iaDb->row_bind(array('title_alias'), '`status` = :status AND `id` = :id', array('status' => iaCore::STATUS_ACTIVE, 'id' => $listingId), 'listings'))
+	if ($listingData = $iaDb->row_bind(array('title_alias'), '`id` = :id', array('id' => $listingId), 'listings'))
 	{
 		if ($listingData['title_alias'])
 		{

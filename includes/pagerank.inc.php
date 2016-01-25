@@ -27,7 +27,7 @@ final class PageRank
 	 *
 	 * @return string
 	 */
-	public function getPageRank($q, $context = null)
+	public static function getPageRank($q, $context = null)
 	{
 		$ch = self::_checksum(self::_makehash($q));
 		$url = 'http://%s/tbr?client=navclient-auto&ch=%s&features=Rank&q=info:%s';

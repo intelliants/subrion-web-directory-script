@@ -69,7 +69,8 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType())
 
 	$listing = $iaListing->getById($listingId);
 
-	if (empty($listing))
+	if (empty($listing) || iaCore::STATUS_APPROVAL == $listing['status'] &&
+		!(iaUsers::hasIdentity() && iaUsers::getIdentity()->id == $listing['member_id']))
 	{
 		return iaView::errorPage(iaView::ERROR_NOT_FOUND);
 	}
