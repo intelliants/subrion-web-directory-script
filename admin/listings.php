@@ -164,11 +164,6 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType())
 
 			$fields = $iaField->getByItemName($iaListing->getItemName());
 
-			if (isset($_POST['owner']) && empty($_POST['owner'])) // Bug #1761
-			{
-				unset($_POST['owner']);
-			}
-
 			list($data, $error, $messages, $errorFields) = $iaField->parsePost($fields, $listing);
 			if (isset($_POST['reported_as_broken']))
 			{
