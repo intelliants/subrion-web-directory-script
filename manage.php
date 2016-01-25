@@ -27,11 +27,6 @@ if (iaView::REQUEST_JSON == $iaView->getRequestType() && isset($_GET['get']) && 
 
 if (iaView::REQUEST_HTML == $iaView->getRequestType())
 {
-	if (!$iaCore->get('listing_add_guest', true) && !iaUsers::hasIdentity())
-	{
-		return iaView::accessDenied(iaLanguage::getf('listing_add_no_auth', array('base_url' => IA_URL)));
-	}
-
 	$iaField = $iaCore->factory('field');
 	$iaUtil = $iaCore->factory('util');
 
@@ -162,13 +157,10 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType())
 			$messages[] = iaLanguage::get('error_locked_category');
 		}
 
-		if (!$iaCore->get('listing_add_guest'))
+		if (!$iaListing->isSubmissionAllowed($item['member_id']))
 		{
-			if (!$iaListing->isSubmissionAllowed($item['member_id']))
-			{
-				$error = true;
-				$messages[] = iaLanguage::get('limit_is_exceeded');
-			}
+			$error = true;
+			$messages[] = iaLanguage::get('limit_is_exceeded');
 		}
 
 		if (!$error)

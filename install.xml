@@ -74,6 +74,9 @@
 		<object meta_object="admin_pages" id="manage_listings" action="edit" access="1">Edit Listing</object>
 
 		<permission type="group" type_id="4" access="0">my_listings</permission>
+		<permission type="group" type_id="4" action="add" access="0">view_listing</permission>
+		<permission type="group" type_id="4" action="edit" access="0">view_listing</permission>
+		<permission type="group" type_id="4" action="delete" access="0">view_listing</permission>
 	</permissions>
 
 	<configgroup name="directory">Directory</configgroup>
@@ -88,7 +91,6 @@
 	<config group="directory" name="directory_enable_alexarank" type="radio" values="1,0" description="Display Alexa Rank">1</config>
 	<config group="directory" name="directory_hide_empty_categories" type="radio" values="1,0" description="Hide empty categories">0</config>
 	<config group="directory" name="listing_auto_approval" type="radio" values="1,0" description="Listings auto approval">1</config>
-	<config group="directory" name="listing_add_guest" type="radio" values="1,0" description="Allow to add listing for guest">1</config>
 	<config group="directory" name="listing_tie_to_member" type="radio" values="1,0" description="Tie listings to registered members">1</config>
 	<config group="directory" name="directory_redirect_to_site" type="radio" values="1,0" description="Redirect to a website by clicking on a title" private="0">0</config>
 	<config group="directory" name="directory_lowercase_urls" type="radio" values="1,0" description="Transform page URLs to lowercase" private="0">1</config>
@@ -99,7 +101,7 @@
 	<config group="directory" name="crossed_category_path" type="radio" values="1,0" description="Use crossed category path in Listing URL" show="listing_crossed|1">1</config>
 	<config group="directory" name="directory_listings_perpage" type="text" description="Listings on page">10</config>
 	<config group="directory" name="directory_summary_length" type="text" description="Summary length">700</config>
-	<config group="directory" name="directory_listing_limit" type="text" description="Listing limit for each member" show="listing_add_guest|0">6</config>
+	<config group="directory" name="directory_listing_limit" type="text" description="Listing limit for each member" show="0">6</config>
 	<config group="directory" name="duplicate_checking" type="radio" description="Duplicate checking">0</config>
 	<config group="directory" name="duplicate_type" type="radio" description="Duplicate Type" show="duplicate_checking|1">0</config>
 
@@ -272,7 +274,6 @@
 		<phrase category="frontend" key="error_locked_category">You are not allowed to submit into a locked category.</phrase>
 		<phrase category="frontend" key="invalid_category">Invalid category.</phrase>
 		<phrase category="frontend" key="limit_is_exceeded">You may post a limited number of listings.</phrase>
-		<phrase category="frontend" key="listing_add_no_auth">Guests are not allowed to add listings. Only registered members can do that. Please &lt;a href=":base_urllogin/"&gt;sign in&lt;/a&gt; or &lt;a href=":base_urlregistration/"&gt;register&lt;/a&gt; in order to continue.</phrase>
 		<phrase category="frontend" key="listing_updated">Listing updated.</phrase>
 		<phrase category="frontend" key="listing_updated_waiting">Thank you. Your listing has been updated. Waiting for administrator review.</phrase>
 		<phrase category="frontend" key="listing_removed">Listing removed.</phrase>
