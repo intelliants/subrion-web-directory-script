@@ -53,6 +53,7 @@ elseif ($iaCore->checkDomain() && $isDefaultPackage)
 		if ($pageUrl = $iaDb->one_bind('alias', '`name` = :page AND `status` = :status', array('page' => $package_home, 'status' => iaCore::STATUS_ACTIVE), 'pages'))
 		{
 			$pageUrl = array_shift(explode(IA_URL_DELIMITER, trim($pageUrl, IA_URL_DELIMITER)));
+			$pageUrl = ('directory_home' == $iaCore->get('home_page')) ? $pageUrl . '_home' : $pageUrl;
 			$iaView->name($pageUrl);
 			$iaCore->requestPath = $iaView->url;
 		}
