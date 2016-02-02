@@ -49,3 +49,13 @@
 </div>
 
 {ia_add_media files='js:_IA_URL_packages/directory/js/front/view'}
+
+{ia_add_js}
+$(function() {
+	$('.js-delete-listing').on('click', function(e) {
+		e.preventDefault();
+
+		intelli.confirm(_t('do_you_really_want_to_delete_listing'), { url: $(this).attr('href') });
+	});
+});
+{/ia_add_js}

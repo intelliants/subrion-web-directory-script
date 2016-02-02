@@ -16,7 +16,7 @@ class iaListing extends abstractDirectoryPackageFront
 		'columnAlias' => array(
 			'date' => 'date_added'
 		),
-		'regularSearchStatements' => array("t1.`title` LIKE '%:query%' OR t1.`domain` LIKE '%:query%'"),
+		'regularSearchStatements' => array("(t1.`title` LIKE '%:query%' OR t1.`domain` LIKE '%:query%') AND t1.`status` != 'banned'"),
 		'customColumns' => array('c', 'sc')
 	);
 
@@ -61,7 +61,7 @@ class iaListing extends abstractDirectoryPackageFront
 		$sql .= "LEFT JOIN `{$this->iaDb->prefix}categs` cat ON t1.`category_id` = cat.`id` ";
 		$sql .= "LEFT JOIN `{$this->iaDb->prefix}members` t3 ON t1.`member_id` = t3.`id` ";
 
-		$sql .= $aWhere ? "WHERE $aWhere " : '';
+		$sql .= $aWhere ? "WHERE ($aWhere) AND t1.`status` != 'banned'" : "WHERE t1.`status` != 'banned'";
 		$sql .= $aOrder ? " ORDER BY $aOrder " : '';
 		$sql .= $aStart || $aLimit ? " LIMIT $aStart,$aLimit " : '';
 
@@ -70,6 +70,7 @@ class iaListing extends abstractDirectoryPackageFront
 
 	public function coreSearch($stmt, $start, $limit, $order)
 	{
+
 		$rows = $this->get($stmt, $start, $limit, $order);
 
 		return array($this->iaDb->foundRows(), $rows);
@@ -160,15 +161,14 @@ class iaListing extends abstractDirectoryPackageFront
 		return false;
 	}
 
-	public function checkDuplicateListings($aUrl, $aType = 'exact')
-	{
-		$sql = "SELECT `status` ";
-		$sql .= "FROM " . self::getTable(true) . " ";
-		$cause = ('domain' == $aType) ? "WHERE `domain` = '{$aUrl}'" : "WHERE `listing_url` = '{$aUrl}'";
-		$sql .= ('contain' == $aType) ? "WHERE `url` LIKE '%{$aUrl}%'" : $cause;
-
-		return $this->iaDb->getOne($sql);
-	}
+    public function checkDuplicateListings($domain, $aUrl)
+    {
+        $sql = "SELECT COUNT(`id`) ";
+        $sql .= "FROM " . self::getTable(true) . " ";
+        $cause = ('domain' == $aUrl) ? "WHERE `domain` = '{$aUrl}'" : "WHERE `url` = '{$aUrl}'";
+        $sql .= ('contain' == $domain) ? "WHERE `url` LIKE '%{$aUrl}%'" : $cause;
+        return $this->iaDb->getOne($sql);
+    }
 
 	public function insert(array $entryData)
 	{
