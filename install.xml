@@ -306,7 +306,7 @@
 		<hook name="smartyFrontFiltersBeforeFields" type="smarty" page_type="front" filename="search.filters"><![CDATA[]]></hook>
 		<hook name="smartyFrontSearchSortingListings" type="smarty" page_type="front" filename="search.listings.sorting-header"><![CDATA[]]></hook>
 		<hook name="adminDatabaseConsistency" type="smarty" page_type="admin" filename="hook.db-consistency"><![CDATA[]]></hook>
-		<hook name="phpAdminDatabaseConsistencyType" page_type="admin" pages="database_manage">
+		<hook name="phpAdminDatabaseConsistencyType" page_type="admin" pages="database">
 			<![CDATA[
 if ('repair_directorycats' == $type)
 {
