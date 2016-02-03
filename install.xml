@@ -188,18 +188,17 @@
 	</fields_groups>
 
 	<fields>
-		<!-- Listing fields -->
-		<field name="title" item="listings" type="text" group="general" length="70" searchable="1" required="1"
+		<field name="title" item="listings" type="text" group="general" length="70" required="1"
 			page="advsearch,add_listing,edit_listing,view_member,view_listing,favorites,rss_listings">Title</field>
-		<field name="url" item="listings" type="text" group="general" length="70" searchable="1" required="1" default="http://"
+		<field name="url" item="listings" type="text" group="general" length="70" required="1" default="http://"
 			page="advsearch,add_listing,edit_listing,view_member,view_listing,favorites,rss_listings">URL</field>
-		<field name="description" item="listings" type="textarea" group="general" editor="1" searchable="1" required="1" length="" default=""
+		<field name="description" item="listings" type="textarea" group="general" editor="1" required="1" length="" default=""
 			page="advsearch,add_listing,edit_listing,view_listing,rss_listings">Description</field>
-		<field name="reciprocal" item="listings" type="text" group="general" length="70" required="0" default="http://"
+		<field name="reciprocal" item="listings" type="text" group="general" length="70" default="http://"
 			page="add_listing,edit_listing,view_listing,favorites">Reciprocal URL</field>
-		<field name="email" item="listings" type="text" group="general" length="70" required="0" default=""
+		<field name="email" item="listings" type="text" group="general" length="70"
 			page="add_listing,edit_listing">Email</field>
-		<field name="meta_description" item="listings" type="textarea" group="general" editor="0" required="0" adminonly="1" length="" default=""
+		<field name="meta_description" item="listings" type="textarea" group="general" editor="0" adminonly="1" length="" default=""
 			page="advsearch">Meta-Description</field>
 		<field name="meta_keywords" item="listings" type="text" group="general" length="70" required="0" adminonly="1"
 			page="advsearch">Meta-Keywords</field>
@@ -273,6 +272,7 @@
 		<phrase category="frontend" key="error_add_listing">Unknown error occured during listing submission. Please contact the site administrator if you have this error again.</phrase>
 		<phrase category="frontend" key="error_locked_category">You are not allowed to submit into a locked category.</phrase>
 		<phrase category="frontend" key="invalid_category">Invalid category.</phrase>
+		<phrase category="frontend" key="keywords">Keywords</phrase>
 		<phrase category="frontend" key="limit_is_exceeded">You may post a limited number of listings.</phrase>
 		<phrase category="frontend" key="listing_updated">Listing updated.</phrase>
 		<phrase category="frontend" key="listing_updated_waiting">Thank you. Your listing has been updated. Waiting for administrator review.</phrase>
@@ -313,8 +313,8 @@
 	</blocks>
 
 	<hooks>
-		<hook name="phpCoreUrlRewrite" filename="packages/directory/includes/hook.rewrite-url.php" page_type="front"><![CDATA[]]></hook>
-		<hook name="phpCoreBeforePageDisplay" filename="packages/directory/includes/hook.blocks-load.php" page_type="front"><![CDATA[]]></hook>
+		<hook name="phpCoreUrlRewrite" filename="hook.rewrite-url" page_type="front"><![CDATA[]]></hook>
+		<hook name="phpCoreBeforePageDisplay" filename="hook.blocks-load" page_type="front"><![CDATA[]]></hook>
 		<hook name="smartyFrontFiltersBeforeFields" type="smarty" page_type="front" filename="search.filters"><![CDATA[]]></hook>
 		<hook name="smartyFrontSearchSortingListings" type="smarty" page_type="front" filename="search.listings.sorting-header"><![CDATA[]]></hook>
 		<hook name="adminDatabaseConsistency" type="smarty" page_type="admin" filename="hook.db-consistency"><![CDATA[]]></hook>

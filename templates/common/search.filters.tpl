@@ -1,5 +1,9 @@
 {if isset($directoryFiltersCategories)}
 	<div class="form-group">
+		<label>{lang key='keywords'}</label>
+		<input type="text" name="keywords" placeholder="{lang key='keywords'}" class="form-control"{if isset($filters.params.keywords)} value="{$filters.params.keywords|escape:'html'}"{/if}>
+	</div>
+	<div class="form-group">
 		<label>{lang key='category'}</label>
 		<select name="c" class="form-control no-js" id="js-l-c">
 			<option value="">{lang key='any'}</option>

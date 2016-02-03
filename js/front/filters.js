@@ -11,7 +11,7 @@ $(function()
 
 		if (value != '')
 		{
-			$.getJSON(intelli.config.packages.directory.url + 'read.json', {id: value}, function(response)
+			$.getJSON(intelli.config.packages.directory.url + 'directory/read.json', {id: value}, function(response)
 			{
 				if (response && response.length > 0)
 				{

@@ -17,7 +17,7 @@ class iaListing extends abstractDirectoryPackageFront
 			'date' => 'date_added'
 		),
 		'regularSearchStatements' => array("(t1.`title` LIKE '%:query%' OR t1.`domain` LIKE '%:query%') AND t1.`status` != 'banned'"),
-		'customColumns' => array('c', 'sc')
+		'customColumns' => array('keywords', 'c', 'sc')
 	);
 
 	private $_urlPatterns = array(
@@ -70,7 +70,6 @@ class iaListing extends abstractDirectoryPackageFront
 
 	public function coreSearch($stmt, $start, $limit, $order)
 	{
-
 		$rows = $this->get($stmt, $start, $limit, $order);
 
 		return array($this->iaDb->foundRows(), $rows);
@@ -80,6 +79,18 @@ class iaListing extends abstractDirectoryPackageFront
 	{
 		switch ($column)
 		{
+			case 'keywords':
+				$fields = array('title', 'description', 'url');
+				$value = "'%" . iaSanitize::sql($value) . "%'";
+
+				$result = array();
+				foreach ($fields as $fieldName)
+				{
+					$result[] = array('col' => ':column', 'cond' => 'LIKE', 'val' => $value, 'field' => $fieldName);
+				}
+
+				return $result;
+
 			case 'c':
 				$iaCateg = $this->iaCore->factoryPackage('categ', $this->getPackageName());
 
