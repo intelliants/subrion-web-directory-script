@@ -105,25 +105,6 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType())
 		}
 	}
 
-	if (iaUsers::hasIdentity() && iaUsers::getIdentity()->id == $listing['member_id'])
-	{
-		$pageActions[] = array(
-			'icon' => 'icon-edit',
-			'title' => iaLanguage::get('edit'),
-			'url' => $iaListing->url(iaCore::ACTION_EDIT, $listing),
-			'classes' => 'btn-info'
-		);
-
-		$pageActions[] = array(
-			'icon' => 'icon-remove',
-			'title' => iaLanguage::get('remove'),
-			'url' => $iaListing->url(iaCore::ACTION_DELETE, $listing),
-			'classes' => 'btn-danger js-delete-listing'
-		);
-
-		$iaView->set('actions', $pageActions);
-	}
-
 	$iaItem = $iaCore->factory('item');
 
 	if ($listing['url'])
@@ -146,6 +127,31 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType())
 			'data-id' => $listing['id']
 		)
 	));
+
+	if (iaUsers::hasIdentity() && iaUsers::getIdentity()->id == $listing['member_id'])
+	{
+		$actionUrls = array(
+			iaCore::ACTION_EDIT => $iaListing->url(iaCore::ACTION_EDIT, $listing),
+			iaCore::ACTION_DELETE => $iaListing->url(iaCore::ACTION_DELETE, $listing)
+		);
+		$iaView->assign('tools', $actionUrls);
+
+		$iaItem->setItemTools(array(
+			'id' => 'action-edit',
+			'title' => iaLanguage::get('edit'),
+			'attributes' => array(
+				'href' => $actionUrls[iaCore::ACTION_EDIT],
+			)
+		));
+		$iaItem->setItemTools(array(
+			'id' => 'action-delete',
+			'title' => iaLanguage::get('remove'),
+			'attributes' => array(
+				'href' => $actionUrls[iaCore::ACTION_DELETE],
+				'class' => 'js-delete-listing'
+			)
+		));
+	}
 
 	// update favorites status
 	$listing = array_shift($iaItem->updateItemsFavorites(array($listing), $iaListing->getItemName()));

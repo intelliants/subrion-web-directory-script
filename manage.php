@@ -298,14 +298,13 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType())
 
 	if (iaCore::ACTION_EDIT == $pageAction)
 	{
-		$pageActions[] = array(
-			'icon' => 'icon-info-sign',
+		$iaCore->factory('item')->setItemTools(array(
+			'id' => 'action-visit',
 			'title' => iaLanguage::get('view'),
-			'url' => $iaListing->url('view', $listing),
-			'classes' => 'btn-info'
-		);
-
-		$iaView->set('actions', $pageActions);
+			'attributes' => array(
+				'href' => $iaListing->url('view', $listing),
+			)
+		));
 	}
 	elseif (isset($_GET['category']) && is_numeric($_GET['category']))
 	{
