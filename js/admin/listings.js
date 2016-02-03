@@ -10,23 +10,20 @@ Ext.onReady(function()
 				{name: 'title_alias', title: _t('title_alias'), width: 1},
 				{name: 'category_title', title: _t('category'), width: 140},
 				{name: 'member', title: _t('owner'), width: 140},
-				{name: 'reported_as_broken', title: _t('broken'), width: 76, align: intelli.gridHelper.constants.ALIGN_CENTER, renderer: intelli.gridHelper.renderer.check, editor: Ext.create('Ext.form.ComboBox',
-					{
-						typeAhead: false,
-						editable: false,
-						lazyRender: true,
-						store: Ext.create('Ext.data.SimpleStore', {fields: ['value','title'], data: [[0, _t('no')], [1, _t('yes')]]}),
-						displayField: 'title',
-						valueField: 'value'
-					}),
-					hidden: true
-				},
 				{name: 'date_added', title: _t('date_added'), width: 100},
 				{name: 'date_modified', title: _t('date_modified'), width: 100},
 				'status',
+				{name: 'reported_as_broken', title: _t('broken'), icon: 'info', click: function(node){
+					Ext.MessageBox.alert(
+						_t('reported_as_broken_comments'),
+						node.data.reported_as_broken_comments.replace(/(?:\r\n|\r|\n)/g, '<br />')
+					)
+				}},
 				'update',
 				'delete'
 			],
+			fields: ['reported_as_broken_comments'],
+			sorters: [{property: 'date_modified', direction: 'DESC'}],
 			statuses: ['active', 'approval', 'banned', 'suspended'],
 			texts: {
 				delete_multiple: _t('are_you_sure_to_delete_selected_categs'),

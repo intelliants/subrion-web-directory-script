@@ -113,6 +113,10 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType())
 		$iaField = $iaCore->factory('field');
 		$iaPlan = $iaCore->factory('plan');
 		$plans = $iaPlan->getPlans($iaListing->getItemName());
+		foreach ($plans as &$plan)
+		{
+			list(, $plan['defaultEndDate']) = $iaPlan->calculateDates($plan['duration'], $plan['unit']);
+		}
 		$iaView->assign('plans', $plans);
 
 		$rootCategory = $iaDb->row(array('id', 'title', 'parents'), '`parent_id` = -1', 'categs');
@@ -164,20 +168,26 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType())
 
 			$fields = $iaField->getByItemName($iaListing->getItemName());
 
-			if (isset($_POST['owner']) && empty($_POST['owner'])) // Bug #1761
+			list($data, $error, $messages, $errorFields) = $iaField->parsePost($fields, $listing);
+			if (isset($_POST['reported_as_broken']))
 			{
-				unset($_POST['owner']);
+				$data['reported_as_broken'] = $_POST['reported_as_broken'];
+				if (!$_POST['reported_as_broken'])
+				{
+					$data['reported_as_broken_comments'] = '';
+				}
 			}
 
-			list($data, $error, $messages, $errorFields) = $iaField->parsePost($fields, $listing);
-
-			if (isset($data['url']) && $data['url'])
+			if (isset($data['url']) && $data['url'] && !iaValidate::isUrl($data['url']))
 			{
-				if (!iaValidate::isUrl($data['url']))
-				{
-					$error = true;
-					$messages[] = iaLanguage::get('error_url');
-				}
+				$error = true;
+				$messages[] = iaLanguage::get('error_url');
+			}
+
+			if (isset($data['email']) && $data['email'] && !iaValidate::isEmail($data['email']))
+			{
+				$error = true;
+				$messages[] = iaLanguage::get('error_email_incorrect');
 			}
 
 			$data['rank'] = min(5, max(0, (int)$_POST['rank']));

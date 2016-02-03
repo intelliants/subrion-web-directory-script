@@ -224,6 +224,12 @@ class iaListing extends abstractDirectoryPackageAdmin
 				$entryData['category_alias'] = $aOldListing['category_alias'];
 			}
 
+			if (isset($aOldListing['title']) && !isset($entryData['title']))
+			{
+				$entryData['title'] = $aOldListing['title'];
+			}
+			$entryData['email'] = (isset($aOldListing['email']) && $aOldListing['email']) ? $aOldListing['email'] : '';
+
 			if ($crossed)
 			{
 				$diff = (iaCore::STATUS_ACTIVE == $status) ? 1 : -1;
@@ -284,7 +290,7 @@ class iaListing extends abstractDirectoryPackageAdmin
 	{
 		if ($this->iaCore->get('listing_' . $listingData['status']))
 		{
-			$email = $this->iaDb->one('email', iaDb::convertIds($listingData['member_id']), iaUsers::getTable());
+			$email = ($listingData['email']) ? $listingData['email'] : $this->iaDb->one('email', iaDb::convertIds($listingData['member_id']), iaUsers::getTable());
 
 			if ($email)
 			{
@@ -364,7 +370,8 @@ class iaListing extends abstractDirectoryPackageAdmin
 		return $this->iaDb->getRow($sql);
 	}
 
-	public function get($aWhere = null, $aStart = 0, $aLimit = '', $aOrder = '', $fields = 't1.*')
+	public function get($aWhere = null, $aStart = 0, $aLimit = '', $aOrder = '',
+		$fields = 't1.`id`, t1.`title`, t1.`title_alias`, t1.`reported_as_broken`, t1.`reported_as_broken_comments`, t1.`date_added`, t1.`date_modified`, t1.`status`')
 	{
 		$sql = "SELECT SQL_CALC_FOUND_ROWS $fields, '1' `update`, '1' `delete`, ";
 		$sql .= "t2.`title` `category_title`, t2.`title_alias` `category_alias`, ";

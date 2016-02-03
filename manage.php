@@ -27,11 +27,6 @@ if (iaView::REQUEST_JSON == $iaView->getRequestType() && isset($_GET['get']) && 
 
 if (iaView::REQUEST_HTML == $iaView->getRequestType())
 {
-	if (!$iaCore->get('listing_add_guest', true) && !iaUsers::hasIdentity())
-	{
-		return iaView::accessDenied(iaLanguage::getf('listing_add_no_auth', array('base_url' => IA_URL)));
-	}
-
 	$iaField = $iaCore->factory('field');
 	$iaUtil = $iaCore->factory('util');
 
@@ -73,6 +68,7 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType())
 
 			if (iaCore::ACTION_DELETE == $pageAction)
 			{
+
 				$iaView->disableLayout();
 
 				$iaListing->delete($listing)
@@ -107,17 +103,37 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType())
 			$messages[] = iaLanguage::get('confirmation_code_incorrect');
 		}
 
-		if (isset($item['url']) && $item['url'])
+		if (isset($item['url']) && $item['url'] && !iaValidate::isUrl($item['url']))
 		{
-			if (!iaValidate::isUrl($item['url']))
-			{
-				$error = true;
-				$messages[] = iaLanguage::get('error_url');
-			}
+			$error = true;
+			$messages[] = iaLanguage::get('error_url');
+		}
+
+		if (isset($item['email']) && $item['email'] && !iaValidate::isEmail($item['email']))
+		{
+			$error = true;
+			$messages[] = iaLanguage::get('error_email_incorrect');
+		}
+		elseif (!iaUsers::hasIdentity() && (!isset($item['email']) || empty($item['email'])))
+		{
+			$error = true;
+			$messages[] = iaLanguage::getf('field_is_empty', array('field' => iaLanguage::get('email')));
 		}
 
 		$item['ip'] = $iaUtil->getIp();
-		$item['member_id'] = iaUsers::hasIdentity() ? iaUsers::getIdentity()->id : 0;
+		$item['member_id'] = 0;
+		if (iaUsers::hasIdentity())
+		{
+			$item['member_id'] = iaUsers::getIdentity()->id;
+		}
+		elseif($iaCore->get('listing_tie_to_member'))
+		{
+			$iaUsers = $iaCore->factory('users');
+			$member = $iaUsers->getInfo($item['email'], 'email');
+
+			$item['member_id'] = ($member) ? $member['id'] : 0;
+		}
+
 		$item['category_id'] = (int)$_POST['category_id'];
 		$item['status'] = $iaCore->get('listing_auto_approval') ? iaCore::STATUS_ACTIVE : iaCore::STATUS_APPROVAL;
 		$item['short_description'] = iaSanitize::snippet($_POST['description'], $iaCore->get('directory_summary_length'));
@@ -141,13 +157,10 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType())
 			$messages[] = iaLanguage::get('error_locked_category');
 		}
 
-		if (!$iaCore->get('listing_add_guest'))
+		if (!$iaListing->isSubmissionAllowed($item['member_id']))
 		{
-			if (!$iaListing->isSubmissionAllowed($item['member_id']))
-			{
-				$error = true;
-				$messages[] = iaLanguage::get('limit_is_exceeded');
-			}
+			$error = true;
+			$messages[] = iaLanguage::get('limit_is_exceeded');
 		}
 
 		if (!$error)
@@ -178,14 +191,14 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType())
 			// check if listing already exists
 			if (iaCore::ACTION_ADD == $pageAction && $iaCore->get('duplicate_checking'))
 			{
-				$check = $iaCore->get('duplicate_type') == 'domain' ? $item['domain'] : $item['url'];
-				$status = $iaListing->checkDuplicateListings($check, $iaCore->get('duplicate_type'));
-				if ($status == 'banned')
+				$check = $iaCore->get('duplicate_type') == 0 ? $item['domain'] : $item['url'];
+				$countDuplicateList = $iaListing->checkDuplicateListings($item['domain'], $check);
+				if ($countDuplicateList > 0)
 				{
 					$error = true;
 					$messages[] = iaLanguage::get('error_banned');
 				}
-				elseif ($status)
+				elseif ($countDuplicateList)
 				{
 					$error = true;
 					$messages[] = iaLanguage::get('error_listing_present');
@@ -234,8 +247,9 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType())
 		if (!$error)
 		{
 			$item['category_alias'] = $category['title_alias'];
-
-			$url = iaCore::STATUS_ACTIVE == $item['status'] ? $iaListing->url('view', $item) : $iaCore->packagesData[$iaListing->getPackageName()]['url'];
+			$url = (iaCore::STATUS_ACTIVE == $item['status'] ||
+				(iaUsers::hasIdentity() && iaCore::STATUS_APPROVAL == $item['status']))
+				? $iaListing->url('view', $item) : $iaCore->packagesData[$iaListing->getPackageName()]['url'];
 
 			// if plan is chosen
 			if (isset($_POST['plan_id']) && !empty($_POST['plan_id']))
@@ -284,14 +298,13 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType())
 
 	if (iaCore::ACTION_EDIT == $pageAction)
 	{
-		$pageActions[] = array(
-			'icon' => 'icon-info-sign',
+		$iaCore->factory('item')->setItemTools(array(
+			'id' => 'action-visit',
 			'title' => iaLanguage::get('view'),
-			'url' => $iaListing->url('view', $listing),
-			'classes' => 'btn-info'
-		);
-
-		$iaView->set('actions', $pageActions);
+			'attributes' => array(
+				'href' => $iaListing->url('view', $listing),
+			)
+		));
 	}
 	elseif (isset($_GET['category']) && is_numeric($_GET['category']))
 	{

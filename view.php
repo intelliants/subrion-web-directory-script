@@ -8,17 +8,54 @@ if (iaView::REQUEST_JSON == $iaView->getRequestType())
 	if ('report' == $_POST['action'])
 	{
 		$id = (int)$_POST['id'];
+		$comment = '';
+		if ((isset($_POST['comments']) && $_POST['comments']))
+		{
+			$time = date('Y-m-d H:i:s');
+			$iaCore->factory('util');
+			$ip = iaUtil::getIp(false);
+			$comment = <<<COMMENT
+Date: {$time}
+IP: {$ip}
+Comment: {$_POST['comments']}
+
+
+COMMENT;
+		}
 
 		$listing = $iaListing->getById($id);
 
 		$iaMailer = $iaCore->factory('mailer');
 		$iaMailer->loadTemplate('reported_as_broken');
 		$iaMailer->setReplacements(array(
-			'title' => $listing['title']
+			'title' => $listing['title'],
+			'comments' => $comment,
 		));
 		$iaMailer->sendToAdministrators();
 
-		$iaDb->update(array('reported_as_broken' => 1), iaDb::convertIds($id), null, iaListing::getTable());
+		$email = (isset($listing['email']) && $listing['email']) ? $listing['email'] : $iaDb->one('email', iaDb::convertIds($listing['member_id']), iaUsers::getTable());
+
+		if ($email)
+		{
+			$iaMailer->loadTemplate('reported_as_broken');
+			$iaMailer->setReplacements(array(
+				'title' => $listing['title'],
+				'comments' => $comment,
+			));
+			$iaMailer->addAddress($email);
+
+			$iaMailer->send();
+		}
+		$fields = array('reported_as_broken' => 1);
+		if ($comment)
+		{
+			if (isset($listing['reported_as_broken_comments']) && $listing['reported_as_broken_comments'])
+			{
+				$comment = $listing['reported_as_broken_comments'] . $comment;
+			}
+			$fields['reported_as_broken_comments'] = $comment;
+		}
+		$iaDb->update($fields, iaDb::convertIds($id), null, iaListing::getTable());
 	}
 }
 
@@ -32,7 +69,8 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType())
 
 	$listing = $iaListing->getById($listingId);
 
-	if (empty($listing))
+	if (empty($listing) || iaCore::STATUS_APPROVAL == $listing['status'] &&
+		!(iaUsers::hasIdentity() && iaUsers::getIdentity()->id == $listing['member_id']))
 	{
 		return iaView::errorPage(iaView::ERROR_NOT_FOUND);
 	}
@@ -67,25 +105,6 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType())
 		}
 	}
 
-	if (iaUsers::hasIdentity() && iaUsers::getIdentity()->id == $listing['member_id'])
-	{
-		$pageActions[] = array(
-			'icon' => 'icon-edit',
-			'title' => iaLanguage::get('edit'),
-			'url' => $iaListing->url(iaCore::ACTION_EDIT, $listing),
-			'classes' => 'btn-info'
-		);
-
-		$pageActions[] = array(
-			'icon' => 'icon-remove',
-			'title' => iaLanguage::get('remove'),
-			'url' => $iaListing->url(iaCore::ACTION_DELETE, $listing),
-			'classes' => 'btn-danger'
-		);
-
-		$iaView->set('actions', $pageActions);
-	}
-
 	$iaItem = $iaCore->factory('item');
 
 	if ($listing['url'])
@@ -108,6 +127,31 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType())
 			'data-id' => $listing['id']
 		)
 	));
+
+	if (iaUsers::hasIdentity() && iaUsers::getIdentity()->id == $listing['member_id'])
+	{
+		$actionUrls = array(
+			iaCore::ACTION_EDIT => $iaListing->url(iaCore::ACTION_EDIT, $listing),
+			iaCore::ACTION_DELETE => $iaListing->url(iaCore::ACTION_DELETE, $listing)
+		);
+		$iaView->assign('tools', $actionUrls);
+
+		$iaItem->setItemTools(array(
+			'id' => 'action-edit',
+			'title' => iaLanguage::get('edit'),
+			'attributes' => array(
+				'href' => $actionUrls[iaCore::ACTION_EDIT],
+			)
+		));
+		$iaItem->setItemTools(array(
+			'id' => 'action-delete',
+			'title' => iaLanguage::get('remove'),
+			'attributes' => array(
+				'href' => $actionUrls[iaCore::ACTION_DELETE],
+				'class' => 'js-delete-listing'
+			)
+		));
+	}
 
 	// update favorites status
 	$listing = array_shift($iaItem->updateItemsFavorites(array($listing), $iaListing->getItemName()));
