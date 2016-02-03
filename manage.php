@@ -286,10 +286,9 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType())
 
 	if ($category && isset($listing['id']))
 	{
-		$crossed = $iaDb->getAll("SELECT t.`id`, t.`title`
-			FROM `{$iaDb->prefix}categs` t, `{$iaDb->prefix}listings_categs` cr
-			WHERE t.`id` = cr.`category_id` AND cr.`listing_id` = '{$listing['id']}'");
 		$category['crossed'] = array();
+
+		$crossed = $iaCateg->getCrossed($listing['id']);
 		foreach ($crossed as $val)
 		{
 			$category['crossed'][$val['id']] = $val['title'];
