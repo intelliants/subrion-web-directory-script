@@ -23,6 +23,7 @@ Ext.onReady(function()
 				'delete'
 			],
 			fields: ['reported_as_broken_comments'],
+			sorters: [{property: 'date_modified', direction: 'DESC'}],
 			statuses: ['active', 'approval', 'banned', 'suspended'],
 			texts: {
 				delete_multiple: _t('are_you_sure_to_delete_selected_categs'),
