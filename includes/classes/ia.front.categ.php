@@ -111,4 +111,21 @@ class iaCateg extends abstractDirectoryPackageFront
 		$iaDb->query($update_child);
 		$iaDb->query($update_parent);
 	}
+
+	public function getCrossedByListingId($listingId)
+	{
+		$this->iaCore->factoryPackage('listing', $this->getPackageName());
+
+		$sql = 'SELECT c.`id`, c.`title` '
+			. 'FROM `:prefix:table_categories` c, `:prefix:table_listings_categories` lc '
+			. 'WHERE c.`id` = lc.`category_id` AND lc.`listing_id` = :id';
+		$sql = iaDb::printf($sql, array(
+			'prefix' => $this->iaDb->prefix,
+			'table_categories' => self::getTable(),
+			'table_listings_categories' => iaListing::getTableCrossed(),
+			'id' => (int)$listingId
+		));
+
+		return $this->iaDb->getKeyValue($sql);
+	}
 }

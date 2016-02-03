@@ -283,18 +283,7 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType())
 	}
 
 	$category = empty($category) ? array('id' => 0, 'parents' => '') : $category;
-
-	if ($category && isset($listing['id']))
-	{
-		$crossed = $iaDb->getAll("SELECT t.`id`, t.`title`
-			FROM `{$iaDb->prefix}categs` t, `{$iaDb->prefix}listings_categs` cr
-			WHERE t.`id` = cr.`category_id` AND cr.`listing_id` = '{$listing['id']}'");
-		$category['crossed'] = array();
-		foreach ($crossed as $val)
-		{
-			$category['crossed'][$val['id']] = $val['title'];
-		}
-	}
+	empty($listing['id']) || $category['crossed'] = $iaCateg->getCrossedByListingId($listing['id']);
 
 	if (iaCore::ACTION_EDIT == $pageAction)
 	{
