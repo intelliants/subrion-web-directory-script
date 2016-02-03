@@ -113,6 +113,10 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType())
 		$iaField = $iaCore->factory('field');
 		$iaPlan = $iaCore->factory('plan');
 		$plans = $iaPlan->getPlans($iaListing->getItemName());
+		foreach ($plans as &$plan)
+		{
+			list(, $plan['defaultEndDate']) = $iaPlan->calculateDates($plan['duration'], $plan['unit']);
+		}
 		$iaView->assign('plans', $plans);
 
 		$rootCategory = $iaDb->row(array('id', 'title', 'parents'), '`parent_id` = -1', 'categs');
