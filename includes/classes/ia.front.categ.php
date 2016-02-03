@@ -112,6 +112,13 @@ class iaCateg extends abstractDirectoryPackageFront
 		$iaDb->query($update_parent);
 	}
 
+	/**
+	 * Returns crossed categories array by a given listing id
+	 *
+	 * @param int $id listing id
+	 *
+	 * @return mixed
+	 */
 	public function getCrossedByListingId($listingId)
 	{
 		$this->iaCore->factoryPackage('listing', $this->getPackageName());
