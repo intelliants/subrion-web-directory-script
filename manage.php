@@ -188,20 +188,15 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType())
 				}
 			}
 
-			// check if listing already exists
-			if (iaCore::ACTION_ADD == $pageAction && $iaCore->get('duplicate_checking'))
+			// check if listing with specified URL already exists
+			if (iaCore::ACTION_ADD == $pageAction && $iaCore->get('directory_duplicate_url'))
 			{
-				$check = $iaCore->get('duplicate_type') == 0 ? $item['domain'] : $item['url'];
-				$countDuplicateList = $iaListing->checkDuplicateListings($item['domain'], $check);
-				if ($countDuplicateList > 0)
+				$type = $iaCore->get('directory_duplicate_url_type');
+				$check = ($type == 'url') ? $item['url'] : $item['domain'];
+				if ($iaListing->checkDuplicateListings($check, $type))
 				{
 					$error = true;
-					$messages[] = iaLanguage::get('error_banned');
-				}
-				elseif ($countDuplicateList)
-				{
-					$error = true;
-					$messages[] = iaLanguage::get('error_listing_present');
+					$messages[] = iaLanguage::get('error_duplicate_url');
 				}
 			}
 		}
