@@ -102,8 +102,8 @@
 	<config group="directory" name="directory_listings_perpage" type="text" description="Listings on page">10</config>
 	<config group="directory" name="directory_summary_length" type="text" description="Summary length">700</config>
 	<config group="directory" name="directory_listing_limit" type="text" description="Listing limit for each member" show="0">6</config>
-	<config group="directory" name="directory_duplicate_url" type="radio" description="Check for duplicate URLs">0</config>
-	<config group="directory" name="directory_duplicate_url_type" type="select" values="'url','domain'" description="Check for duplicate:" show="directory_duplicate_url|1">url</config>
+	<config group="directory" name="directory_duplicate_check" type="radio" description="Check for duplicate listing's field">0</config>
+	<config group="directory" name="directory_duplicate_check_field" type="select" values="'url','domain','title'" description="Check for duplicate:" show="directory_duplicate_check|1">url</config>
 	<config group="directory" name="directory_div3" type="divider">Blocks</config>
 	<config group="directory" name="directory_listings_tabs_new" type="radio" values="1,0" description="Display New Listings tab">1</config>
 	<config group="directory" name="directory_listings_tabs_popular" type="radio" values="1,0" description="Display Popular Listings tab">1</config>
@@ -269,7 +269,7 @@
 		<phrase category="frontend" key="do_you_want_report_broken">Do you want to report this listing as broken?</phrase>
 		<phrase category="frontend" key="error_update_listing">Unknown error occured during listing editing. Please contact the site administrator if you have this error again.</phrase>
 		<phrase category="frontend" key="error_add_listing">Unknown error occured during listing submission. Please contact the site administrator if you have this error again.</phrase>
-		<phrase category="frontend" key="error_duplicate_url">Listing with specified URL has been already submitted.</phrase>
+		<phrase category="frontend" key="error_duplicate_field">Listing with specified :field has been already submitted.</phrase>
 		<phrase category="frontend" key="error_locked_category">You are not allowed to submit into a locked category.</phrase>
 		<phrase category="frontend" key="invalid_category">Invalid category.</phrase>
 		<phrase category="frontend" key="keywords">Keywords</phrase>

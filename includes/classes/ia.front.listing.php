@@ -172,9 +172,11 @@ class iaListing extends abstractDirectoryPackageFront
 		return false;
 	}
 
-	public function checkDuplicateListings($aUrl, $type)
+	public function checkDuplicateListings($listing)
 	{
-		return $this->iaDb->one('id', iaDb::convertIds($aUrl, $type), self::getTable());
+		$field = $this->iaCore->get('directory_duplicate_check_field');
+
+		return $this->iaDb->one('id', iaDb::convertIds($listing[$field], $field), self::getTable()) ? $field : false;
 	}
 
 	public function insert(array $entryData)
