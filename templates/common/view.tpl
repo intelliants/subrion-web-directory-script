@@ -41,8 +41,9 @@
 		</div>
 	</div>
 
-	<div>{$item.description}</div>
-
+	<div class="ia-item-view__section">
+		<div>{$item.description}</div>
+	</div>
 	{include file='item-view-tabs.tpl' isView=true exceptions=array('title', 'url', 'reciprocal', 'description')}
 
 	{if isset($actionClaimListing)}
