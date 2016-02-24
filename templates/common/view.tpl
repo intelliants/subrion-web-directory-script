@@ -31,8 +31,6 @@
 				<p><span class="fa fa-globe"></span> {lang key='alexa_rank'} <a href="http://www.alexa.com/siteinfo/{$item.domain}#">{$item.alexa_rank}</a></p>
 			{/if}
 
-			<div>{$item.description}</div>
-
 			<!-- AddThis Button BEGIN -->
 			<div class="addthis_toolbox addthis_default_style panel-item pull-left">
 				<a class="addthis_counter addthis_pill_style"></a>
@@ -42,6 +40,8 @@
 			<!-- AddThis Button END -->
 		</div>
 	</div>
+
+	<div>{$item.description}</div>
 
 	{include file='item-view-tabs.tpl' isView=true exceptions=array('title', 'url', 'reciprocal', 'description')}
 
