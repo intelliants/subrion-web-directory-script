@@ -62,7 +62,8 @@ class iaListing extends abstractDirectoryPackageFront
 		$sql .= "LEFT JOIN `{$this->iaDb->prefix}members` t3 ON t1.`member_id` = t3.`id` ";
 
 		$sql .= $aWhere ? "WHERE ($aWhere) AND t1.`status` != 'banned'" : "WHERE t1.`status` != 'banned'";
-		$sql .= $aOrder ? " ORDER BY $aOrder " : '';
+		$sql .= " ORDER BY `sponsored` DESC, `featured` DESC ";
+		$sql .= $aOrder ? ", $aOrder " : '';
 		$sql .= $aStart || $aLimit ? " LIMIT $aStart,$aLimit " : '';
 
 		return $this->iaDb->getAll($sql);
@@ -148,7 +149,7 @@ class iaListing extends abstractDirectoryPackageFront
 				. ($this->iaCore->get('crossed_category_path')
 					? 'AND ca.`id` = IF(li.`category_id` IN( ' . $cat_list . ' ), li.`category_id`, cr.`category_id`) ' : 'AND ca.`id` = li.`category_id` ')
 				. $aWhere
-				. ($aOrder ? " ORDER BY $aOrder " : '')
+				. ($aOrder ? " ORDER BY `sponsored` DESC, `featured` DESC, $aOrder " : '')
 				. ($aStart || $aLimit ? " LIMIT $aStart,$aLimit " : '');
 
 		return $this->iaDb->getAll($sql);
