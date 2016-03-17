@@ -164,7 +164,6 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType())
 				$condition = "`id` IN({$category['parents']}) AND `parent_id` != -1 AND `status` = 'active'";
 				$parents = $iaCateg->get($condition);
 
-
 				foreach ($parents as $key => $parent)
 				{
 					$url = $iaCateg->url('default', $parent);

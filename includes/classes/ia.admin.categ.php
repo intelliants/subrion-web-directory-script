@@ -5,6 +5,7 @@ class iaCateg extends abstractDirectoryPackageAdmin
 {
 	protected static $_table = 'categs';
 	protected $_tableFlat = 'categs_flat';
+	protected static $_tableCrossed = 'categs_crossed';
 
 	protected $_activityLog = array('item' => 'category');
 
@@ -17,6 +18,10 @@ class iaCateg extends abstractDirectoryPackageAdmin
 		'default' => ':base:title_alias'
 	);
 
+	public static function getTableCrossed()
+	{
+		return self::$_tableCrossed;
+	}
 
 	public function url($action, $params)
 	{
@@ -79,12 +84,79 @@ class iaCateg extends abstractDirectoryPackageAdmin
 		$entryData['date_added'] = date(iaDb::DATETIME_FORMAT);
 		$entryData['date_modified'] = date(iaDb::DATETIME_FORMAT);
 
-		return parent::insert($entryData);
+		if (isset($entryData['crossed']))
+		{
+			$crossed = $entryData['crossed'];
+			unset($entryData['crossed']);
+		}
+
+		$entryId = parent::insert($entryData);
+
+		if ($entryId)
+		{
+			if (isset($crossed) && !empty($crossed))
+			{
+				$this->iaDb->setTable(self::getTableCrossed());
+
+				$crossed = explode(',', $crossed);
+				$count = count($crossed);
+				$crossedInput = array();
+
+				for ($i = 0; $i < $count; $i++)
+				{
+					$crossedInput[] = array('category_id' => $entryId, 'crossed_id' => (int)$crossed[$i]);
+				}
+
+				if (count($crossedInput) > 0)
+				{
+					$this->iaDb->insert($crossedInput);
+				}
+
+				$this->iaDb->resetTable();
+			}
+		}
+
+		return $entryId;
 	}
 
 	public function update(array $entryData, $id)
 	{
 		$entryData['date_modified'] = date(iaDb::DATETIME_FORMAT);
+
+		$crossed = $this->iaDb->onefield('crossed_id', iaDb::convertIds($id, 'category_id'), 0, null, self::getTableCrossed());
+
+		if (isset($entryData['crossed']))
+		{
+			$crossed = $entryData['crossed'];
+			unset($entryData['crossed']);
+		}
+
+		if (isset($crossed) && $crossed)
+		{
+			$this->iaDb->setTable(self::getTableCrossed());
+
+			$this->iaDb->delete(iaDb::convertIds($id, 'category_id'));
+
+			if (!is_array($crossed))
+			{
+				$crossed = explode(',', $crossed);
+			}
+
+			$count = count($crossed);
+			$crossedInput = array();
+
+			for ($i = 0; $i < $count; $i++)
+			{
+				$crossedInput[] = array('category_id' => $id, 'crossed_id' => (int)$crossed[$i]);
+			}
+
+			if (count($crossedInput) > 0)
+			{
+				$this->iaDb->insert($crossedInput);
+			}
+
+			$this->iaDb->resetTable();
+		}
 
 		return parent::update($entryData, $id);
 	}
@@ -95,6 +167,9 @@ class iaCateg extends abstractDirectoryPackageAdmin
 
 		if ($result)
 		{
+			$stmt = iaDb::convertIds($itemId, 'category_id');
+			$this->iaDb->delete($stmt, self::getTableCrossed());
+
 			$stmt = sprintf('`id` IN (SELECT `category_id` FROM `%s%s` WHERE `parent_id` = %d)',
 				$this->iaDb->prefix, $this->_tableFlat, $itemId);
 

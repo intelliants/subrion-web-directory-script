@@ -4,6 +4,7 @@
 class iaCateg extends abstractDirectoryPackageFront
 {
 	protected static $_table = 'categs';
+	protected static $_tableCrossed = 'categs_crossed';
 
 	protected $_itemName = 'categs';
 
@@ -16,6 +17,10 @@ class iaCateg extends abstractDirectoryPackageFront
 		'regularSearchStatements' => array("`title` LIKE '%:query%'"),
 	);
 
+	public static function getTableCrossed()
+	{
+		return self::$_tableCrossed;
+	}
 
 	public function url($action, $params)
 	{
@@ -46,14 +51,33 @@ class iaCateg extends abstractDirectoryPackageFront
 		return $this->iaDb->row($aFields, $aWhere, self::getTable());
 	}
 
-	public function get($where = '', $aStart = 0, $aLimit = null, $fields = '*')
+	public function get($where = '', $catId = '0', $aStart = 0, $aLimit = null, $fields = 'c.*')
 	{
 		if (empty($where))
 		{
 			$where = iaDb::EMPTY_CONDITION;
 		}
-		$fields .= ', `num_all_listings` `num`';
-		$return = $this->iaDb->all($fields, $where . ' ORDER BY `level`, `title`', $aStart, $aLimit, self::getTable());
+		$fields .= ", c.`num_all_listings` `num`";
+
+		$sql = "(SELECT :fields, '0' `crossed` "
+			. 'FROM `:prefix:table_categories` c '
+			. 'WHERE :where) '
+			. 'UNION ALL '
+			. "(SELECT :fields, '1' `crossed` "
+			. 'FROM `:prefix:table_categories` c '
+			. 'LEFT JOIN `:prefix:table_crossed_categories` cr '
+			. 'ON c.`id` = cr.`crossed_id` '
+			. 'WHERE cr.`category_id` = :id ORDER BY c.`title`)';
+		$sql = iaDb::printf($sql, array(
+			'fields' => $fields,
+			'prefix' => $this->iaDb->prefix,
+			'table_categories' => self::getTable(),
+			'table_crossed_categories' => self::getTableCrossed(),
+			'id' => $catId,
+			'where' => $where . ' ORDER BY c.`level`, c.`title`'
+			));
+
+		$return = $this->iaDb->getAll($sql, $aStart, $aLimit);
 
 		if ($return)
 		{

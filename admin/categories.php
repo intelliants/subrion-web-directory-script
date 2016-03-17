@@ -27,8 +27,8 @@ if (iaView::REQUEST_JSON == $iaView->getRequestType())
 			$categoryId = (isset($_POST['node']) && is_numeric($_POST['node'])) ? (int)$_POST['node'] : $categoryId;
 
 			$clause = '`parent_id` = ' . $categoryId . ' ORDER BY `title`';
-
 			$entries = $iaDb->all(array('id', 'title', 'child'), $clause, null, null, 'categs');
+
 			foreach ($entries as $entry)
 			{
 				$output[] = array(
@@ -120,6 +120,7 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType())
 		$category = array(
 			'parent_id' => $rootCategory['id'],
 			'parents' => $rootCategory['parents'],
+			'crossed' => false,
 			'locked' => 0,
 			'icon' => false,
 			'status' => iaCore::STATUS_ACTIVE,
@@ -165,6 +166,7 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType())
 				$data['locked'] = iaUtil::checkPostParam('locked');
 				$data['title_alias'] = empty($_POST['title_alias']) ? htmlspecialchars_decode($data['title']) : $_POST['title_alias'];
 				$data['title_alias'] = $iaCateg->getTitleAlias($data);
+				$data['crossed'] = $_POST['crossed'] ? $_POST['crossed'] : false;
 
 				if (iaCore::ACTION_ADD == $pageAction)
 				{
@@ -205,6 +207,32 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType())
 			}
 
 			$iaView->setMessages($messages, $error ? iaView::ERROR : iaView::SUCCESS);
+		}
+
+		if (isset($category['id']))
+		{
+			$crossed = $iaDb->getAll("SELECT t.`id`, t.`title`
+				FROM `{$iaCore->iaDb->prefix}categs` t, `{$iaCore->iaDb->prefix}categs_crossed` cr
+				WHERE t.`id` = cr.`crossed_id` AND cr.`category_id` = '{$category['id']}'");
+			$category['crossed'] = array();
+			foreach ($crossed as $val)
+			{
+				$category['crossed'][$val['id']] = $val['title'];
+			}
+		}
+		if (isset($_POST['crossed']))
+		{
+			$crossed = explode(',', $_POST['crossed']);
+			$count = count($crossed);
+			$add = array();
+			for ($i = 0; $i < $count; $i++)
+			{
+				$add[] = (int)$crossed[$i];
+			}
+			if ($add)
+			{
+				$category['crossed'] = $iaDb->keyvalue(array('id', 'title'), "`id` IN (" . implode(',', $add) . ")", 'categs');
+			}
 		}
 
 		if (isset($category['parent_id']) && $category['parent_id'] != $rootCategory['parent_id'])

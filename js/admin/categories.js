@@ -48,6 +48,77 @@ Ext.onReady(function()
 
 		intelli.categs.init();
 	}
+	else
+	{
+		// Crossed categories
+		if ('#tree-crossed'.length)
+		{
+			$('#tree-crossed').jstree(
+			{
+				core:
+				{
+					data: {
+						data: function(n)
+						{
+							var params = {};
+							if(n.id != '#')
+							{
+								params.id = n.id;
+							}
+
+							return params;
+						},
+						url: intelli.config.admin_url + '/directory/categories/read.json?get=tree'
+					},
+					multiple: true
+				},
+				checkbox: {keep_selected_style: false, three_state: false},
+				plugins: ['checkbox']
+			})
+			.on('loaded.jstree', function()
+			{
+				var tree = $('#tree-crossed').jstree(true),
+					nodes = [];
+
+				$('span', '#crossed-list').each(function()
+				{
+					nodes.push($(this).data('id'));
+				});
+
+				tree.select_node(nodes);
+			})
+			.on('click.jstree', function(e)
+			{
+				var crossedJsTree = $('#tree-crossed').jstree(true);
+				var selectedNodes = crossedJsTree.get_selected();
+				var currentCatId = $('input[name="id"]').val();
+
+				if (selectedNodes == currentCatId)
+				{
+					crossedJsTree.deselect_node(e.target);
+				}
+				else
+				{
+					$('#crossed').val(selectedNodes.join(','));
+
+					var titles = [];
+					for (var i in selectedNodes)
+					{
+						var node = crossedJsTree.get_node(selectedNodes[i]);
+						titles.push('<span>' + node.text + '</span>');
+					}
+
+					$('#crossed-list').html(titles.join(', '));
+				}
+
+				var balance = selectedNodes.length;
+				if (balance >= 0)
+				{
+					$('#crossed-limit').text(balance);
+				}
+			});
+		}
+	}
 });
 
 intelli.titleCache = '';

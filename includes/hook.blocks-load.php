@@ -56,19 +56,19 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType())
 			? $iaView->getValues('category')
 			: $iaDb->row('id', '`level` = 0', iaCateg::getTable());
 
-		$condition = "`parent_id` = {$category['id']} AND `status` = 'active'";
-		$hideIfEmpty && ($condition .= ' AND `num_all_listings` != 0');
+		$condition = "c.`parent_id` = {$category['id']} AND c.`status` = 'active'";
+		$hideIfEmpty && ($condition .= ' AND c.`num_all_listings` != 0');
 
-		$children = $iaCateg->get($condition);
+		$children = $iaCateg->get($condition, $category['id']);
 
 		if ($iaCore->get('directory_display_subcategories'))
 		{
 			foreach ($children as $key => $cat)
 			{
-				$condition = "`parent_id`={$cat['id']} AND `status`='active'";
-				$hideIfEmpty && ($condition .= ' AND `num_all_listings` != 0');
+				$condition = "c.`parent_id` = {$cat['id']} AND c.`status`='active'";
+				$hideIfEmpty && ($condition .= ' AND c.`num_all_listings` != 0');
 
-				$children[$key]['subcategories'] = $iaCateg->get($condition, 0, $iaCore->get('directory_subcategories_number'), '`title`, `title_alias`');
+				$children[$key]['subcategories'] = $iaCateg->get($condition, $cat['id'], 0, $iaCore->get('directory_subcategories_number'), 'c.`title`, c.`title_alias`');
 			}
 		}
 

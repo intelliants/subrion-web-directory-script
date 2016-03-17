@@ -423,6 +423,17 @@ CREATE TABLE IF NOT EXISTS `{prefix}categs`(
 		</sql>
 		<sql>
 			<![CDATA[
+CREATE TABLE `{prefix}categs_crossed` (
+	`id` int(8) unsigned NOT NULL auto_increment,
+	`category_id` int(8) unsigned NOT NULL default '0',
+	`crossed_id` int(8) unsigned NOT NULL default '0',
+	PRIMARY KEY  (`id`),
+	KEY `category_id` (`category_id`,`crossed_id`)
+) {mysql_version};
+			]]>
+		</sql>
+		<sql>
+			<![CDATA[
 CREATE TABLE IF NOT EXISTS `{prefix}categs_flat`(
 	`parent_id` int(8) unsigned NOT NULL,
 	`category_id` int(8) unsigned NOT NULL,
