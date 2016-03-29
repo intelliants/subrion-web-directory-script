@@ -239,7 +239,7 @@ class iaListing extends abstractDirectoryPackageAdmin
 					$this->_changeNumListing($entry['category_id'], $diff);
 				}
 			}
-
+			$entryData['id'] = $id;
 			$this->_sendUserNotification($entryData);
 		}
 
