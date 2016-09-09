@@ -62,7 +62,7 @@ $(function()
 			</div>
 		{/capture}
 
-		{include file='field-type-content-fieldset.tpl' item_sections=$sections isSystem=true}
+		{$exceptions = array()}
 	{else}
 		<input type="hidden" name="parent_id" id="parent_id" value="-1">
 
@@ -89,7 +89,9 @@ $(function()
 			</div>
 		{/capture}
 
-		{include file='field-type-content-fieldset.tpl' item_sections=$sections isSystem=true exceptions=['meta_description', 'meta_keywords']}
+		{$exceptions = ['meta_description', 'meta_keywords', 'icon']}
 	{/if}
+
+	{include file='field-type-content-fieldset.tpl' item_sections=$sections isSystem=true exceptions=$exceptions}
 </form>
 {ia_add_media files='tree, js:_IA_URL_packages/directory/js/admin/categories'}
