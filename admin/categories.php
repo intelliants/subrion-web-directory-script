@@ -27,7 +27,7 @@ if (iaView::REQUEST_JSON == $iaView->getRequestType())
 			$categoryId = (isset($_POST['node']) && is_numeric($_POST['node'])) ? (int)$_POST['node'] : $categoryId;
 
 			$clause = '`parent_id` = ' . $categoryId . ' ORDER BY `title`';
-			$entries = $iaDb->all(array('id', 'title', 'child'), $clause, null, null, 'categs');
+			$entries = $iaDb->all(array('id', 'title', 'child'), $clause, null, null, iaCateg::getTable());
 
 			foreach ($entries as $entry)
 			{
@@ -211,15 +211,20 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType())
 
 		if (isset($category['id']))
 		{
-			$crossed = $iaDb->getAll("SELECT t.`id`, t.`title`
-				FROM `{$iaCore->iaDb->prefix}categs` t, `{$iaCore->iaDb->prefix}categs_crossed` cr
-				WHERE t.`id` = cr.`crossed_id` AND cr.`category_id` = '{$category['id']}'");
+			$sql = <<<SQL
+SELECT t.`id`, t.`title`
+FROM `{$iaCore->iaDb->prefix}categs` t, `{$iaCore->iaDb->prefix}categs_crossed` cr
+WHERE t.`id` = cr.`crossed_id` && cr.`category_id` = '{$category['id']}'
+SQL;
+			$crossed = $iaDb->getAll($sql);
+
 			$category['crossed'] = array();
 			foreach ($crossed as $val)
 			{
 				$category['crossed'][$val['id']] = $val['title'];
 			}
 		}
+
 		if (isset($_POST['crossed']))
 		{
 			$crossed = explode(',', $_POST['crossed']);
@@ -231,13 +236,13 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType())
 			}
 			if ($add)
 			{
-				$category['crossed'] = $iaDb->keyvalue(array('id', 'title'), "`id` IN (" . implode(',', $add) . ")", 'categs');
+				$category['crossed'] = $iaDb->keyvalue(array('id', 'title'), "`id` IN (" . implode(',', $add) . ")", iaCateg::getTable());
 			}
 		}
 
 		if (isset($category['parent_id']) && $category['parent_id'] != $rootCategory['parent_id'])
 		{
-			$parent = $iaDb->row(array('id', 'parent_id', 'title', 'title_alias', 'parents'), iaDb::convertIds($category['parent_id']), 'categs');
+			$parent = $iaDb->row(array('id', 'parent_id', 'title', 'title_alias', 'parents'), iaDb::convertIds($category['parent_id']), iaCateg::getTable());
 			$category['title_alias'] = end(explode(IA_URL_DELIMITER, trim($category['title_alias'], IA_URL_DELIMITER)));
 		}
 		else
@@ -258,3 +263,4 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType())
 
 	$iaView->assign('quick_search_item', $iaCateg->getItemName());
 }
+$iaDb->resetTable();
