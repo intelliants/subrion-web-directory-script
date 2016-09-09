@@ -62,20 +62,7 @@ $(function()
 			</div>
 		{/capture}
 
-		{capture name='description' append='field_after'}
-			<div id="title_alas" class="row">
-				<label class="col col-lg-2 control-label">{lang key='field_meta_description'}</label>
-				<div class="col col-lg-4">
-					<textarea name="meta_description" id="field_meta_description" rows="8">{if isset($item.meta_description)}{$item.meta_description}{/if}</textarea>
-				</div>
-			</div>
-			<div id="title_alias" class="row">
-				<label class="col col-lg-2 control-label">{lang key='field_meta_keywords'}</label>
-				<div class="col col-lg-4">
-					<input type="text" name="meta_keywords" id="field_meta_keywords" value="{if isset($item.meta_keywords)}{$item.meta_keywords}{/if}">
-				</div>
-			</div>
-		{/capture}
+		{include file='field-type-content-fieldset.tpl' item_sections=$sections isSystem=true}
 	{else}
 		<input type="hidden" name="parent_id" id="parent_id" value="-1">
 
@@ -101,8 +88,8 @@ $(function()
 				</div>
 			</div>
 		{/capture}
-	{/if}
 
-	{include file='field-type-content-fieldset.tpl' item_sections=$sections isSystem=true exceptions=['meta_description', 'meta_keywords']}
+		{include file='field-type-content-fieldset.tpl' item_sections=$sections isSystem=true exceptions=['meta_description', 'meta_keywords']}
+	{/if}
 </form>
 {ia_add_media files='tree, js:_IA_URL_packages/directory/js/admin/categories'}
