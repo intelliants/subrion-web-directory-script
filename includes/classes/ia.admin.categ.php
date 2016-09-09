@@ -151,7 +151,7 @@ class iaCateg extends abstractDirectoryPackageAdmin
 
 				for ($i = 0; $i < $count; $i++)
 				{
-					$crossedInput[] = array('category_id' => $entryId, 'crossed_id' => (int)$crossed[$i]);
+					$crossedInput[] = array('crossed_id' => $entryId, 'category_id' => (int)$crossed[$i]);
 				}
 
 				if (count($crossedInput) > 0)
@@ -170,7 +170,7 @@ class iaCateg extends abstractDirectoryPackageAdmin
 	{
 		$entryData['date_modified'] = date(iaDb::DATETIME_FORMAT);
 
-		$crossed = $this->iaDb->onefield('crossed_id', iaDb::convertIds($id, 'category_id'), 0, null, self::getTableCrossed());
+		$crossed = $this->iaDb->onefield('category_id', iaDb::convertIds($id, 'crossed_id'), 0, null, self::getTableCrossed());
 
 		if (isset($entryData['crossed']))
 		{
