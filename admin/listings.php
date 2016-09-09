@@ -221,14 +221,6 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType())
 						$data['alexa_rank'] = $alexaData['rank'];
 					}
 				}
-
-				// check pagerank
-				if ($iaCore->get('directory_enable_pagerank'))
-				{
-					include IA_PACKAGES . 'directory' . IA_DS . 'includes' . IA_DS . 'pagerank.inc.php';
-
-					$data['pagerank'] = PageRank::getPageRank($data['domain']);
-				}
 			}
 
 			if ($error)

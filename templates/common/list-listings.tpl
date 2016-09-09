@@ -46,11 +46,6 @@
 	</div>
 
 	<div class="ia-item__panel">
-		{if $core.config.directory_enable_pagerank && $listing.pagerank}
-			<span class="ia-item__panel__item">
-				<span class="fa fa-signal"></span> {lang key='pagerank'} {$listing.pagerank}
-			</span>
-		{/if}
 		{if $core.config.directory_enable_alexarank && $listing.alexa_rank}
 			<span class="ia-item__panel__item">
 				<span class="fa fa-globe"></span> {lang key='alexa_rank'} <a href="http://www.alexa.com/siteinfo/{$listing.domain}#">{$listing.alexa_rank}</a></li>

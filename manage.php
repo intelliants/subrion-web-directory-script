@@ -179,13 +179,6 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType())
 					$alexaData = $iaAlexaRank->getAlexa($item['domain']);
 					$data['alexa_rank'] = $alexaData['rank'];
 				}
-
-				if ($iaCore->get('directory_enable_pagerank'))
-				{
-					include IA_PACKAGES . $iaCore->packagesData['directory']['name'] . IA_DS . 'includes' . IA_DS . 'pagerank.inc.php';
-
-					$item['pagerank'] = PageRank::getPageRank($item['domain']);
-				}
 			}
 
 			// check if listing with specified field already exists

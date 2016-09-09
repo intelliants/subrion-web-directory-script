@@ -87,7 +87,6 @@
 	<config group="directory" name="directory_show_amount" type="radio" values="1,0" description="Show category listings amount">1</config>
 	<config group="directory" name="directory_div2" type="divider">Listings</config>
 	<config group="directory" name="directory_enable_thumbshots" type="radio" values="1,0" description="Display thumbshots">1</config>
-	<config group="directory" name="directory_enable_pagerank" type="radio" values="1,0" description="Display pagerank">1</config>
 	<config group="directory" name="directory_enable_alexarank" type="radio" values="1,0" description="Display Alexa Rank">1</config>
 	<config group="directory" name="directory_hide_empty_categories" type="radio" values="1,0" description="Hide empty categories">0</config>
 	<config group="directory" name="listing_auto_approval" type="radio" values="1,0" description="Listings auto approval">1</config>
@@ -256,7 +255,6 @@
 		<phrase category="common" key="no_web_listings2"><![CDATA[No listings have been submitted. <a href="{%URL%}">Click here</a> to add a listing.]]></phrase>
 		<phrase category="common" key="no_my_listings"><![CDATA[You have not submitted any listings. <a href="{%URL%}">Click here</a> to add a listing.]]></phrase>
 		<phrase category="common" key="prev_crossed">Previous crossed categories</phrase>
-		<phrase category="common" key="pagerank">Pagerank</phrase>
 		<phrase category="common" key="views_num">Number of clicks</phrase>
 
 		<phrase category="frontend" key="add_listing">Add Listing</phrase>
@@ -468,7 +466,6 @@ CREATE TABLE IF NOT EXISTS `{prefix}listings`(
 	`domain` varchar(150) NOT NULL,
 	`ip` bigint(12) NOT NULL,
 	`status` enum('approval', 'banned', 'suspended', 'active') NOT NULL default 'approval',
-	`pagerank` tinyint(3) NOT NULL,
 	`alexa_rank` bigint(16) unsigned default NULL,
 	`rank` tinyint(3) NOT NULL,
 	`date_added` datetime NOT NULL,
