@@ -52,7 +52,7 @@ class iaListing extends abstractDirectoryPackageFront
 		return iaDb::printf($this->_urlPatterns[$action], $data);
 	}
 
-	public function get($aWhere, $aStart = 0, $aLimit = 0, $aOrder = false)
+	public function get($where, $start = 0, $limit = 0, $order = false)
 	{
 		$sql = 'SELECT SQL_CALC_FOUND_ROWS t1.*, ';
 		$sql .= 'cat.`title` `category_title`, cat.`title_alias` `category_alias`, ';
@@ -61,10 +61,9 @@ class iaListing extends abstractDirectoryPackageFront
 		$sql .= "LEFT JOIN `{$this->iaDb->prefix}categs` cat ON t1.`category_id` = cat.`id` ";
 		$sql .= "LEFT JOIN `{$this->iaDb->prefix}members` t3 ON t1.`member_id` = t3.`id` ";
 
-		$sql .= $aWhere ? "WHERE ($aWhere) AND t1.`status` != 'banned'" : "WHERE t1.`status` != 'banned'";
-		$sql .= " ORDER BY `sponsored` DESC, `featured` DESC ";
-		$sql .= $aOrder ? ", $aOrder " : '';
-		$sql .= $aStart || $aLimit ? " LIMIT $aStart,$aLimit " : '';
+		$sql .= $where ? "WHERE ($where) AND t1.`status` != 'banned'" : "WHERE t1.`status` != 'banned'";
+		$sql .= " ORDER BY `sponsored` DESC, `featured` DESC " . ($order ? ", $order " : '');
+		$sql .= $start || $limit ? " LIMIT $start, $limit" : '';
 
 		return $this->iaDb->getAll($sql);
 	}
@@ -109,7 +108,15 @@ class iaListing extends abstractDirectoryPackageFront
 		return array($this->url(iaCore::ACTION_EDIT, $params['item']), '');
 	}
 
-	// called at the Member Details page
+	/**
+	 * Get member listings on View Member page
+	 *
+	 * @param int $memberId member id
+	 * @param int $start
+	 * @param int $limit
+	 *
+	 * @return array
+	 */
 	public function fetchMemberListings($memberId, $start, $limit)
 	{
 		$stmtWhere = 't1.`status` = :status AND t1.`member_id` = :member';
@@ -124,14 +131,14 @@ class iaListing extends abstractDirectoryPackageFront
 		);
 	}
 
-	public function postPayment($aId, $aPlan)
+	public function postPayment($listingId, $plan)
 	{
-		iaCore::instance()->startHook('phpDirectoryListingSetPlan', array('transaction' => $aId, 'plan' => $aPlan));
+		iaCore::instance()->startHook('phpDirectoryListingSetPlan', array('transaction' => $listingId, 'plan' => $plan));
 
 		return true;
 	}
 
-	public function getByCategoryId($cat_list, $aWhere, $aStart = 0, $aLimit = 0, $aOrder = false, $status = iaCore::STATUS_ACTIVE)
+	public function getByCategoryId($cat_list, $where, $start = 0, $limit = 0, $order = false, $status = iaCore::STATUS_ACTIVE)
 	{
 		$tmp = explode(',', $cat_list);
 		$cat_id = $tmp[0];
@@ -148,9 +155,9 @@ class iaListing extends abstractDirectoryPackageFront
 				. 'AND (li.`category_id` IN( ' . $cat_list . ' ) OR cr.`category_id` is not NULL) '
 				. ($this->iaCore->get('crossed_category_path')
 					? 'AND ca.`id` = IF(li.`category_id` IN( ' . $cat_list . ' ), li.`category_id`, cr.`category_id`) ' : 'AND ca.`id` = li.`category_id` ')
-				. $aWhere
-				. ($aOrder ? " ORDER BY `sponsored` DESC, `featured` DESC, $aOrder " : '')
-				. ($aStart || $aLimit ? " LIMIT $aStart,$aLimit " : '');
+				. $where
+				. ($order ? " ORDER BY `sponsored` DESC, `featured` DESC, $order " : '')
+				. ($start || $limit ? " LIMIT $start, $limit " : '');
 
 		return $this->iaDb->getAll($sql);
 	}
@@ -159,13 +166,13 @@ class iaListing extends abstractDirectoryPackageFront
 	/**
 	 * Returns domain name by a given URL
 	 *
-	 * @param string $aUrl
+	 * @param string $url
 	 *
 	 * @return bool
 	 */
-	public function getDomain($aUrl = '')
+	public function getDomain($url = '')
 	{
-		if (preg_match('/^(?:http|https|ftp):\/\/((?:[A-Z0-9][A-Z0-9_-]*)(?:\.[A-Z0-9][A-Z0-9_-]*)+)(:(\d+))?/i', $aUrl, $m))
+		if (preg_match('/^(?:http|https|ftp):\/\/((?:[A-Z0-9][A-Z0-9_-]*)(?:\.[A-Z0-9][A-Z0-9_-]*)+)(:(\d+))?/i', $url, $m))
 		{
 			return $m[1];
 		}
@@ -248,9 +255,12 @@ class iaListing extends abstractDirectoryPackageFront
 		return $entryData['id'];
 	}
 
-	/*
+	/**
+	 * Updates listing data
+	 *
 	 * @param array $aListing new listing details
 	 * @param array $aOldListing previous listing details
+	 * @return mixed
 	 */
 	public function update(array $aListing, array $aOldListing)
 	{
@@ -362,6 +372,13 @@ class iaListing extends abstractDirectoryPackageFront
 		return $return;
 	}
 
+	/**
+	 * Delete listing record
+	 *
+	 * @param $listingData listing details
+	 *
+	 * @return bool
+	 */
 	public function delete($listingData)
 	{
 		$result = (bool)$this->iaDb->delete('`id` = :id', self::getTable(), array('id' => $listingData['id']));
@@ -386,6 +403,11 @@ class iaListing extends abstractDirectoryPackageFront
 		return $result;
 	}
 
+	/**
+	 * Sends email notification to administrator once a new listing is created
+	 *
+	 * @param int $listingId listing id
+	 */
 	protected function _sendAdminNotification($listingId)
 	{
 		if ($this->iaCore->get('new_listing'))
@@ -406,34 +428,34 @@ class iaListing extends abstractDirectoryPackageFront
 	 * Change category listings counter.
 	 * Parent categories counter will be changed too.
 	 *
-	 * @param $aCatId category Id
-	 * @param int $aInt
+	 * @param int $categoryId category Id
+	 * @param int $increment
 	 *
 	 * @return mixed
 	 */
-	protected function _changeNumListing($aCatId, $aInt = 1)
+	protected function _changeNumListing($categoryId, $increment = 1)
 	{
 		$sql  = "UPDATE `{$this->iaDb->prefix}categs` ";
 		// `num_listings` changed only for ONE category
-		$sql .= "SET `num_listings`=IF(`id` = $aCatId, `num_listings` + {$aInt}, `num_listings`) ";
-		$sql .= ", `num_all_listings`=`num_all_listings` + {$aInt} ";
-		$sql .= "WHERE FIND_IN_SET({$aCatId}, `child`) ";
+		$sql .= "SET `num_listings`=IF(`id` = $categoryId, `num_listings` + {$increment}, `num_listings`) ";
+		$sql .= ", `num_all_listings`=`num_all_listings` + {$increment} ";
+		$sql .= "WHERE FIND_IN_SET({$categoryId}, `child`) ";
 
 		return $this->iaDb->query($sql);
 	}
 
+	/**
+	 * Get listing details by id
+	 *
+	 * @param int $itemId listing id
+	 *
+	 * @return array
+	 */
 	public function getById($itemId)
 	{
-		$listing = $this->get("t1.`id` = '{$itemId}'", 0, 1);
+		$listings = $this->get("t1.`id` = '{$itemId}'", 0, 1);
 
-		return $listing ? $listing[0] : array();
-	}
-
-	public function getByMemberId($memberId, $aStart = 0, $aLimit = 10, $aOrder = false)
-	{
-		$listings = $this->get(' t3.`id` = ' . $memberId . ' ', $aStart, $aLimit, $aOrder);
-
-		return $listings ? $listings : array();
+		return $listings ? $listings[0] : array();
 	}
 
 	public function getTop($limit = 10, $start = 0)
@@ -467,6 +489,7 @@ class iaListing extends abstractDirectoryPackageFront
 	public function isSubmissionAllowed($memberId)
 	{
 		$listingCount = $this->iaDb->one_bind(iaDb::STMT_COUNT_ROWS, '`member_id` = :member', array('member' => $memberId), self::getTable());
+
 		return ($listingCount < $this->iaCore->get('directory_listing_limit'));
 	}
 }

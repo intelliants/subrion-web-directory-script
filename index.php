@@ -108,7 +108,7 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType())
 				return iaView::errorPage(iaView::ERROR_UNAUTHORIZED);
 			}
 
-			$listings = $iaListing->getByMemberId(iaUsers::getIdentity()->id, $start, $per_page, $order);
+			$listings = $iaListing->get(' t3.`id` = ' . iaUsers::getIdentity()->id . ' ', $start, $per_page, $order);
 			iaLanguage::set('no_web_listings', iaLanguage::get('no_my_listings'));
 
 			break;
