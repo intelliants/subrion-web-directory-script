@@ -188,8 +188,11 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType())
 
 			$listings = $iaListing->getByCategoryId($children, '', $start, $per_page, $order);
 
-			$iaView->set('description', $category['meta_description']);
-			$iaView->set('keywords', $category['meta_keywords']);
+			if (-1 != $category['parent_id'])
+			{
+				$iaView->set('description', $category['meta_description']);
+				$iaView->set('keywords', $category['meta_keywords']);
+			}
 			$iaView->assign('category', $category);
 
 			if (isset($category) && -1 != $category['parent_id'] && isset($category['title']))
