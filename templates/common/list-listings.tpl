@@ -1,4 +1,18 @@
 <div class="ia-item ia-item--{$listing.status}{if $listing.sponsored} ia-item--sponsored{/if}{if $listing.featured} ia-item--featured{/if} has-panel" id="listing-{$listing.id}">
+	{if isset($listing.breadcrumb)}
+		<div class="ia-item__breadcrumb">
+			<ol class="breadcrumb">
+				{foreach $listing.breadcrumb as $item}
+					{if $item.current}
+						<li>{$item.title}</li>
+					{else}
+						<li><a href="{$item.url}">{$item.title}</a></li>
+					{/if}
+				{/foreach}
+			</ol>
+		</div>
+	{/if}
+
 	{if $core.config.directory_enable_thumbshots}
 		<div class="ia-item__image">
 			<img src="http://free.pagepeeker.com/v2/thumbs.php?size=m&url={$listing.url|escape:url}" class="img-responsive">

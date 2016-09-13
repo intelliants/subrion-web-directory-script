@@ -65,7 +65,9 @@ class iaListing extends abstractDirectoryPackageFront
 		$sql .= " ORDER BY `sponsored` DESC, `featured` DESC " . ($order ? ", $order " : '');
 		$sql .= $start || $limit ? " LIMIT $start, $limit" : '';
 
-		return $this->iaDb->getAll($sql);
+		$rows = $this->iaDb->getAll($sql);
+
+		return $this->_process($rows);
 	}
 
 	public function coreSearch($stmt, $start, $limit, $order)
@@ -159,7 +161,9 @@ class iaListing extends abstractDirectoryPackageFront
 				. ($order ? " ORDER BY `sponsored` DESC, `featured` DESC, $order " : '')
 				. ($start || $limit ? " LIMIT $start, $limit " : '');
 
-		return $this->iaDb->getAll($sql);
+		$rows = $this->iaDb->getAll($sql);
+
+		return $this->_process($rows);
 	}
 
 	// TODO: c'mon guys, use Util class for this type of functionality
@@ -442,6 +446,40 @@ class iaListing extends abstractDirectoryPackageFront
 		$sql .= "WHERE FIND_IN_SET({$categoryId}, `child`) ";
 
 		return $this->iaDb->query($sql);
+	}
+
+	protected function _process($rows)
+	{
+		foreach ($rows as &$row)
+		{
+			$row['breadcrumb'][] = ['title' => $this->iaCore->get('bc_home'), 'url' => IA_URL, 'current' => 0];
+
+			$packageUrl = $this->iaCore->packagesData[$this->getPackageName()]['url'];
+
+			if (IA_URL !== $packageUrl) {
+				$row['breadcrumb'][] = ['title' => iaLanguage::get('directory'), 'url' => $packageUrl, 'current' => 0];
+			}
+
+			$iaCateg = $this->iaCore->factoryPackage('categ', $this->getPackageName());
+
+			$category = $iaCateg->getById($row['category_id']);
+
+			if ($category && isset($category['parents']) && $category['parents'])
+			{
+				$parents = $iaCateg->get("`id` IN({$category['parents']}) AND `parent_id` > -1");
+
+				foreach ($parents as $parent)
+				{
+					$row['breadcrumb'][] = array(
+							'title' => $parent['title'],
+							'url' => $iaCateg->url('view', $parent),
+							'current' => $category['id'] == $parent['id'] ? 1 : 0
+					);
+				}
+			}
+		}
+
+		return $rows;
 	}
 
 	/**
