@@ -205,7 +205,30 @@ class iaCateg extends abstractDirectoryPackageAdmin
 			$this->iaDb->resetTable();
 		}
 
-		return parent::update($entryData, $id);
+		$currentData = $this->getById($id);
+
+		if (empty($currentData))
+		{
+			return false;
+		}
+
+		$result = $this->iaDb->update($entryData, iaDb::convertIds($id), null, self::getTable());
+
+		if ($result)
+		{
+			$this->_writeLog(iaCore::ACTION_EDIT, $entryData, $id);
+
+			$this->updateCounters($id, $entryData, iaCore::ACTION_EDIT, $currentData);
+
+			$this->iaCore->startHook('phpListingUpdated', array(
+				'itemId' => $id,
+				'itemName' => $this->getItemName(),
+				'itemData' => $entryData,
+				'previousData' => $currentData
+			));
+		}
+
+		return $result;
 	}
 
 	public function delete($itemId)
