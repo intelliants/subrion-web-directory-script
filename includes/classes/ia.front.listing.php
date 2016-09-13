@@ -488,15 +488,15 @@ class iaListing extends abstractDirectoryPackageFront
 
 	public function isSubmissionAllowed($memberId)
 	{
+		$result = true;
+
 		if (iaUsers::MEMBERSHIP_ADMINISTRATOR != iaUsers::getIdentity()->usergroup_id)
 		{
 			$listingCount = $this->iaDb->one_bind(iaDb::STMT_COUNT_ROWS, '`member_id` = :member', array('member' => $memberId), self::getTable());
 
-			return ($listingCount < $this->iaCore->get('directory_listing_limit'));
+			$result = ($listingCount < $this->iaCore->get('directory_listing_limit'));
 		}
-		else
-		{
-			return true;
-		}
+
+		return $result;
 	}
 }
