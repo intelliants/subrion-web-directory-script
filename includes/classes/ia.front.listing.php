@@ -55,7 +55,7 @@ class iaListing extends abstractDirectoryPackageFront
 	public function get($where, $start = 0, $limit = 0, $order = false)
 	{
 		$sql = 'SELECT SQL_CALC_FOUND_ROWS t1.*, ';
-		$sql .= 'cat.`title` `category_title`, cat.`title_alias` `category_alias`, ';
+		$sql .= 'cat.`title` `category_title`, cat.`title_alias` `category_alias`, `cat`.`parents` `category_parents`, ';
 		$sql .= 't3.`fullname` `member`, t3.`username` `account_username` ';
 		$sql .= 'FROM `' . self::getTable(true) . '` t1 ';
 		$sql .= "LEFT JOIN `{$this->iaDb->prefix}categs` cat ON t1.`category_id` = cat.`id` ";
@@ -148,7 +148,7 @@ class iaListing extends abstractDirectoryPackageFront
 			'SELECT SQL_CALC_FOUND_ROWS  `li`.*,'
 				. 'IF(li.`category_id`  IN( ' . $cat_list . ' ), li.`category_id`, cr.`category_id`) `category`, '
 				. 'IF(li.`category_id` = ' . $cat_id . ', 0, 1) `crossed`, '
-				. 'ca.`title` `category_title`, ca.`title_alias` `category_alias`, '
+				. 'ca.`title` `category_title`, ca.`title_alias` `category_alias`, `ca`.`parents` `category_parents`, '
 				. 'ac.`fullname` `member`, ac.`username` `account_username` '
 			. 'FROM `' . $this->iaDb->prefix . 'categs` ca, ' . self::getTable(true) . ' li '
 				. 'LEFT JOIN `' . $this->iaDb->prefix . 'listings_categs` cr ON (cr.`listing_id` = li.`id` AND cr.`category_id` = ' . $cat_id . ') '
@@ -462,18 +462,16 @@ class iaListing extends abstractDirectoryPackageFront
 
 			$iaCateg = $this->iaCore->factoryPackage('categ', $this->getPackageName());
 
-			$category = $iaCateg->getById($row['category_id']);
-
-			if ($category && isset($category['parents']) && $category['parents'])
+			if ($row['category_parents'])
 			{
-				$parents = $iaCateg->get("`id` IN({$category['parents']}) AND `parent_id` > -1");
+				$parents = $iaCateg->get("`id` IN({$row['category_parents']}) AND `parent_id` > -1");
 
 				foreach ($parents as $parent)
 				{
 					$row['breadcrumb'][] = array(
 							'title' => $parent['title'],
 							'url' => $iaCateg->url('view', $parent),
-							'current' => $category['id'] == $parent['id'] ? 1 : 0
+							'current' => $row['category_id'] == $parent['id'] ? 1 : 0
 					);
 				}
 			}
