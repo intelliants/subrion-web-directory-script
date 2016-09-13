@@ -460,30 +460,22 @@ class iaListing extends abstractDirectoryPackageFront
 
 	public function getTop($limit = 10, $start = 0)
 	{
-		$listings = $this->get("t1.`status` = 'active'", $start, $limit, "t1.`rank` DESC");
-
-		return $listings ? $listings : array();
+		return $this->get("t1.`status` = 'active'", $start, $limit, "t1.`rank` DESC");
 	}
 
 	public function getPopular($limit = 10, $start = 0)
 	{
-		$listings = $this->get("t1.`status` = 'active'", $start, $limit, "t1.`views_num` DESC");
-
-		return $listings ? $listings : array();
+		return $this->get("t1.`status` = 'active'", $start, $limit, "t1.`views_num` DESC");
 	}
 
 	public function getLatest($limit = 10, $start = 0)
 	{
-		$listings = $this->get("t1.`status` = 'active'", $start, $limit, "t1.`date_added` DESC");
-
-		return $listings ? $listings : array();
+		return $this->get("t1.`status` = 'active'", $start, $limit, "t1.`date_added` DESC");
 	}
 
 	public function getRandom($limit = 10, $start = 0)
 	{
-		$listings = $this->get("t1.`status` = 'active'", $start, $limit, iaDb::FUNCTION_RAND);
-
-		return $listings ? $listings : array();
+		return $this->get("t1.`status` = 'active'", $start, $limit, iaDb::FUNCTION_RAND);
 	}
 
 	public function isSubmissionAllowed($memberId)
@@ -494,9 +486,7 @@ class iaListing extends abstractDirectoryPackageFront
 
 			return ($listingCount < $this->iaCore->get('directory_listing_limit'));
 		}
-		else
-		{
-			return true;
-		}
+
+		return true;
 	}
 }
