@@ -23,7 +23,7 @@ if (iaView::REQUEST_JSON == $iaView->getRequestType())
 		case 'tree':
 			$output = array();
 
-			$categoryId = (isset($_GET['id']) && is_numeric($_GET['id'])) ? (int)$_GET['id'] : 0;
+			$categoryId = (isset($_GET['id']) && is_numeric($_GET['id'])) ? (int)$_GET['id'] : 1;
 			$categoryId = (isset($_POST['node']) && is_numeric($_POST['node'])) ? (int)$_POST['node'] : $categoryId;
 
 			$clause = '`parent_id` = ' . $categoryId . ' ORDER BY `title`';
