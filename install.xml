@@ -289,8 +289,6 @@
 		<phrase category="frontend" key="do_you_really_want_to_delete_listing">Do you really want to remove the listing?</phrase>
 	</phrases>
 
-	<cron name="listings_expiration">0 * * * * packages/directory/includes/cron/expiration.php</cron>
-
 	<tooltips>
 		<tooltip key="display_children_listing">If this options is turned ON your visitors will see listings from inner children categories during categories browsing.</tooltip>
 		<tooltip key="listing_tie_to_member">Members will own newly submitted listings that have same email addresses as registered members</tooltip>
