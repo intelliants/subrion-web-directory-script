@@ -4,9 +4,9 @@
 	<summary>This package is intended to create web directory on your Subrion powered website.</summary>
 	<author>Intelliants LLC</author>
 	<contributor>Intelliants LLC</contributor>
-	<version>4.0.1</version>
-	<date>2016-02-03</date>
-	<compatibility>4.0.4</compatibility>
+	<version>4.1.0</version>
+	<date>2016-09-13</date>
+	<compatibility>4.1.0</compatibility>
 	<url>dir</url>
 
 	<screenshots>
@@ -514,18 +514,24 @@ $iaCategs->rebuildRelation();
 	</install>
 
 	<uninstall>
-		<sql><![CDATA[DROP TABLE IF EXISTS `{prefix}categs`;]]></sql>
-		<sql><![CDATA[DROP TABLE IF EXISTS `{prefix}listings_categs`;]]></sql>
-		<sql><![CDATA[DROP TABLE IF EXISTS `{prefix}listings`;]]></sql>
+		<sql>
+			<![CDATA[
+DROP TABLE IF EXISTS `{prefix}categs`, `{prefix}categs_crossed`, `{prefix}categs_flat`, `{prefix}listings_categs`, `{prefix}listings`;
+			]]>
+		</sql>
 	</uninstall>
 
 	<upgrade>
 		<sql version="4.0.1" external="1">includes{DS}dumps{DS}upgrades{DS}4.0.1.sql</sql>
-		<sql version="4.0.2"><![CDATA[
+		<sql version="4.0.2">
+			<![CDATA[
 DELETE FROM `{prefix}config` WHERE `config_group` = 'directory' AND `extras` = 'directory' AND `name` = 'duplicate_checking';
-		]]></sql>
-		<sql version="4.0.2"><![CDATA[
+			]]>
+		</sql>
+		<sql version="4.0.2">
+			<![CDATA[
 DELETE FROM `{prefix}config` WHERE `config_group` = 'directory' AND `extras` = 'directory' AND `name` = 'duplicate_type';
-		]]></sql>
+			]]>
+		</sql>
 	</upgrade>
 </package>
