@@ -452,14 +452,6 @@ class iaListing extends abstractDirectoryPackageFront
 	{
 		foreach ($rows as &$row)
 		{
-			$row['breadcrumb'][] = ['title' => $this->iaCore->get('bc_home'), 'url' => IA_URL, 'current' => 0];
-
-			$packageUrl = $this->iaCore->packagesData[$this->getPackageName()]['url'];
-
-			if (IA_URL !== $packageUrl) {
-				$row['breadcrumb'][] = ['title' => iaLanguage::get('directory'), 'url' => $packageUrl, 'current' => 0];
-			}
-
 			$iaCateg = $this->iaCore->factoryPackage('categ', $this->getPackageName());
 
 			if ($row['category_parents'])
@@ -469,9 +461,8 @@ class iaListing extends abstractDirectoryPackageFront
 				foreach ($parents as $parent)
 				{
 					$row['breadcrumb'][] = array(
-							'title' => $parent['title'],
-							'url' => $iaCateg->url('view', $parent),
-							'current' => $row['category_id'] == $parent['id'] ? 1 : 0
+						'title' => $parent['title'],
+						'url' => $iaCateg->url('view', $parent)
 					);
 				}
 			}

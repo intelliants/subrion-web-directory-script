@@ -1,18 +1,4 @@
 <div class="ia-item ia-item--{$listing.status}{if $listing.sponsored} ia-item--sponsored{/if}{if $listing.featured} ia-item--featured{/if} has-panel" id="listing-{$listing.id}">
-	{if isset($listing.breadcrumb)}
-		<div class="ia-item__breadcrumb">
-			<ol class="breadcrumb">
-				{foreach $listing.breadcrumb as $item}
-					{if $item.current}
-						<li>{$item.title}</li>
-					{else}
-						<li><a href="{$item.url}">{$item.title}</a></li>
-					{/if}
-				{/foreach}
-			</ol>
-		</div>
-	{/if}
-
 	{if $core.config.directory_enable_thumbshots}
 		<div class="ia-item__image">
 			<img src="http://free.pagepeeker.com/v2/thumbs.php?size=m&url={$listing.url|escape:url}" class="img-responsive">
@@ -49,8 +35,16 @@
 
 		<div class="ia-item__additional">
 			<p class="text-overflow"><span class="fa fa-link"></span> <a href="{$listing.url}" class="url">{$listing.url}</a></p>
-			{if !isset($category) || $listing.category_id != $category.id}
-				<p><span class="fa fa-folder-o"></span> <a href="{ia_url type='url' item='categs' data=$listing}">{$listing.category_title}</a></p>
+			{if isset($listing.breadcrumb) && !isset($category) || $listing.category_id != $category.id}
+				<div class="clearfix"></div>
+				<p>
+					<span class="fa fa-folder-o"></span>
+					{foreach $listing.breadcrumb as $item}
+						{if 1 !==  $item@iteration} <span class="fa fa-angle-right"></span> {/if}
+						<a href="{$item.url}">{$item.title}</a>
+					{/foreach}
+				</p>
+				<div class="clearfix"></div>
 			{/if}
 			<p><span class="fa fa-clock-o"></span> {$listing.date_added|date_format:$core.config.date_format}</p>
 			<p><span class="fa fa-eye"></span> {$listing.views_num} {lang key='views'}</p>
