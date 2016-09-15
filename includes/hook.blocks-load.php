@@ -32,7 +32,16 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType())
 
 	if ($iaView->blockExists('featured_listings'))
 	{
-		$iaView->assign('featured_listings', $iaListing->get("t1.`featured` != 0", 0, $limit, "t1.`featured_start` DESC"));
+		$aWhere = ('directory_home' == $iaView->name()) ? sprintf(" AND t1.`category_id` = %s", $iaView->getValues('category')['id']) : '';
+
+		$listings = $iaListing->get("t1.`featured` != 0 $aWhere", 0, $limit, "t1.`featured_start` DESC");
+
+		if (empty($listings))
+		{
+			$listings = $iaListing->get("t1.`featured` != 0", 0, $limit, "t1.`featured_start` DESC");
+		}
+
+		$iaView->assign('featured_listings', $listings);
 	}
 
 	if ($iaView->blockExists('sponsored_listings'))
