@@ -21,7 +21,7 @@ $(function()
 {
 	new IntelliTree(
 	{
-		url: intelli.config.admin_url + '/directory/categories/read.json?get=tree',
+		url: intelli.config.ia_url + '/directory/categories/read.json?get=tree',
 		onchange: intelli.fillUrlBox,
 		nodeOpened: [{$category.parents}],
 		nodeSelected: {$item.category_id}
@@ -101,7 +101,7 @@ $(function()
 
 	{ia_hooker name='smartyAdminSubmitItemBeforeFields'}
 
-	{include file='field-type-content-fieldset.tpl' item_sections=$sections isSystem=true statuses=$statuses}
+	{include file='field-type-content-fieldset.tpl' isSystem=true statuses=$statuses}
 </form>
 
 {ia_hooker name='smartyAdminSubmitItemBeforeFooter'}

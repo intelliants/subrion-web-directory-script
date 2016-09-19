@@ -5,6 +5,8 @@ $iaListing = $iaCore->factoryPackage('listing', IA_CURRENT_PACKAGE);
 
 if (iaView::REQUEST_JSON == $iaView->getRequestType())
 {
+	$data = array();
+
 	$categoryId = isset($_GET['id']) ? (int)$_GET['id'] : $iaDb->one('id', '`parent_id` = -1', 'categs');
 
 	$where = "`parent_id` = $categoryId && `status` = 'active'";
@@ -16,6 +18,7 @@ if (iaView::REQUEST_JSON == $iaView->getRequestType())
 
 	$data = array();
 	$rows = $iaDb->all(array('id', 'title', 'title_alias', 'locked', 'child'), $where, null, null, 'categs');
+
 	foreach ($rows as &$row)
 	{
 		$data[] = array(
@@ -23,17 +26,19 @@ if (iaView::REQUEST_JSON == $iaView->getRequestType())
 			'text' => $row['title'],
 			'children' => $row['child'] && $row['child'] != $row['id']
 		);
-/*		$data[] = array(
-			'data' => array(
-				'title' => $row['title'],
-				'attr' => array('href' => $iaCore->packagesData[IA_CURRENT_PACKAGE]['url'] . $row['title_alias'])
-			),
-			'state' => ($row['child'] == $row['id']) ? 'leaf' : 'closed',
-			'attr' => array(
-				'id' => $row['id'],
-				'rel' => $row['locked'] ? 'locked' : 'default'
-			)
-		);*/
+	}
+
+	if (isset($_GET['title']) && isset($_GET['category']) && isset($_GET['get']) && 'alias' == $_GET['get'])
+	{
+		$iaCateg = $iaCore->factoryPackage('categ', IA_CURRENT_PACKAGE, iaCore::ADMIN);
+
+		$iaDb->setTable(iaCateg::getTable());
+
+		$title = $iaCateg->getTitleAlias(array('title_alias' => $_GET['title'], 'parent_id' => (int)$_GET['category']));
+
+		$data['data'] = $iaCateg->url('default', array('title_alias' => $title));
+
+		$iaDb->resetTable();
 	}
 
 	$iaView->assign($data);

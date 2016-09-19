@@ -22,7 +22,7 @@ $(function()
 {
 	new IntelliTree(
 	{
-		url: intelli.config.admin_url + '/directory/categories/read.json?get=tree',
+		url: intelli.config.ia_url + 'directory/categories/read.json?get=tree',
 		onchange: intelli.fillUrlBox,
 		nodeOpened: [{$item.parents}],
 		nodeSelected: {$parent.id}
@@ -92,6 +92,6 @@ $(function()
 		{$exceptions = ['meta_description', 'meta_keywords', 'icon']}
 	{/if}
 
-	{include file='field-type-content-fieldset.tpl' item_sections=$sections isSystem=true exceptions=$exceptions}
+	{include file='field-type-content-fieldset.tpl' isSystem=true exceptions=$exceptions}
 </form>
 {ia_add_media files='tree, js:_IA_URL_packages/directory/js/admin/categories'}

@@ -10,7 +10,7 @@ $(function()
 			total = 0,
 			progress = 0,
 			interval = 2000,
-			url = intelli.config.admin_url + '/directory/categories/read.json';
+			url = intelli.config.ia_url + '/directory/categories/read.json';
 
 		var barHolder = $('#recount-listings-progress');
 		var bar = $('.progress-bar', barHolder);

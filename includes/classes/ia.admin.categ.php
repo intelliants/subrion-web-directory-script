@@ -47,51 +47,21 @@ class iaCateg extends abstractDirectoryPackageAdmin
 		return iaDb::printf($this->_urlPatterns[$action], $data);
 	}
 
-	public function gridRead($params, $columns, array $filterParams = array(), array $persistentConditions = array())
+	public function exists($alias, $parentId, $id = false)
 	{
-		$params || $params = array();
+		return $id
+			? (bool)$this->iaDb->exists('`title_alias` = :alias AND `parent_id` = :parent AND `id` != :id', array('alias' => $alias, 'parent' => $parentId, 'id' => $id), self::getTable())
+			: (bool)$this->iaDb->exists('`title_alias` = :alias AND `parent_id` = :parent', array('alias' => $alias, 'parent' => $parentId), self::getTable());
+	}
 
-		$start = isset($params['start']) ? (int)$params['start'] : 0;
-		$limit = isset($params['limit']) ? (int)$params['limit'] : 15;
+	public function getRoot()
+	{
+		return $this->iaDb->row(iaDb::ALL_COLUMNS_SELECTION, '`parent_id` = -1', self::getTable());
+	}
 
-		$sort = $params['sort'];
-		$dir = in_array($params['dir'], array(iaDb::ORDER_ASC, iaDb::ORDER_DESC)) ? $params['dir'] : iaDb::ORDER_ASC;
-		$order = ($sort && $dir) ? " ORDER BY `{$sort}` {$dir}" : '';
-
-		$where = $values = array();
-		foreach ($filterParams as $name => $type)
-		{
-			if (isset($params[$name]) && $params[$name])
-			{
-				$value = iaSanitize::sql($params[$name]);
-
-				switch ($type)
-				{
-					case 'equal':
-						$where[] = sprintf('`%s` = :%s', $name, $name);
-						$values[$name] = $value;
-						break;
-					case 'like':
-						$where[] = sprintf('`%s` LIKE :%s', $name, $name);
-						$values[$name] = '%' . $value . '%';
-				}
-			}
-		}
-
-		$where = array_merge($where, $persistentConditions);
-		$where || $where[] = iaDb::EMPTY_CONDITION;
-		$where = implode(' AND ', $where);
-		$this->iaDb->bind($where, $values);
-
-		if (is_array($columns))
-		{
-			$columns = array_merge(array('id', 'update' => 1, 'delete' => 1), $columns);
-		}
-
-		return array(
-			'data' => $this->iaDb->all($columns, $where . $order, $start, $limit),
-			'total' => (int)$this->iaDb->one(iaDb::STMT_COUNT_ROWS, $where)
-		);
+	public function getRootId()
+	{
+		return $this->iaDb->one(iaDb::ID_COLUMN_SELECTION, '`parent_id` = -1', self::getTable());
 	}
 
 	public function getSitemapEntries()

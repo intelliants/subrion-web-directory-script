@@ -426,46 +426,4 @@ class iaListing extends abstractDirectoryPackageAdmin
 
 		return false;
 	}
-
-	public function gridRead($params, array $filterParams = array(), array $persistentConditions = array())
-	{
-		$params || $params = array();
-
-		$start = isset($params['start']) ? (int)$params['start'] : 0;
-		$limit = isset($params['limit']) ? (int)$params['limit'] : 15;
-
-		$sort = $params['sort'];
-		$dir = in_array($params['dir'], array(iaDb::ORDER_ASC, iaDb::ORDER_DESC)) ? $params['dir'] : iaDb::ORDER_ASC;
-		$order = ($sort && $dir) ? "`{$sort}` {$dir}" : '';
-
-		$where = $values = array();
-		foreach ($filterParams as $name => $type)
-		{
-			if (isset($params[$name]) && $params[$name])
-			{
-				$value = iaSanitize::sql($params[$name]);
-
-				switch ($type)
-				{
-					case 'equal':
-						$where[] = sprintf('t1.`%s` = :%s', $name, $name);
-						$values[$name] = $value;
-						break;
-					case 'like':
-						$where[] = sprintf('t1.`%s` LIKE :%s', $name, $name);
-						$values[$name] = '%' . $value . '%';
-				}
-			}
-		}
-
-		$where = array_merge($where, $persistentConditions);
-		$where || $where[] = iaDb::EMPTY_CONDITION;
-		$where = implode(' AND ', $where);
-		$this->iaDb->bind($where, $values);
-
-		return array(
-			'data' => $this->get($where, $start, $limit, $order),
-			'total' => (int)$this->iaDb->foundRows()
-		);
-	}
 }

@@ -68,7 +68,7 @@ Ext.onReady(function()
 
 							return params;
 						},
-						url: intelli.config.admin_url + '/directory/categories/read.json?get=tree'
+						url: intelli.config.ia_url + 'directory/categories/read.json?get=tree'
 					},
 					multiple: true
 				},
@@ -138,7 +138,7 @@ intelli.fillUrlBox = function()
 			params.alias = 1;
 		}
 
-		$.get(intelli.config.admin_url + '/directory/categories/read.json?get=tree', params, function(response)
+		$.get(intelli.config.ia_url + 'directory/categories/read.json?get=tree', params, function(response)
 		{
 			if ('' != response.data)
 			{
@@ -153,5 +153,5 @@ intelli.fillUrlBox = function()
 
 $(function()
 {
-	$('input[name="title"], input[name="alias"]').blur(intelli.fillUrlBox).blur();
+	$('input[name="title"], input[name="title_alias"]').blur(intelli.fillUrlBox).blur();
 });

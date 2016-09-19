@@ -6,7 +6,7 @@
 	<contributor>Intelliants LLC</contributor>
 	<version>4.1.0</version>
 	<date>2016-09-13</date>
-	<compatibility>4.1.0</compatibility>
+	<compatibility>4.0.5</compatibility>
 	<url>dir</url>
 
 	<screenshots>
@@ -219,6 +219,7 @@
 		<phrase category="admin" key="are_you_sure_to_delete_selected_listings">Are you sure you wish to delete these listings?</phrase>
 		<phrase category="admin" key="broken">Broken</phrase>
 		<phrase category="admin" key="category_added">Category added.</phrase>
+		<phrase category="admin" key="category_deleted">Category deleted.</phrase>
 		<phrase category="admin" key="directory_package">&quot;Directory&quot; package</phrase>
 		<phrase category="admin" key="no_crossed_categories">No Crossed Categories.</phrase>
 		<phrase category="admin" key="no_owner">No Owner</phrase>
@@ -233,6 +234,8 @@
 		<phrase category="admin" key="recount_directory_listings_success">Directory Listings have been successfully recounted.</phrase>
 		<phrase category="admin" key="reported_as_broken">Reported as Broken</phrase>
 		<phrase category="admin" key="reported_as_broken_comments">Broken report comments</phrase>
+		<phrase category="admin" key="category_already_exists">Category with similar title alias exists in this category.</phrase>
+		<phrase category="admin" key="edit_directory_category">Edit Category ":name"</phrase>
 
 		<phrase category="common" key="alexa_rank">Alexa Rank</phrase>
 		<phrase category="common" key="all_listings_num">Number of all listings</phrase>

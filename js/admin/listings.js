@@ -113,7 +113,7 @@ Ext.onReady(function()
 
 							return params;
 						},
-						url: intelli.config.admin_url + '/directory/categories/read.json?get=tree'
+						url: intelli.config.ia_url + '/directory/categories/read.json?get=tree'
 					},
 					multiple: true
 				},
@@ -191,7 +191,7 @@ intelli.fillUrlBox = function()
 			params.alias = 1;
 		}
 
-		$.get(intelli.config.admin_url + '/directory/listings/read.json?get=alias', params, function(response)
+		$.get(intelli.config.ia_url + '/directory/listings/read.json?get=alias', params, function(response)
 		{
 			if (response.data)
 			{

@@ -1,6 +1,117 @@
 <?php
 //##copyright##
 
+class iaBackendController extends iaAbstractControllerPackageBackend
+{
+	protected $_name = 'listings';
+
+	protected $_helperName = 'listing';
+
+	protected $_phraseAddSuccess = 'listing_added';
+
+	protected $_activityLog = array('item' => 'listing');
+
+	public function init()
+	{
+		$this->_iaCateg = $this->_iaCore->factoryPackage('categ', $this->getPackageName(), iaCore::ADMIN);
+	}
+
+	public function _gridRead($params, array $filterParams = array(), array $persistentConditions = array())
+	{
+		$params || $params = array();
+
+		$start = isset($params['start']) ? (int)$params['start'] : 0;
+		$limit = isset($params['limit']) ? (int)$params['limit'] : 15;
+
+		$sort = $params['sort'];
+		$dir = in_array($params['dir'], array(iaDb::ORDER_ASC, iaDb::ORDER_DESC)) ? $params['dir'] : iaDb::ORDER_ASC;
+		$order = ($sort && $dir) ? "`{$sort}` {$dir}" : '';
+
+		$where = $values = array();
+		foreach ($filterParams as $name => $type)
+		{
+			if (isset($params[$name]) && $params[$name])
+			{
+				$value = iaSanitize::sql($params[$name]);
+
+				switch ($type)
+				{
+					case 'equal':
+						$where[] = sprintf('t1.`%s` = :%s', $name, $name);
+						$values[$name] = $value;
+						break;
+					case 'like':
+						$where[] = sprintf('t1.`%s` LIKE :%s', $name, $name);
+						$values[$name] = '%' . $value . '%';
+				}
+			}
+		}
+
+		$where = array_merge($where, $persistentConditions);
+		$where || $where[] = iaDb::EMPTY_CONDITION;
+		$where = implode(' AND ', $where);
+		$this->_iaDb->bind($where, $values);
+
+		$iaListing = $this->_iaCore->factoryPackage('listing', IA_CURRENT_PACKAGE, iaCore::ADMIN);
+
+		return array(
+			'data' => $iaListing->get($where, $start, $limit, $order),
+			'total' => (int)$this->_iaDb->foundRows()
+		);
+	}
+
+	protected function _entryAdd(array $entryData)
+	{
+		$entryData['date_added'] = date(iaDb::DATETIME_FORMAT);
+		$entryData['date_modified'] = date(iaDb::DATETIME_FORMAT);
+
+		return parent::_entryAdd($entryData);
+	}
+
+	protected function _entryUpdate(array $entryData, $entryId)
+	{
+		$entryData['date_modified'] = date(iaDb::DATETIME_FORMAT);
+
+		return parent::_entryUpdate($entryData, $entryId);
+	}
+
+	protected function _setDefaultValues(array &$entry)
+	{
+		$entry = array(
+			'member_id' => iaUsers::getIdentity()->id,
+			'category_id' => 0,
+			'sponsored' => false,
+			'featured' => false,
+			'status' => iaCore::STATUS_ACTIVE
+		);
+	}
+
+	protected function _preSaveEntry(array &$entry, array $data, $action)
+	{
+//		var_dump($data); die;
+		$fields = $this->_iaField->getByItemName($this->getHelper()->getItemName());
+		list($entry, , $this->_messages, ) = $this->_iaField->parsePost($fields, $entry);
+
+//		$entry['category_id'] = (int)$data['category_id'];
+
+		$entry['title_alias'] = empty($data['title_alias']) ? $data['title'] : $data['title_alias'];
+		$entry['title_alias'] = $this->getHelper()->titleAlias($entry['title_alias']);
+
+		return !$this->getMessages();
+	}
+
+	protected function _assignValues(&$iaView, array &$entryData)
+	{
+		parent::_assignValues($iaView, $entryData);
+
+		$category = $this->_iaDb->row(array('id', 'title', 'parent_id', 'parents'), iaDb::convertIds($entryData['category_id']), 'categs');
+
+		$iaView->assign('category', $category);
+		$iaView->assign('statuses', array(iaCore::STATUS_APPROVAL, 'banned', 'suspended', iaCore::STATUS_ACTIVE));
+	}
+}
+
+/*
 $iaListing = $iaCore->factoryPackage('listing', IA_CURRENT_PACKAGE, iaCore::ADMIN);
 
 $iaDb->setTable(iaListing::getTable());
@@ -334,3 +445,4 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType())
 
 	$iaView->assign('quick_search_item', $iaListing->getItemName());
 }
+*/
