@@ -236,6 +236,7 @@
 		<phrase category="admin" key="reported_as_broken_comments">Broken report comments</phrase>
 		<phrase category="admin" key="category_already_exists">Category with similar title alias exists in this category.</phrase>
 		<phrase category="admin" key="edit_directory_category">Edit Category ":name"</phrase>
+		<phrase category="admin" key="directory_category_already_exists">Category already exists</phrase>
 
 		<phrase category="common" key="alexa_rank">Alexa Rank</phrase>
 		<phrase category="common" key="all_listings_num">Number of all listings</phrase>

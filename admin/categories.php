@@ -63,7 +63,7 @@ class iaBackendController extends iaAbstractControllerPackageBackend
 		$fields = $this->_iaField->getByItemName($this->getHelper()->getItemName());
 		list($entry, , $this->_messages, ) = $this->_iaField->parsePost($fields, $entry);
 
-		$entry['parent_id'] = $data['parent_id'] ? (int)$data['parent_id'] : $this->_root['id'];
+		$entry['parent_id'] = $data['parent_id'] ? $data['parent_id'] : $this->_root['id'];
 		$entry['locked'] = (int)$data['locked'];
 		$entry['status'] = $data['status'];
 		$entry['title_alias'] = empty($_POST['title_alias']) ? htmlspecialchars_decode($data['title']) : $data['title_alias'];

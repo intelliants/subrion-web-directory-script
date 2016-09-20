@@ -47,11 +47,11 @@ class iaCateg extends abstractDirectoryPackageAdmin
 		return iaDb::printf($this->_urlPatterns[$action], $data);
 	}
 
-	public function exists($alias, $parentId, $id = false)
+	public function exists($alias, $parentId, $id = null)
 	{
-		return $id
-			? (bool)$this->iaDb->exists('`title_alias` = :alias AND `parent_id` = :parent AND `id` != :id', array('alias' => $alias, 'parent' => $parentId, 'id' => $id), self::getTable())
-			: (bool)$this->iaDb->exists('`title_alias` = :alias AND `parent_id` = :parent', array('alias' => $alias, 'parent' => $parentId), self::getTable());
+		return is_null($id)
+			? (bool)$this->iaDb->exists('`title_alias` = :alias AND `parent_id` = :parent', array('alias' => $alias, 'parent' => $parentId), self::getTable())
+			: (bool)$this->iaDb->exists('`title_alias` = :alias AND `parent_id` = :parent AND `id` != :id', array('alias' => $alias, 'parent' => $parentId, 'id' => $id), self::getTable());
 	}
 
 	public function getRoot()
@@ -94,6 +94,34 @@ class iaCateg extends abstractDirectoryPackageAdmin
 	public function getCategory($aWhere, $aFields = '*')
 	{
 		return $this->iaDb->row($aFields, $aWhere, self::getTable());
+	}
+
+	public function update(array $itemData, $id)
+	{
+		$currentData = $this->getById($id);
+
+		if (empty($currentData))
+		{
+			return false;
+		}
+
+		$result = $this->iaDb->update($itemData, iaDb::convertIds($id), null, self::getTable());
+
+		if ($result)
+		{
+			$this->_writeLog(iaCore::ACTION_EDIT, $itemData, $id);
+
+			$this->updateCounters($id, $itemData, iaCore::ACTION_EDIT, $currentData);
+
+			$this->iaCore->startHook('phpListingUpdated', array(
+					'itemId' => $id,
+					'itemName' => $this->getItemName(),
+					'itemData' => $itemData,
+					'previousData' => $currentData
+			));
+		}
+
+		return $result;
 	}
 
 	public function delete($itemId)
