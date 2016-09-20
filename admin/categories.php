@@ -60,8 +60,6 @@ class iaBackendController extends iaAbstractControllerPackageBackend
 
 	protected function _preSaveEntry(array &$entry, array $data, $action)
 	{
-		$iaCateg = $this->_iaCore->factoryPackage('categ', IA_CURRENT_PACKAGE, iaCore::ADMIN);
-
 		$fields = $this->_iaField->getByItemName($this->getHelper()->getItemName());
 		list($entry, , $this->_messages, ) = $this->_iaField->parsePost($fields, $entry);
 
@@ -69,7 +67,7 @@ class iaBackendController extends iaAbstractControllerPackageBackend
 		$entry['locked'] = (int)$data['locked'];
 		$entry['status'] = $data['status'];
 		$entry['title_alias'] = empty($_POST['title_alias']) ? htmlspecialchars_decode($data['title']) : $data['title_alias'];
-		$entry['title_alias'] = $iaCateg->getTitleAlias($entry);
+		$entry['title_alias'] = $this->getHelper()->getTitleAlias($entry);
 		$entry['order'] = $this->_iaDb->getMaxOrder() + 1;
 
 		if ($this->getHelper()->exists($entry['title_alias'], $entry['parent_id'], $this->getEntryId()))

@@ -41,6 +41,22 @@ if (iaView::REQUEST_JSON == $iaView->getRequestType())
 		$iaDb->resetTable();
 	}
 
+	if ('pre_recount_listings' == $_POST['action'])
+	{
+		$iaCateg = $iaCore->factoryPackage('categ', IA_CURRENT_PACKAGE, iaCore::ADMIN);
+
+		$iaCateg->clearListingsNum();
+
+		$data['categories_total'] = $iaCateg->getCount();
+	}
+
+	if ('recount_listings' == $_POST['action'])
+	{
+		$iaCateg = $iaCore->factoryPackage('categ', IA_CURRENT_PACKAGE, iaCore::ADMIN);
+
+		$data = $iaCateg->recountListingsNum($_POST['start'], $_POST['limit']);
+	}
+
 	$iaView->assign($data);
 }
 
