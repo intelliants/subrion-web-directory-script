@@ -14,7 +14,7 @@
 				<div class="col col-lg-4">
 					<input type="text" id="js-category-label" value="{if $parent}{$parent.title}{else}{lang key='field_category_id_annotation'}{/if}" disabled>
 					<div id="js-tree" class="tree categories-tree"{if iaCore::ACTION_EDIT == $pageAction} style="display:none"{/if}></div>
-					<input type="hidden" name="parent_id" id="input-category" value="{if !isset($item.parent_id)}{$root_cat.id}{else}{$item.parent_id}{/if}">
+					<input type="hidden" name="parent_id" id="input-category" value="{$item.parent_id}">
 				</div>
 			</div>
 			{ia_add_js}
@@ -24,7 +24,7 @@ $(function()
 	{
 		url: intelli.config.ia_url + 'directory/categories/read.json?get=tree',
 		onchange: intelli.fillUrlBox,
-		nodeOpened: [{$item.parents}],
+		nodeOpened: [0,{$item.parents}],
 		nodeSelected: {$parent.id}
 	});
 });

@@ -7,7 +7,7 @@ if (iaView::REQUEST_JSON == $iaView->getRequestType())
 {
 	$data = array();
 
-	$categoryId = isset($_GET['id']) ? (int)$_GET['id'] : $iaDb->one('id', '`parent_id` = -1', 'categs');
+	$categoryId = isset($_GET['id']) ? (int)$_GET['id'] : $iaDb->one('parent_id', '`id` = 0', 'categs');
 
 	$where = "`parent_id` = $categoryId && `status` = 'active'";
 	if ($iaCore->get('directory_hide_empty_categories'))
@@ -22,9 +22,9 @@ if (iaView::REQUEST_JSON == $iaView->getRequestType())
 	foreach ($rows as &$row)
 	{
 		$data[] = array(
-			'id' => (int)$row['id'],
+			'id' => $row['id'],
 			'text' => $row['title'],
-			'children' => $row['child'] && $row['child'] != $row['id']
+			'children' => $row['child'] && $row['child'] != $row['id'] || empty($row['child'])
 		);
 	}
 

@@ -21,9 +21,9 @@ $(function()
 {
 	new IntelliTree(
 	{
-		url: intelli.config.ia_url + '/directory/categories/read.json?get=tree',
+		url: intelli.config.ia_url + 'directory/categories/read.json?get=tree',
 		onchange: intelli.fillUrlBox,
-		nodeOpened: [{$category.parents}],
+		nodeOpened: [0,{$category.parents}],
 		nodeSelected: {$item.category_id}
 	});
 	$('input[name=reported_as_broken]').change(function() {

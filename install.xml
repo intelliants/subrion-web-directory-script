@@ -26,13 +26,17 @@
 	</packageitems>
 
 	<actions>
-		<action name="listings_view" url="directory/listings/" icon="list" pages="manage_listings,listing_add,listing_edit">View Listings</action>
-		<action name="listings_add" url="directory/listings/add/" icon="plus-alt" pages="directory_home,manage_listings,listing_edit">Add Listing</action>
-		<action name="categs_view" url="directory/categories/" icon="list-2" pages="manage_categs,categ_add,categ_edit">View Categories</action>
-		<action name="categs_add" url="directory/categories/add/" icon="folder-plus" pages="directory_home,manage_categs,categ_edit">Add Category</action>
+		<action name="listings_list" url="directory/listings/" icon="list-2" pages="directory_stats,manage_listings:add,manage_listings:edit">View Listings</action>
+		<action name="listings_add" url="directory/listings/add/" icon="plus-alt" pages="manage_listings,manage_listings:edit">Add Listings</action>
+		<action name="dashboard_listings_add" url="directory/listings/add/" icon="plus" type="dashboard">Add Listings</action>
+
+		<action name="categories_list" url="directory/categories/" icon="folder" pages="directory_stats,manage_categs:add,manage_categs:edit">View Categories</action>
+		<action name="categories_add" url="directory/categories/add/" icon="folder-plus"  pages="manage_categs,manage_categs:edit">Add Category</action>
+
+		<action name="listings_field_view" url="fields/listings/" icon="list" pages="listings_fields">View Fields</action>
 		<action name="listings_field_add" url="fields/add/?item=listings" icon="plus-alt" pages="listings_fields">Add Field</action>
 		<action name="listings_group_view" url="fields/group/" icon="list-2" pages="listings_fields">Field Groups</action>
-		<action name="listings_group_add" url="fields/group/add/" icon="folder-plus" pages="listings_fields">Add Field Group</action>
+		<action name="listings_group_add" url="fields/group/add/" icon="list-add" pages="listings_fields">Add Field Group</action>
 	</actions>
 
 	<groups>
@@ -40,16 +44,12 @@
 	</groups>
 
 	<adminpages>
-		<page group="directory" url="directory/" name="directory_stats" filename="statistics" menus="menu">Statistics</page>
+		<page group="directory" filename="statistics" name="directory_stats" url="directory/" menus="menu">Statistics</page>
 		<page group="directory" menus="menu">Management</page>
-		<page group="directory" url="directory/categories/" menus="menu" name="manage_categs" filename="categories">Categories</page>
-		<page group="directory" url="directory/categories/add/" action="add" parent="manage_categs" name="categ_add" filename="categories">Add Category</page>
-		<page group="directory" url="directory/categories/edit/" action="edit" parent="manage_categs" name="categ_edit" filename="categories">Edit Category</page>
-		<page group="directory" url="directory/listings/" menus="menu" name="manage_listings" filename="listings">Listings</page>
-		<page group="directory" url="directory/listings/add/" action="add" parent="manage_listings" name="listing_add" filename="listings">Add Listing</page>
-		<page group="directory" url="directory/listings/edit/" name="listing_edit" action="edit" parent="manage_listings" filename="listings">Edit Listing</page>
+		<page group="directory" filename="listings" name="manage_listings" url="directory/listings/" menus="menu">Listings</page>
+		<page group="directory" filename="categories" name="manage_categs" url="directory/categories/" menus="menu">Categories</page>
 		<page group="directory" menus="menu">Extended</page>
-		<page group="directory" url="fields/listings/" menus="menu" name="listings_fields" filename="fields">Listings Fields</page>
+		<page group="directory" filename="fields" menus="menu" url="fields/listings/" name="listings_fields">Listings Fields</page>
 	</adminpages>
 
 	<pages>

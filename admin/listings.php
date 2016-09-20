@@ -185,19 +185,21 @@ class iaBackendController extends iaAbstractControllerPackageBackend
 	{
 		parent::_assignValues($iaView, $entryData);
 
-		$listing = $this->getHelper()->getById((int)$this->_iaCore->requestPath[0]);
-
 		$category = $this->_iaDb->row(array('id', 'title', 'parent_id', 'parents'), iaDb::convertIds($entryData['category_id']), 'categs');
 
-		$crossed = $this->_iaDb->getAll("SELECT t.`id`, t.`title`
-			FROM `{$this->_iaCore->iaDb->prefix}categs` t, `{$this->_iaCore->iaDb->prefix}listings_categs` cr
-			WHERE t.`id` = cr.`category_id` AND cr.`listing_id` = '{$listing['id']}'");
+		if (!empty($this->_iaCore->requestPath[0])) {
+			$listing = $this->getHelper()->getById((int)$this->_iaCore->requestPath[0]);
 
-		$category['crossed'] = array();
+			$crossed = $this->_iaDb->getAll("SELECT t.`id`, t.`title`
+				FROM `{$this->_iaCore->iaDb->prefix}categs` t, `{$this->_iaCore->iaDb->prefix}listings_categs` cr
+				WHERE t.`id` = cr.`category_id` AND cr.`listing_id` = '{$listing['id']}'");
 
-		foreach ($crossed as $val)
-		{
-			$category['crossed'][$val['id']] = $val['title'];
+			$category['crossed'] = array();
+
+			foreach ($crossed as $val)
+			{
+				$category['crossed'][$val['id']] = $val['title'];
+			}
 		}
 
 		$iaView->assign('category', $category);
