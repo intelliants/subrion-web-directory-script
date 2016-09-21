@@ -25,6 +25,11 @@ class iaBackendController extends iaAbstractControllerPackageBackend
 		$this->_root = $this->getHelper()->getRoot();
 	}
 
+	protected function _modifyGridParams(&$conditions, &$values, array $params)
+	{
+		$conditions[] = '`parent_id` >= 0';
+	}
+
 	protected function _entryAdd(array $entryData)
 	{
 		$entryData['date_added'] = date(iaDb::DATETIME_FORMAT);

@@ -8,8 +8,15 @@ if (iaView::REQUEST_JSON == $iaView->getRequestType())
 	$data = array();
 
 	$categoryId = isset($_GET['id']) ? (int)$_GET['id'] : $iaDb->one('parent_id', '`id` = 0', 'categs');
+	$currentCategId = (isset($_GET['current_category']) ? (int)$_GET['current_category'] : 0);
 
 	$where = "`parent_id` = $categoryId && `status` = 'active'";
+
+	if ($currentCategId)
+	{
+		$where .= " && `id` != $currentCategId";
+	}
+
 	if ($iaCore->get('directory_hide_empty_categories'))
 	{
 		$where .= " AND `num_all_listings` != 0";

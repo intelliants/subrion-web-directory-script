@@ -20,11 +20,13 @@
 			{ia_add_js}
 $(function()
 {
+	var current_category = $('input[name="id"]').val();
+
 	new IntelliTree(
 	{
-		url: intelli.config.ia_url + 'directory/categories/read.json?get=tree',
+		url: intelli.config.ia_url + 'directory/categories/read.json?get=tree&current_category=' + current_category,
 		onchange: intelli.fillUrlBox,
-		nodeOpened: [0,{$item.parents}],
+		nodeOpened: [0,{if isset($item.parents)}{$item.parents}{/if}],
 		nodeSelected: {$parent.id}
 	});
 });
