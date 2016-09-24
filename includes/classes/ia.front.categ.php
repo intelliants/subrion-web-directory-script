@@ -46,12 +46,12 @@ class iaCateg extends abstractDirectoryPackageFront
 		return iaDb::printf($this->_urlPatterns[$action], $data);
 	}
 
-	public function getCategory($aWhere, $aFields = '*')
+	public function getCategory($where, $aFields = '*')
 	{
-		return $this->iaDb->row($aFields, $aWhere, self::getTable());
+		return $this->iaDb->row($aFields, $where, self::getTable());
 	}
 
-	public function get($where = '', $catId = '0', $aStart = 0, $aLimit = null, $fields = 'c.*')
+	public function get($where = '', $catId = '0', $start = 0, $limit = null, $fields = 'c.*')
 	{
 		if (empty($where))
 		{
@@ -77,7 +77,7 @@ class iaCateg extends abstractDirectoryPackageFront
 			'where' => $where . ' ORDER BY c.`level`, c.`title`'
 			));
 
-		$return = $this->iaDb->getAll($sql, $aStart, $aLimit);
+		$return = $this->iaDb->getAll($sql, $start, $limit);
 
 		if ($return)
 		{
@@ -90,9 +90,9 @@ class iaCateg extends abstractDirectoryPackageFront
 		return $return;
 	}
 
-	/*
-	 * Rebuild categories relations.
-	 * Filds will be updated: parents, child, level, title_alias
+	/**
+	 * Rebuild categories relations
+	 * Fields will be updated: parents, child, level, title_alias
 	 */
 	public function rebuildRelation()
 	{
@@ -139,7 +139,7 @@ class iaCateg extends abstractDirectoryPackageFront
 	/**
 	 * Returns crossed categories array by a given listing id
 	 *
-	 * @param int $id listing id
+	 * @param int $listingId listing id
 	 *
 	 * @return mixed
 	 */

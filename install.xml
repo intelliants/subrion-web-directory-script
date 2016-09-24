@@ -85,20 +85,18 @@
 	<config group="directory" name="directory_display_subcategories" type="radio" values="1,0" description="Subcategories list below titles">1</config>
 	<config group="directory" name="directory_subcategories_number" type="text" description="Number of subcategories displayed below titles" show="directory_display_subcategories|1">3</config>
 	<config group="directory" name="directory_show_amount" type="radio" values="1,0" description="Show category listings amount">1</config>
+	<config group="directory" name="directory_hide_empty_categories" type="radio" values="1,0" description="Hide empty categories">0</config>
 	<config group="directory" name="directory_div2" type="divider">Listings</config>
 	<config group="directory" name="directory_enable_thumbshots" type="radio" values="1,0" description="Display thumbshots">1</config>
 	<config group="directory" name="directory_enable_alexarank" type="radio" values="1,0" description="Display Alexa Rank">1</config>
-	<config group="directory" name="directory_hide_empty_categories" type="radio" values="1,0" description="Hide empty categories">0</config>
 	<config group="directory" name="listing_auto_approval" type="radio" values="1,0" description="Listings auto approval">1</config>
 	<config group="directory" name="listing_tie_to_member" type="radio" values="1,0" description="Tie listings to registered members">1</config>
 	<config group="directory" name="directory_redirect_to_site" type="radio" values="1,0" description="Redirect to a website by clicking on a title" private="0">0</config>
-	<config group="directory" name="directory_lowercase_urls" type="radio" values="1,0" description="Transform page URLs to lowercase" private="0">1</config>
+	<config group="directory" name="directory_lowercase_urls" type="radio" values="1,0" description="Transform listing page URLs to lowercase" private="0">1</config>
 	<config group="directory" name="display_children_listing" type="radio" values="1,0" description="Display listings from child categories">0</config>
-	<config group="directory" name="listing_order_type" type="radio" values="1,0" description="Use dropdown for listings sorting">0</config>
-	<config group="directory" name="listing_crossed" type="radio" values="1,0" description="Cross listings into multiple categories" private="0">0</config>
-	<config group="directory" name="listing_crossed_limit" type="text" description="Listing crossed categories limit" show="listing_crossed|1" private="0">5</config>
-	<config group="directory" name="crossed_category_path" type="radio" values="1,0" description="Use crossed category path in Listing URL" show="listing_crossed|1">1</config>
-	<config group="directory" name="directory_listings_perpage" type="text" description="Listings on page">10</config>
+	<config group="directory" name="listing_crossed" type="radio" values="1,0" description="Allow submission in multiple categories" private="0">0</config>
+	<config group="directory" name="listing_crossed_limit" type="text" description="Multiple categories submission default limit" show="listing_crossed|1" private="0">5</config>
+	<config group="directory" name="directory_listings_perpage" type="text" description="Listings per page">10</config>
 	<config group="directory" name="directory_summary_length" type="text" description="Summary length">700</config>
 	<config group="directory" name="directory_listing_limit" type="text" description="Listing limit for each member" show="0">6</config>
 	<config group="directory" name="directory_duplicate_check" type="radio" description="Check for duplicate listing's field">0</config>
@@ -107,10 +105,10 @@
 	<config group="directory" name="directory_listings_tabs_new" type="radio" values="1,0" description="Display New Listings tab">1</config>
 	<config group="directory" name="directory_listings_tabs_popular" type="radio" values="1,0" description="Display Popular Listings tab">1</config>
 	<config group="directory" name="directory_listings_tabs_random" type="radio" values="1,0" description="Display Random Listings tab">1</config>
-	<config group="directory" name="directory_listings_perblock" type="text" description="Listings in Block">5</config>
-	<config group="directory" name="directory_new_listings_perblock" type="text" description="Listings in New Listings Tab">5</config>
-	<config group="directory" name="directory_popular_listings_perblock" type="text" description="Listings in Popular Listings Tab">5</config>
-	<config group="directory" name="directory_random_listings_perblock" type="text" description="Listings in Random Listings Tab">5</config>
+	<config group="directory" name="directory_listings_perblock" type="text" description="Listings in block">5</config>
+	<config group="directory" name="directory_new_listings_perblock" type="text" description="Listings in New Listings tab">5</config>
+	<config group="directory" name="directory_popular_listings_perblock" type="text" description="Listings in Popular Listings tab">5</config>
+	<config group="directory" name="directory_random_listings_perblock" type="text" description="Listings in Random Listings tab">5</config>
 
 	<!-- E-mail template for new listing submission notification (Administrators) -->
 	<config group="email_templates" name="new_listing" type="radio" values="1,0" description="New Listing Submitted">1</config>
@@ -294,8 +292,21 @@
 	</phrases>
 
 	<tooltips>
+		<tooltip key="directory_categories_columns">Number of columns for categories display on directory index page.</tooltip>
+		<tooltip key="directory_display_subcategories">Display subcategories list on directory index page.</tooltip>
+		<tooltip key="directory_subcategories_number">Number of subcategories on directory index page.</tooltip>
+		<tooltip key="directory_show_amount">Display number of listings on directory index page.</tooltip>
+		<tooltip key="directory_hide_empty_categories">Hide categories without listings.</tooltip>
+
+		<tooltip key="directory_enable_thumbshots">Display thumbnails generated by pagepeeker.com website.</tooltip>
+		<tooltip key="directory_enable_alexarank">Display AlexaRank statistics for the listing domains.</tooltip>
+		<tooltip key="listing_tie_to_member">Members will own newly submitted listings that have same email addresses as registered members.</tooltip>
+		<tooltip key="directory_lowercase_urls">Transform listing and category URLs to lowercase during submission.</tooltip>
 		<tooltip key="display_children_listing">If this options is turned ON your visitors will see listings from inner children categories during categories browsing.</tooltip>
-		<tooltip key="listing_tie_to_member">Members will own newly submitted listings that have same email addresses as registered members</tooltip>
+		<tooltip key="listing_crossed">Allow listing submission in multiple categories.</tooltip>
+		<tooltip key="listing_crossed_limit">Max number of categories members are allowed to submit to.</tooltip>
+		<tooltip key="directory_duplicate_check">Enables listing duplicate checking by several fields.</tooltip>
+		<tooltip key="directory_duplicate_check_field">Specify field you wish to use for duplicate checking.</tooltip>
 	</tooltips>
 
 	<blocks>

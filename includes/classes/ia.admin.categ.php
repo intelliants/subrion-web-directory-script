@@ -83,12 +83,12 @@ class iaCateg extends abstractDirectoryPackageAdmin
 		return $result;
 	}
 
-	public function get($where = '', $aStart = 0, $aLimit = null, $fields = '*')
+	public function get($where = '', $start = 0, $limit = null, $fields = '*')
 	{
 		$where || $where = iaDb::EMPTY_CONDITION;
 		$fields .= ', `num_all_listings` `num`';
 
-		return $this->iaDb->all($fields, $where . ' ORDER BY `level`, `title`', $aStart, $aLimit, self::getTable());
+		return $this->iaDb->all($fields, $where . ' ORDER BY `level`, `title`', $start, $limit, self::getTable());
 	}
 
 	public function getCategory($aWhere, $aFields = '*')
@@ -148,8 +148,8 @@ class iaCateg extends abstractDirectoryPackageAdmin
 		$this->rebuildRelation();
 	}
 
-	/*
-	 * Rebuild categories relations.
+	/**
+	 * Rebuild categories relations
 	 * Fields that will be updated: parents, child, level, title_alias
 	 */
 	public function rebuildRelation()
@@ -261,14 +261,14 @@ class iaCateg extends abstractDirectoryPackageAdmin
 		return $this->iaDb->one(iaDb::STMT_COUNT_ROWS, null, self::getTable());
 	}
 
-	public function getTitleAlias($aCategory, $aParent = array())
+	public function getTitleAlias($category, $parent = array())
 	{
-		if (-1 == $aCategory['parent_id'])
+		if (-1 == $category['parent_id'])
 		{
 			return '';
 		}
 
-		$title = iaSanitize::alias($aCategory['title_alias']);
+		$title = iaSanitize::alias($category['title_alias']);
 
 		if ('category' == $title)
 		{
@@ -276,12 +276,12 @@ class iaCateg extends abstractDirectoryPackageAdmin
 			$title .= '-' . $id;
 		}
 
-		if (empty($aParent) || $aCategory['parent_id'] != $aParent['id'])
+		if (empty($parent) || $category['parent_id'] != $parent['id'])
 		{
-			$aParent = $this->getCategory("`id` = {$aCategory['parent_id']}", "`id`, `title_alias`");
+			$parent = $this->getCategory("`id` = {$category['parent_id']}", "`id`, `title_alias`");
 		}
 
-		$title = ltrim($aParent['title_alias'] . $title . IA_URL_DELIMITER, IA_URL_DELIMITER);
+		$title = ltrim($parent['title_alias'] . $title . IA_URL_DELIMITER, IA_URL_DELIMITER);
 
 		if ($this->iaCore->get('directory_lowercase_urls', true))
 		{

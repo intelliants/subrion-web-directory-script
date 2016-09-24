@@ -85,13 +85,13 @@ class iaListing extends abstractDirectoryPackageAdmin
 		return $result;
 	}
 
-	protected function _changeNumListing($aCatId, $aInt = 1)
+	protected function _changeNumListing($categoryId, $aInt = 1)
 	{
 		$sql  = "UPDATE `{$this->iaDb->prefix}categs` ";
 		// `num_listings` changed only for ONE category
-		$sql .= "SET `num_listings`=if (`id` = $aCatId, `num_listings` + {$aInt}, `num_listings`) ";
+		$sql .= "SET `num_listings`=if (`id` = $categoryId, `num_listings` + {$aInt}, `num_listings`) ";
 		$sql .= ", `num_all_listings` = `num_all_listings` + {$aInt} ";
-		$sql .= "WHERE FIND_IN_SET({$aCatId}, `child`) ";
+		$sql .= "WHERE FIND_IN_SET({$categoryId}, `child`) ";
 
 		return $this->iaDb->query($sql);
 	}
@@ -119,7 +119,6 @@ class iaListing extends abstractDirectoryPackageAdmin
 
 		return false;
 	}
-
 
 	public function recountListingsNum()
 	{
@@ -166,21 +165,20 @@ class iaListing extends abstractDirectoryPackageAdmin
 		}
 
 		$this->iaDb->resetTable();
-
 	}
 
-	public function getById($aId)
+	public function getById($listingId)
 	{
 		$sql = "SELECT t1.*, ";
 		$sql .= "if (t2.`fullname` <> '', t2.`fullname`, t2.`username`) `member` ";
 		$sql .= "FROM `" . self::getTable(true) . "` t1 ";
 		$sql .= "LEFT JOIN `{$this->iaDb->prefix}members` t2 ON (t1.`member_id` = t2.`id`) ";
-		$sql .= "WHERE t1.`id` = '{$aId}'";
+		$sql .= "WHERE t1.`id` = '{$listingId}'";
 
 		return $this->iaDb->getRow($sql);
 	}
 
-	public function get($aWhere = null, $aStart = 0, $aLimit = '', $aOrder = '',
+	public function get($where = null, $start = 0, $limit = '', $order = '',
 		$fields = 't1.`id`, t1.`title`, t1.`title_alias`, t1.`reported_as_broken`, t1.`reported_as_broken_comments`, t1.`date_added`, t1.`date_modified`, t1.`status`')
 	{
 		$sql = "SELECT SQL_CALC_FOUND_ROWS $fields, '1' `update`, '1' `delete`, ";
@@ -191,9 +189,9 @@ class iaListing extends abstractDirectoryPackageAdmin
 		$sql .= "ON t1.`category_id` = t2.`id` ";
 		$sql .= "LEFT JOIN `{$this->iaDb->prefix}members` t3 ";
 		$sql .= "ON t1.`member_id` = t3.`id` ";
-		$sql .= $aWhere ? "WHERE $aWhere " : '';
-		$sql .= $aOrder ? " ORDER BY $aOrder " : '';
-		$sql .= $aStart || $aLimit ? " LIMIT $aStart, $aLimit " : '';
+		$sql .= $where ? "WHERE $where " : '';
+		$sql .= $order ? " ORDER BY $order " : '';
+		$sql .= $start || $limit ? " LIMIT $start, $limit " : '';
 
 		return $this->iaDb->getAll($sql);
 	}

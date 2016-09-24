@@ -124,15 +124,6 @@ class iaBackendController extends iaAbstractControllerPackageBackend
 					$entry['alexa_rank'] = $alexaData['rank'];
 				}
 			}
-
-			// check pagerank
-			if ($this->_iaCore->get('directory_enable_pagerank'))
-			{
-				include IA_PACKAGES . 'directory' . IA_DS . 'includes' . IA_DS . 'pagerank.inc.php';
-				$pageRank = new PageRank();
-
-				$entry['pagerank'] = $pageRank->getPageRank($entry['domain']);
-			}
 		}
 
 		return !$this->getMessages();
@@ -185,7 +176,7 @@ class iaBackendController extends iaAbstractControllerPackageBackend
 	{
 		parent::_assignValues($iaView, $entryData);
 
-		$category = $this->_iaDb->row(array('id', 'title', 'parent_id', 'parents'), iaDb::convertIds($entryData['category_id']), 'categs');
+		$category = $this->_iaDb->row(array('id', 'title', 'parent_id', 'parents'), iaDb::convertIds($entryData['category_id']), $this->getHelper()->getTable());
 
 		if (!empty($this->_iaCore->requestPath[0])) {
 			$listing = $this->getHelper()->getById((int)$this->_iaCore->requestPath[0]);
@@ -203,6 +194,6 @@ class iaBackendController extends iaAbstractControllerPackageBackend
 		}
 
 		$iaView->assign('category', $category);
-		$iaView->assign('statuses', array(iaCore::STATUS_APPROVAL, 'banned', 'suspended', iaCore::STATUS_ACTIVE));
+		$iaView->assign('statuses', $this->getHelper()->getStatuses());
 	}
 }
