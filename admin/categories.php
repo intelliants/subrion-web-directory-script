@@ -83,6 +83,40 @@ class iaBackendController extends iaAbstractControllerPackageBackend
 		return !$this->getMessages();
 	}
 
+	protected function _postSaveEntry(array &$entry, array $data, $action)
+	{
+		if (!empty($data['crossed']))
+		{
+			$data['crossed'] = explode(',', $data['crossed']);
+
+			$entryData['category_id'] = $this->getHelper()->getLastId();
+
+			if (iaCore::ACTION_EDIT == $action)
+			{
+				$entryData['category_id'] = $data['id'];
+
+				$stmt = iaDb::convertIds($entryData['category_id'], 'category_id');
+
+				$this->_iaDb->delete($stmt, $this->getHelper()->getTableCrossed());
+			}
+
+			foreach ($data['crossed'] as $row)
+			{
+				$entryData['crossed_id'] = $row;
+
+				$this->_iaDb->insert(array($entryData), null, $this->getHelper()->getTableCrossed());
+			}
+		}
+		else
+		{
+			if (iaCore::ACTION_EDIT == $action) {
+				$stmt = iaDb::convertIds($data['id'], 'category_id');
+
+				$this->_iaDb->delete($stmt, $this->getHelper()->getTableCrossed());
+			}
+		}
+	}
+
 	protected function _assignValues(&$iaView, array &$entryData)
 	{
 		parent::_assignValues($iaView, $entryData);
@@ -90,6 +124,20 @@ class iaBackendController extends iaAbstractControllerPackageBackend
 		$entryData['title_alias'] = end(explode(IA_URL_DELIMITER, $entryData['title_alias']));
 
 		$parent = $this->_iaDb->row(array('id', 'title', 'parents', 'child'), iaDb::convertIds($entryData['parent_id']));
+
+		if (!empty($this->_iaCore->requestPath[0])) {
+			$category = $this->getHelper()->getById((int)$this->_iaCore->requestPath[0]);
+
+			$crossed = $this->_iaDb->getAll("SELECT t.`id`, t.`title` FROM
+				{$this->_iaCore->iaDb->prefix}{$this->getHelper()->getTable()} t,
+				{$this->_iaCore->iaDb->prefix}{$this->getHelper()->getTableCrossed()} cr
+				WHERE t.`id` = cr.`crossed_id` AND cr.`category_id` = '{$category['id']}'");
+
+			foreach ($crossed as $item)
+			{
+				$entryData['crossed'][$item['id']] = $item['title'];
+			}
+		}
 
 		$iaView->assign('parent', $parent);
 	}

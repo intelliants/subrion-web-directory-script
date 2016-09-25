@@ -67,7 +67,7 @@ class iaCateg extends abstractDirectoryPackageFront
 			. 'FROM `:prefix:table_categories` c '
 			. 'LEFT JOIN `:prefix:table_crossed_categories` cr '
 			. 'ON c.`id` = cr.`crossed_id` '
-			. 'WHERE cr.`category_id` = :id ORDER BY c.`title`)';
+			. 'WHERE cr.`category_id` = :id ORDER BY c.`title`) ORDER BY `title`';
 		$sql = iaDb::printf($sql, array(
 			'fields' => $fields,
 			'prefix' => $this->iaDb->prefix,

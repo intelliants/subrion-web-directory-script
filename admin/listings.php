@@ -131,44 +131,35 @@ class iaBackendController extends iaAbstractControllerPackageBackend
 
 	protected function _postSaveEntry(array &$entry, array $data, $action)
 	{
-		if (isset($data['crossed_links']))
+		if (!empty($data['crossed_links']))
 		{
-			$crossed = $data['crossed_links'];
-			unset($data['crossed_links']);
+			$data['crossed_links'] = explode(',', $data['crossed_links']);
+
+			$entryData['listing_id'] = $this->getHelper()->getLastId();
+
+			if (iaCore::ACTION_EDIT == $action)
+			{
+				$entryData['listing_id'] = $this->getHelper()->getById((int)$this->_iaCore->requestPath[0])['id'];
+
+				$stmt = iaDb::convertIds($entryData['listing_id'], 'listing_id');
+
+				$this->_iaDb->delete($stmt, $this->getHelper()->getTableCrossed());
+			}
+
+			foreach ($data['crossed_links'] as $row)
+			{
+				$entryData['category_id'] = $row;
+
+				$this->_iaDb->insert(array($entryData), null, $this->getHelper()->getTableCrossed());
+			}
 		}
-
-		if (isset($crossed) && $crossed)
+		else
 		{
-			$listing = $this->getHelper()->getById((int)$this->_iaCore->requestPath[0]);
+			if (iaCore::ACTION_EDIT == $action) {
+				$stmt = iaDb::convertIds($data['id'], 'listing_id');
 
-			$this->_iaDb->setTable($this->getHelper()->getTableCrossed());
-
-			$this->_iaDb->delete(iaDb::convertIds($listing['id'], 'listing_id'));
-
-			$crossedLimit = $this->_iaCore->get('listing_crossed_limit', 5);
-
-			if (!is_array($crossed))
-			{
-				$crossed = explode(',', $crossed);
+				$this->_iaDb->delete($stmt, $this->getHelper()->getTableCrossed());
 			}
-
-			$count = count($crossed) > $crossedLimit ? $crossedLimit : count($crossed);
-			$crossedInput = array();
-
-			for ($i = 0; $i < $count; $i++)
-			{
-				if ($crossed[$i] != $data['category_id'])
-				{
-					$crossedInput[] = array('listing_id' => $listing['id'], 'category_id' => (int)$crossed[$i]);
-				}
-			}
-
-			if (count($crossedInput) > 0)
-			{
-				$this->_iaDb->insert($crossedInput);
-			}
-
-			$this->_iaDb->resetTable();
 		}
 	}
 
@@ -176,7 +167,7 @@ class iaBackendController extends iaAbstractControllerPackageBackend
 	{
 		parent::_assignValues($iaView, $entryData);
 
-		$category = $this->_iaDb->row(array('id', 'title', 'parent_id', 'parents'), iaDb::convertIds($entryData['category_id']), $this->getHelper()->getTable());
+		$category = $this->_iaDb->row(array('id', 'title', 'parent_id', 'parents'), iaDb::convertIds($entryData['category_id']),  iaCateg::getTable());
 
 		if (!empty($this->_iaCore->requestPath[0])) {
 			$listing = $this->getHelper()->getById((int)$this->_iaCore->requestPath[0]);
@@ -185,11 +176,9 @@ class iaBackendController extends iaAbstractControllerPackageBackend
 				FROM `{$this->_iaCore->iaDb->prefix}categs` t, `{$this->_iaCore->iaDb->prefix}listings_categs` cr
 				WHERE t.`id` = cr.`category_id` AND cr.`listing_id` = '{$listing['id']}'");
 
-			$category['crossed'] = array();
-
-			foreach ($crossed as $val)
+			foreach ($crossed as $item)
 			{
-				$category['crossed'][$val['id']] = $val['title'];
+				$category['crossed'][$item['id']] = $item['title'];
 			}
 		}
 

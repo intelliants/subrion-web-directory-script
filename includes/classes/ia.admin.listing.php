@@ -22,10 +22,14 @@ class iaListing extends abstractDirectoryPackageAdmin
 
 	public $dashboardStatistics = array('icon' => 'link');
 
-
 	public static function getTableCrossed()
 	{
 		return self::$_tableCrossed;
+	}
+
+	public function getLastId()
+	{
+		return $this->iaDb->one('MAX(`id`)', null, self::$_table);
 	}
 
 	public function url($action, array $data)

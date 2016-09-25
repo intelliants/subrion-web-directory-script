@@ -50,9 +50,10 @@ Ext.onReady(function()
 	}
 	else
 	{
-		// Crossed categories
 		if ('#tree-crossed'.length)
 		{
+			var nodes = $('#crossed').val().split(',');
+
 			$('#tree-crossed').jstree(
 			{
 				core:
@@ -61,9 +62,14 @@ Ext.onReady(function()
 						data: function(n)
 						{
 							var params = {};
+
 							if(n.id != '#')
 							{
 								params.id = n.id;
+							}
+							else
+							{
+								params.id = 0;
 							}
 
 							return params;
@@ -75,17 +81,9 @@ Ext.onReady(function()
 				checkbox: {keep_selected_style: false, three_state: false},
 				plugins: ['checkbox']
 			})
-			.on('loaded.jstree', function()
+			.on('load_node.jstree', function(e, data)
 			{
-				var tree = $('#tree-crossed').jstree(true),
-					nodes = [];
-
-				$('span', '#crossed-list').each(function()
-				{
-					nodes.push($(this).data('id'));
-				});
-
-				tree.select_node(nodes);
+				for (var i in nodes) data.instance.select_node(nodes[i]);
 			})
 			.on('click.jstree', function(e)
 			{

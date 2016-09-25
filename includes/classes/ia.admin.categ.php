@@ -23,6 +23,11 @@ class iaCateg extends abstractDirectoryPackageAdmin
 		return self::$_tableCrossed;
 	}
 
+	public function getLastId()
+	{
+		return $this->iaDb->one('MAX(`id`)', null, self::$_table);
+	}
+
 	public function url($action, $params)
 	{
 		$data = array();
@@ -114,10 +119,10 @@ class iaCateg extends abstractDirectoryPackageAdmin
 			$this->updateCounters($id, $itemData, iaCore::ACTION_EDIT, $currentData);
 
 			$this->iaCore->startHook('phpListingUpdated', array(
-					'itemId' => $id,
-					'itemName' => $this->getItemName(),
-					'itemData' => $itemData,
-					'previousData' => $currentData
+				'itemId' => $id,
+				'itemName' => $this->getItemName(),
+				'itemData' => $itemData,
+				'previousData' => $currentData
 			));
 		}
 
@@ -131,10 +136,16 @@ class iaCateg extends abstractDirectoryPackageAdmin
 		if ($result)
 		{
 			$stmt = iaDb::convertIds($itemId, 'category_id');
+			$this->iaDb->delete($stmt, 'listings_categs');
+
+			$stmt = iaDb::convertIds($itemId, 'category_id');
+			$this->iaDb->delete($stmt, self::getTableCrossed());
+
+			$stmt = iaDb::convertIds($itemId, 'crossed_id');
 			$this->iaDb->delete($stmt, self::getTableCrossed());
 
 			$stmt = sprintf('`id` IN (SELECT `category_id` FROM `%s%s` WHERE `parent_id` = %d)',
-				$this->iaDb->prefix, $this->_tableFlat, $itemId);
+			$this->iaDb->prefix, $this->_tableFlat, $itemId);
 
 			$this->iaDb->delete($stmt, self::getTable());
 			$this->iaDb->delete(iaDb::convertIds($itemId, 'parent_id'), $this->_tableFlat);
