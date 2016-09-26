@@ -139,7 +139,8 @@ class iaBackendController extends iaAbstractControllerPackageBackend
 
 			if (iaCore::ACTION_EDIT == $action)
 			{
-				$entryData['listing_id'] = $this->getHelper()->getById((int)$this->_iaCore->requestPath[0])['id'];
+				$entryData['listing_id'] = $this->getHelper()->getById((int)$this->_iaCore->requestPath[0]);
+				$entryData['listing_id'] = $entryData['listing_id']['id'];
 
 				$stmt = iaDb::convertIds($entryData['listing_id'], 'listing_id');
 
