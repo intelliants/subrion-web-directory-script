@@ -67,7 +67,7 @@ $(function()
 	{else}
 		<input type="hidden" name="parent_id" id="parent_id" value="-1">
 
-		{$exceptions = ['meta_description', 'meta_keywords']}
+		{$exceptions = ['meta_description', 'meta_keywords', 'icon']}
 	{/if}
 
 	{include file='field-type-content-fieldset.tpl' isSystem=true exceptions=$exceptions}

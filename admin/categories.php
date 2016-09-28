@@ -26,11 +26,6 @@ class iaBackendController extends iaAbstractControllerPackageBackend
 		$this->_root = $this->getHelper()->getRoot();
 	}
 
-	protected function _modifyGridParams(&$conditions, &$values, array $params)
-	{
-		$conditions[] = '`parent_id` >= 0';
-	}
-
 	protected function _entryAdd(array $entryData)
 	{
 		$entryData['date_added'] = date(iaDb::DATE_FORMAT);
@@ -41,6 +36,8 @@ class iaBackendController extends iaAbstractControllerPackageBackend
 
 	protected function _entryUpdate(array $entryData, $entryId)
 	{
+		$entryData['date_modified'] = date(iaDb::DATE_FORMAT);
+
 		$this->getHelper()->update($entryData, $entryId);
 
 		return (0 === $this->_iaDb->getErrorNumber());
@@ -48,7 +45,7 @@ class iaBackendController extends iaAbstractControllerPackageBackend
 
 	protected function _entryDelete($entryId)
 	{
-		return (bool)$this->getHelper()->delete($entryId);
+		return ($this->_root['id'] == $entryId) ? false : (bool)$this->getHelper()->delete($entryId);
 	}
 
 	protected function _setDefaultValues(array &$entry)

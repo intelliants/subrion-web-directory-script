@@ -31,7 +31,7 @@
 		<action name="dashboard_listings_add" url="directory/listings/add/" icon="plus" type="dashboard">Add Listings</action>
 
 		<action name="categories_list" url="directory/categories/" icon="folder" pages="directory_stats,manage_categs:add,manage_categs:edit">View Categories</action>
-		<action name="categories_add" url="directory/categories/add/" icon="folder-plus"  pages="manage_categs,manage_categs:edit">Add Category</action>
+		<action name="categories_add" url="directory/categories/add/" icon="folder-plus" pages="manage_categs,manage_categs:edit">Add Category</action>
 
 		<action name="listings_field_view" url="fields/listings/" icon="list" pages="listings_fields">View Fields</action>
 		<action name="listings_field_add" url="fields/add/?item=listings" icon="plus-alt" pages="listings_fields">Add Field</action>
@@ -46,10 +46,10 @@
 	<adminpages>
 		<page group="directory" filename="statistics" name="directory_stats" url="directory/" menus="menu">Statistics</page>
 		<page group="directory" menus="menu">Management</page>
-		<page group="directory" filename="listings" name="manage_listings" url="directory/listings/" menus="menu">Listings</page>
 		<page group="directory" filename="categories" name="manage_categs" url="directory/categories/" menus="menu">Categories</page>
+		<page group="directory" filename="listings" name="manage_listings" url="directory/listings/" menus="menu">Listings</page>
 		<page group="directory" menus="menu">Extended</page>
-		<page group="directory" filename="fields" menus="menu" url="fields/listings/" name="listings_fields">Listings Fields</page>
+		<page group="directory" filename="fields" name="listings_fields" url="fields/listings/" menus="menu">Listings Fields</page>
 	</adminpages>
 
 	<pages>
@@ -67,16 +67,27 @@
 	</pages>
 
 	<permissions>
+		<object id="view_listing" access="1">View Listing</object>
 		<object id="view_listing" action="add" access="1">Add Listing</object>
 		<object id="view_listing" action="edit" access="1">Edit Listing</object>
 		<object id="view_listing" action="delete" access="1">Delete Listing</object>
-		<object meta_object="admin_pages" id="manage_listings" action="add" access="1">Add Listing</object>
-		<object meta_object="admin_pages" id="manage_listings" action="edit" access="1">Edit Listing</object>
+
+		<object meta_object="admin_page" id="manage_categs" access="1">View listings</object>
+		<object meta_object="admin_page" id="manage_categs" action="add">Add listing</object>
+		<object meta_object="admin_page" id="manage_categs" action="edit">Edit listing</object>
+		<object meta_object="admin_page" id="manage_categs" action="delete">Delete listing</object>
+
+		<object meta_object="admin_page" id="manage_listings" access="1">View listings</object>
+		<object meta_object="admin_page" id="manage_listings" action="add">Add listing</object>
+		<object meta_object="admin_page" id="manage_listings" action="edit">Edit listing</object>
+		<object meta_object="admin_page" id="manage_listings" action="delete">Delete listing</object>
 
 		<permission type="group" type_id="4" access="0">my_listings</permission>
 		<permission type="group" type_id="4" action="add" access="0">view_listing</permission>
 		<permission type="group" type_id="4" action="edit" access="0">view_listing</permission>
 		<permission type="group" type_id="4" action="delete" access="0">view_listing</permission>
+
+		<object meta_object="admin_page" id="listings_fields" action="listings" access="1">Allow to manage listing fields</object>
 	</permissions>
 
 	<configgroup name="directory">Directory</configgroup>
