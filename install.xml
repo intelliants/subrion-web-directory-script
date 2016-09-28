@@ -6,7 +6,7 @@
 	<contributor>Intelliants LLC</contributor>
 	<version>4.1.0</version>
 	<date>2016-09-13</date>
-	<compatibility>4.0.5</compatibility>
+	<compatibility>4.1</compatibility>
 	<url>dir</url>
 
 	<screenshots>
@@ -104,7 +104,7 @@
 	<config group="directory" name="listing_tie_to_member" type="radio" values="1,0" description="Tie listings to registered members">1</config>
 	<config group="directory" name="directory_redirect_to_site" type="radio" values="1,0" description="Redirect to a website by clicking on a title" private="0">0</config>
 	<config group="directory" name="directory_lowercase_urls" type="radio" values="1,0" description="Transform listing page URLs to lowercase" private="0">1</config>
-	<config group="directory" name="display_children_listing" type="radio" values="1,0" description="Display listings from child categories">0</config>
+	<config group="directory" name="display_children_listing" type="radio" values="1,0" description="Display listings from child categories">1</config>
 	<config group="directory" name="listing_crossed" type="radio" values="1,0" description="Allow submission in multiple categories" private="0">0</config>
 	<config group="directory" name="listing_crossed_limit" type="text" description="Multiple categories submission default limit" show="listing_crossed|1" private="0">5</config>
 	<config group="directory" name="directory_listings_perpage" type="text" description="Listings per page">10</config>
@@ -321,17 +321,17 @@
 	</tooltips>
 
 	<blocks>
+		<!-- Directory Categories -->
+		<block name="directory_categories" title="Directory Categories" position="bottom" type="smarty" header="1" sticky="0" order="1" pages="index">
+			<![CDATA[{ia_hooker name="smartyFrontDirectoryCategories"}]]>
+		</block>
+
 		<block name="directory_categories_tree" title="Top categories" position="left" type="smarty" collapsible="1" sticky="0" pages="directory_home" filename="block.categories-tree"><![CDATA[]]></block>
 		<block name="featured_listings" title="Featured listings" position="right" type="smarty" header="1" sticky="0" pages="directory_home,index" filename="block.featured-listings" classname="box--featured"><![CDATA[]]></block>
 		<block name="sponsored_listings" title="Sponsored listings" position="right" type="smarty" header="1" sticky="0" pages="directory_home,index" filename="block.sponsored-listings" added="3.1.2" classname="box--sponsored"><![CDATA[]]></block>
 		<block name="recent_listings" title="Recently added listings" position="bottom" type="smarty" header="0" sticky="0" order="2" pages="index" filename="block.recent-listings"><![CDATA[]]></block>
 		<block name="directory_listings_tabs" title="Directory listings tabs" position="right" type="smarty" sticky="1" pages="add_listing,profile,member_funds,my_listings,members" header="0" order="0" filename="block.listings-tabs"><![CDATA[]]></block>
 		<block name="directory_author" title="Author" position="right" type="smarty" sticky="0" header="1" pages="view_listing" collapsible="1" order="3" filename="block.author"><![CDATA[]]></block>
-
-		<!-- Directory Categories -->
-		<block name="directory_categories" title="Directory Categories" position="bottom" type="smarty" header="1" sticky="0" order="1" pages="index">
-			<![CDATA[{ia_hooker name="smartyFrontDirectoryCategories"}]]>
-		</block>
 	</blocks>
 
 	<hooks>

@@ -231,7 +231,6 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType())
 				$iaView->title($category['title']);
 			}
 	}
-
 	$totalListings = $iaDb->foundRows();
 
 	iaLanguage::set('no_web_listings', str_replace('{%URL%}', IA_PACKAGE_URL . 'add/' . (isset($category) && $category ? '?category=' . $category['id'] : ''), iaLanguage::get('no_web_listings')));
