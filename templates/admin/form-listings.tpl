@@ -82,12 +82,12 @@ $(function()
 			</div>
 		</div>
 		{if iaCore::ACTION_EDIT == $pageAction}
-		<div id="reported-as-broken" class="row">
-			<label class="col col-lg-2 control-label">{lang key='reported_as_broken'}</label>
-			<div class="col col-lg-4">
-				{html_radio_switcher name='reported_as_broken' value=$item.reported_as_broken}
+			<div id="reported-as-broken" class="row">
+				<label class="col col-lg-2 control-label">{lang key='reported_as_broken'}</label>
+				<div class="col col-lg-4">
+					{html_radio_switcher name='reported_as_broken' value=$item.reported_as_broken}
+				</div>
 			</div>
-		</div>
 			{if $item.reported_as_broken && isset($item.reported_as_broken_comments) && $item.reported_as_broken_comments}
 				<div id="reported-as-broken-comments" class="row">
 					<label class="col col-lg-2 control-label">{lang key='reported_as_broken_comments'}</label>

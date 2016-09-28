@@ -71,6 +71,7 @@ if (iaView::REQUEST_JSON == $iaView->getRequestType())
 
 if (iaView::REQUEST_HTML == $iaView->getRequestType())
 {
+	$pageActions = [];
 	$pageName = $iaView->name();
 
 	if (isset($iaCore->requestPath[0]))
