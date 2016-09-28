@@ -83,13 +83,19 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType())
 		}
 	}
 
+	$pagination = array(
+		'total' => 0,
+		'limit' => $iaCore->get('directory_listings_perpage', 10),
+		'start' => 0,
+		'url' => IA_SELF . '?page={page}'
+	);
+
+	$page = isset($_GET['page']) && is_numeric($_GET['page']) ? max((int)$_GET['page'], 1) : 1;
+	$pagination['start'] = ($page - 1) * $pagination['limit'];
+
 	$order = '';
-	$page = isset($_GET['page']) && 1 < $_GET['page'] ? (int)$_GET['page'] : 1;
-	$per_page = $iaCore->get('directory_listings_perpage', 10);
-	$start = ($page - 1) * $per_page;
 
 	$listings = array();
-	$totalListings = 0;
 	$orders = array('date_added-asc', 'date_added-desc', 'rank-desc', 'rank-asc', 'title-desc', 'title-asc');
 
 	if (!isset($_SESSION['d_order']))
@@ -139,7 +145,7 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType())
 				return iaView::errorPage(iaView::ERROR_UNAUTHORIZED);
 			}
 
-			$listings = $iaListing->get(' t3.`id` = ' . iaUsers::getIdentity()->id . ' ', $start, $per_page, $order);
+			$listings = $iaListing->get(' t3.`id` = ' . iaUsers::getIdentity()->id . ' ', $pagination['start'], $pagination['limit'], $order);
 			iaLanguage::set('no_web_listings', iaLanguage::get('no_my_listings'));
 
 			break;
@@ -147,7 +153,7 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType())
 		case 'top_listings':
 			$rssFeed = 'top';
 
-			$listings = $iaListing->getTop($per_page, $start);
+			$listings = $iaListing->getTop($pagination['limit'], $pagination['start']);
 			iaLanguage::set('no_web_listings', iaLanguage::get('no_web_listings2'));
 
 			break;
@@ -155,7 +161,7 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType())
 		case 'new_listings':
 			$rssFeed = 'latest';
 
-			$listings = $iaListing->getLatest($per_page, $start);
+			$listings = $iaListing->getLatest($pagination['limit'], $pagination['start']);
 			iaLanguage::set('no_web_listings', iaLanguage::get('no_web_listings2'));
 
 			break;
@@ -163,13 +169,13 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType())
 		case 'popular_listings':
 			$rssFeed = 'popular';
 
-			$listings = $iaListing->getPopular($per_page, $start);
+			$listings = $iaListing->getPopular($pagination['limit'], $pagination['start']);
 			iaLanguage::set('no_web_listings', iaLanguage::get('no_web_listings2'));
 
 			break;
 
 		case 'random_listings':
-			$listings = $iaListing->getRandom($per_page, $start);
+			$listings = $iaListing->getRandom($pagination['limit'], $pagination['start']);
 			iaLanguage::set('no_web_listings', iaLanguage::get('no_web_listings2'));
 
 			break;
@@ -217,7 +223,7 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType())
 
 			$iaCateg->incrementViewsCounter($category['id']);
 
-			$listings = $iaListing->getByCategoryId($children, '', $start, $per_page, $order);
+			$listings = $iaListing->getByCategoryId($children, '', $pagination['start'], $pagination['limit'], $order);
 
 			if (-1 != $category['parent_id'])
 			{
@@ -231,7 +237,7 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType())
 				$iaView->title($category['title']);
 			}
 	}
-	$totalListings = $iaDb->foundRows();
+	$pagination['total'] = $iaListing->iaDb->foundRows();
 
 	iaLanguage::set('no_web_listings', str_replace('{%URL%}', IA_PACKAGE_URL . 'add/' . (isset($category) && $category ? '?category=' . $category['id'] : ''), iaLanguage::get('no_web_listings')));
 
@@ -268,10 +274,7 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType())
 
 	$iaView->assign('rss_feed', $rssFeed);
 	$iaView->assign('listings', $listings);
-	$iaView->assign('items', $listings);
-	$iaView->assign('aTotal', $totalListings);
-	$iaView->assign('aItemsPerPage', $iaCore->get('directory_listings_perpage'));
-	$iaView->assign('aTemplate', IA_SELF . '?page={page}');
+	$iaView->assign('pagination', $pagination);
 
 	$iaView->display('index');
 }
