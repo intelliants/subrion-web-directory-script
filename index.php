@@ -5,35 +5,65 @@ $iaListing = $iaCore->factoryPackage('listing', IA_CURRENT_PACKAGE);
 
 if (iaView::REQUEST_JSON == $iaView->getRequestType())
 {
-	$categoryId = isset($_GET['id']) ? (int)$_GET['id'] : $iaDb->one('id', '`parent_id` = -1', 'categs');
+	$data = array();
+
+	$categoryId = isset($_GET['id']) ? (int)$_GET['id'] : $iaDb->one('parent_id', '`id` = 0', 'categs');
+	$currentCategId = (isset($_GET['current_category']) ? (int)$_GET['current_category'] : 0);
 
 	$where = "`parent_id` = $categoryId && `status` = 'active'";
+
+	if ($currentCategId)
+	{
+		$where .= " && `id` != $currentCategId";
+	}
+
 	if ($iaCore->get('directory_hide_empty_categories'))
 	{
 		$where .= " AND `num_all_listings` != 0";
 	}
+
 	$where .= " ORDER BY `title`";
 
 	$data = array();
 	$rows = $iaDb->all(array('id', 'title', 'title_alias', 'locked', 'child'), $where, null, null, 'categs');
+
 	foreach ($rows as &$row)
 	{
 		$data[] = array(
-			'id' => (int)$row['id'],
-			'text' => $row['title'],
-			'children' => $row['child'] && $row['child'] != $row['id']
-		);
-/*		$data[] = array(
-			'data' => array(
-				'title' => $row['title'],
-				'attr' => array('href' => $iaCore->packagesData[IA_CURRENT_PACKAGE]['url'] . $row['title_alias'])
-			),
-			'state' => ($row['child'] == $row['id']) ? 'leaf' : 'closed',
-			'attr' => array(
 				'id' => $row['id'],
-				'rel' => $row['locked'] ? 'locked' : 'default'
-			)
-		);*/
+				'text' => $row['title'],
+				'children' => $row['child'] && $row['child'] != $row['id'] || empty($row['child']),
+				'state' => $state
+		);
+	}
+
+	if (isset($_GET['title']) && isset($_GET['category']) && isset($_GET['get']) && 'alias' == $_GET['get'])
+	{
+		$iaCateg = $iaCore->factoryPackage('categ', IA_CURRENT_PACKAGE, iaCore::ADMIN);
+
+		$iaDb->setTable(iaCateg::getTable());
+
+		$title = $iaCateg->getTitleAlias(array('title_alias' => $_GET['title'], 'parent_id' => (int)$_GET['category']));
+
+		$data['data'] = $iaCateg->url('default', array('title_alias' => $title));
+
+		$iaDb->resetTable();
+	}
+
+	if ('pre_recount_listings' == $_POST['action'])
+	{
+		$iaCateg = $iaCore->factoryPackage('categ', IA_CURRENT_PACKAGE, iaCore::ADMIN);
+
+		$iaCateg->clearListingsNum();
+
+		$data['categories_total'] = $iaCateg->getCount();
+	}
+
+	if ('recount_listings' == $_POST['action'])
+	{
+		$iaCateg = $iaCore->factoryPackage('categ', IA_CURRENT_PACKAGE, iaCore::ADMIN);
+
+		$data = $iaCateg->recountListingsNum($_POST['start'], $_POST['limit']);
 	}
 
 	$iaView->assign($data);
@@ -108,7 +138,7 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType())
 				return iaView::errorPage(iaView::ERROR_UNAUTHORIZED);
 			}
 
-			$listings = $iaListing->getByMemberId(iaUsers::getIdentity()->id, $start, $per_page, $order);
+			$listings = $iaListing->get(' t3.`id` = ' . iaUsers::getIdentity()->id . ' ', $start, $per_page, $order);
 			iaLanguage::set('no_web_listings', iaLanguage::get('no_my_listings'));
 
 			break;
@@ -188,8 +218,11 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType())
 
 			$listings = $iaListing->getByCategoryId($children, '', $start, $per_page, $order);
 
-			$iaView->set('description', $category['meta_description']);
-			$iaView->set('keywords', $category['meta_keywords']);
+			if (-1 != $category['parent_id'])
+			{
+				$iaView->set('description', $category['meta_description']);
+				$iaView->set('keywords', $category['meta_keywords']);
+			}
 			$iaView->assign('category', $category);
 
 			if (isset($category) && -1 != $category['parent_id'] && isset($category['title']))

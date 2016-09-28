@@ -35,8 +35,16 @@
 
 		<div class="ia-item__additional">
 			<p class="text-overflow"><span class="fa fa-link"></span> <a href="{$listing.url}" class="url">{$listing.url}</a></p>
-			{if !isset($category) || $listing.category_id != $category.id}
-				<p><span class="fa fa-folder-o"></span> <a href="{ia_url type='url' item='categs' data=$listing}">{$listing.category_title}</a></p>
+			{if isset($listing.breadcrumb) && !isset($category) || $listing.category_id != $category.id}
+				<div class="clearfix"></div>
+				<p>
+					<span class="fa fa-folder-o"></span>
+					{foreach $listing.breadcrumb as $item}
+						{if 1 !==  $item@iteration} <span class="fa fa-angle-right"></span> {/if}
+						<a href="{$item.url}">{$item.title}</a>
+					{/foreach}
+				</p>
+				<div class="clearfix"></div>
 			{/if}
 			<p><span class="fa fa-clock-o"></span> {$listing.date_added|date_format:$core.config.date_format}</p>
 			<p><span class="fa fa-eye"></span> {$listing.views_num} {lang key='views'}</p>
@@ -46,11 +54,6 @@
 	</div>
 
 	<div class="ia-item__panel">
-		{if $core.config.directory_enable_pagerank && $listing.pagerank}
-			<span class="ia-item__panel__item">
-				<span class="fa fa-signal"></span> {lang key='pagerank'} {$listing.pagerank}
-			</span>
-		{/if}
 		{if $core.config.directory_enable_alexarank && $listing.alexa_rank}
 			<span class="ia-item__panel__item">
 				<span class="fa fa-globe"></span> {lang key='alexa_rank'} <a href="http://www.alexa.com/siteinfo/{$listing.domain}#">{$listing.alexa_rank}</a></li>

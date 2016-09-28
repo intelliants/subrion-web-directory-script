@@ -23,10 +23,6 @@
 		<div class="ia-item__content">
 			<p><span class="fa fa-link"></span> <a href="{$item.url}" target="_blank">{$item.url|strip_tags|truncate:50:'...'}</a></p>
 
-			{if $core.config.directory_enable_pagerank && $item.pagerank}
-				<p><span class="fa fa-signal"></span> {lang key='pagerank'} {$item.pagerank}</p>
-			{/if}
-
 			{if $core.config.directory_enable_alexarank && $item.alexa_rank}
 				<p><span class="fa fa-globe"></span> {lang key='alexa_rank'} <a href="http://www.alexa.com/siteinfo/{$item.domain}#">{$item.alexa_rank}</a></p>
 			{/if}

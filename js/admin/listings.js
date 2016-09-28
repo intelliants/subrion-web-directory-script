@@ -95,9 +95,10 @@ Ext.onReady(function()
 			}
 		}).keyup();
 
-		//
 		if ('#tree-crossed'.length)
 		{
+			var nodes = $('#crossed-links').val().split(',');
+
 			$('#tree-crossed').jstree(
 			{
 				core:
@@ -106,31 +107,28 @@ Ext.onReady(function()
 						data: function(n)
 						{
 							var params = {};
+
 							if(n.id != '#')
 							{
 								params.id = n.id;
 							}
+							else
+							{
+								params.id = 0;
+							}
 
 							return params;
 						},
-						url: intelli.config.admin_url + '/directory/categories/read.json?get=tree'
+						url: intelli.config.ia_url + 'directory/categories/read.json?get=tree'
 					},
 					multiple: true
 				},
-				checkbox: {keep_selected_style: false},
+				checkbox: {keep_selected_style: false, three_state: false},
 				plugins: ['checkbox']
 			})
-			.on('loaded.jstree', function()
+			.on('load_node.jstree', function(e, data)
 			{
-				var tree = $('#tree-crossed').jstree(true),
-					nodes = [];
-
-				$('span', '#crossed-list').each(function()
-				{
-					nodes.push($(this).data('id'));
-				});
-
-				tree.select_node(nodes);
+				for (var i in nodes) data.instance.select_node(nodes[i]);
 			})
 			.on('click.jstree', function(e)
 			{
@@ -191,7 +189,7 @@ intelli.fillUrlBox = function()
 			params.alias = 1;
 		}
 
-		$.get(intelli.config.admin_url + '/directory/listings/read.json?get=alias', params, function(response)
+		$.get(intelli.config.ia_url + '/directory/listings/read.json?get=alias', params, function(response)
 		{
 			if (response.data)
 			{

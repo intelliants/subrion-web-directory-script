@@ -4,9 +4,9 @@
 	<summary>This package is intended to create web directory on your Subrion powered website.</summary>
 	<author>Intelliants LLC</author>
 	<contributor>Intelliants LLC</contributor>
-	<version>4.0.1</version>
-	<date>2016-02-03</date>
-	<compatibility>4.0.4</compatibility>
+	<version>4.1.0</version>
+	<date>2016-09-13</date>
+	<compatibility>4.0.5</compatibility>
 	<url>dir</url>
 
 	<screenshots>
@@ -26,13 +26,17 @@
 	</packageitems>
 
 	<actions>
-		<action name="listings_view" url="directory/listings/" icon="list" pages="manage_listings,listing_add,listing_edit">View Listings</action>
-		<action name="listings_add" url="directory/listings/add/" icon="plus-alt" pages="directory_home,manage_listings,listing_edit">Add Listing</action>
-		<action name="categs_view" url="directory/categories/" icon="list-2" pages="manage_categs,categ_add,categ_edit">View Categories</action>
-		<action name="categs_add" url="directory/categories/add/" icon="folder-plus" pages="directory_home,manage_categs,categ_edit">Add Category</action>
+		<action name="listings_list" url="directory/listings/" icon="list-2" pages="directory_stats,manage_listings:add,manage_listings:edit">View Listings</action>
+		<action name="listings_add" url="directory/listings/add/" icon="plus-alt" pages="manage_listings,manage_listings:edit">Add Listings</action>
+		<action name="dashboard_listings_add" url="directory/listings/add/" icon="plus" type="dashboard">Add Listings</action>
+
+		<action name="categories_list" url="directory/categories/" icon="folder" pages="directory_stats,manage_categs:add,manage_categs:edit">View Categories</action>
+		<action name="categories_add" url="directory/categories/add/" icon="folder-plus" pages="manage_categs,manage_categs:edit">Add Category</action>
+
+		<action name="listings_field_view" url="fields/listings/" icon="list" pages="listings_fields">View Fields</action>
 		<action name="listings_field_add" url="fields/add/?item=listings" icon="plus-alt" pages="listings_fields">Add Field</action>
 		<action name="listings_group_view" url="fields/group/" icon="list-2" pages="listings_fields">Field Groups</action>
-		<action name="listings_group_add" url="fields/group/add/" icon="folder-plus" pages="listings_fields">Add Field Group</action>
+		<action name="listings_group_add" url="fields/group/add/" icon="list-add" pages="listings_fields">Add Field Group</action>
 	</actions>
 
 	<groups>
@@ -40,16 +44,12 @@
 	</groups>
 
 	<adminpages>
-		<page group="directory" url="directory/" name="directory_stats" filename="statistics" menus="menu">Statistics</page>
+		<page group="directory" filename="statistics" name="directory_stats" url="directory/" menus="menu">Statistics</page>
 		<page group="directory" menus="menu">Management</page>
-		<page group="directory" url="directory/categories/" menus="menu" name="manage_categs" filename="categories">Categories</page>
-		<page group="directory" url="directory/categories/add/" action="add" parent="manage_categs" name="categ_add" filename="categories">Add Category</page>
-		<page group="directory" url="directory/categories/edit/" action="edit" parent="manage_categs" name="categ_edit" filename="categories">Edit Category</page>
-		<page group="directory" url="directory/listings/" menus="menu" name="manage_listings" filename="listings">Listings</page>
-		<page group="directory" url="directory/listings/add/" action="add" parent="manage_listings" name="listing_add" filename="listings">Add Listing</page>
-		<page group="directory" url="directory/listings/edit/" name="listing_edit" action="edit" parent="manage_listings" filename="listings">Edit Listing</page>
+		<page group="directory" filename="categories" name="manage_categs" url="directory/categories/" menus="menu">Categories</page>
+		<page group="directory" filename="listings" name="manage_listings" url="directory/listings/" menus="menu">Listings</page>
 		<page group="directory" menus="menu">Extended</page>
-		<page group="directory" url="fields/listings/" menus="menu" name="listings_fields" filename="fields">Listings Fields</page>
+		<page group="directory" filename="fields" name="listings_fields" url="fields/listings/" menus="menu">Listings Fields</page>
 	</adminpages>
 
 	<pages>
@@ -67,16 +67,27 @@
 	</pages>
 
 	<permissions>
+		<object id="view_listing" access="1">View Listing</object>
 		<object id="view_listing" action="add" access="1">Add Listing</object>
 		<object id="view_listing" action="edit" access="1">Edit Listing</object>
 		<object id="view_listing" action="delete" access="1">Delete Listing</object>
-		<object meta_object="admin_pages" id="manage_listings" action="add" access="1">Add Listing</object>
-		<object meta_object="admin_pages" id="manage_listings" action="edit" access="1">Edit Listing</object>
+
+		<object meta_object="admin_page" id="manage_categs" access="1">View listings</object>
+		<object meta_object="admin_page" id="manage_categs" action="add">Add listing</object>
+		<object meta_object="admin_page" id="manage_categs" action="edit">Edit listing</object>
+		<object meta_object="admin_page" id="manage_categs" action="delete">Delete listing</object>
+
+		<object meta_object="admin_page" id="manage_listings" access="1">View listings</object>
+		<object meta_object="admin_page" id="manage_listings" action="add">Add listing</object>
+		<object meta_object="admin_page" id="manage_listings" action="edit">Edit listing</object>
+		<object meta_object="admin_page" id="manage_listings" action="delete">Delete listing</object>
 
 		<permission type="group" type_id="4" access="0">my_listings</permission>
 		<permission type="group" type_id="4" action="add" access="0">view_listing</permission>
 		<permission type="group" type_id="4" action="edit" access="0">view_listing</permission>
 		<permission type="group" type_id="4" action="delete" access="0">view_listing</permission>
+
+		<object meta_object="admin_page" id="listings_fields" action="listings" access="1">Allow to manage listing fields</object>
 	</permissions>
 
 	<configgroup name="directory">Directory</configgroup>
@@ -85,33 +96,30 @@
 	<config group="directory" name="directory_display_subcategories" type="radio" values="1,0" description="Subcategories list below titles">1</config>
 	<config group="directory" name="directory_subcategories_number" type="text" description="Number of subcategories displayed below titles" show="directory_display_subcategories|1">3</config>
 	<config group="directory" name="directory_show_amount" type="radio" values="1,0" description="Show category listings amount">1</config>
+	<config group="directory" name="directory_hide_empty_categories" type="radio" values="1,0" description="Hide empty categories">0</config>
 	<config group="directory" name="directory_div2" type="divider">Listings</config>
 	<config group="directory" name="directory_enable_thumbshots" type="radio" values="1,0" description="Display thumbshots">1</config>
-	<config group="directory" name="directory_enable_pagerank" type="radio" values="1,0" description="Display pagerank">1</config>
 	<config group="directory" name="directory_enable_alexarank" type="radio" values="1,0" description="Display Alexa Rank">1</config>
-	<config group="directory" name="directory_hide_empty_categories" type="radio" values="1,0" description="Hide empty categories">0</config>
 	<config group="directory" name="listing_auto_approval" type="radio" values="1,0" description="Listings auto approval">1</config>
 	<config group="directory" name="listing_tie_to_member" type="radio" values="1,0" description="Tie listings to registered members">1</config>
 	<config group="directory" name="directory_redirect_to_site" type="radio" values="1,0" description="Redirect to a website by clicking on a title" private="0">0</config>
-	<config group="directory" name="directory_lowercase_urls" type="radio" values="1,0" description="Transform page URLs to lowercase" private="0">1</config>
+	<config group="directory" name="directory_lowercase_urls" type="radio" values="1,0" description="Transform listing page URLs to lowercase" private="0">1</config>
 	<config group="directory" name="display_children_listing" type="radio" values="1,0" description="Display listings from child categories">0</config>
-	<config group="directory" name="listing_order_type" type="radio" values="1,0" description="Use dropdown for listings sorting">0</config>
-	<config group="directory" name="listing_crossed" type="radio" values="1,0" description="Cross listings into multiple categories" private="0">0</config>
-	<config group="directory" name="listing_crossed_limit" type="text" description="Listing crossed categories limit" show="listing_crossed|1" private="0">5</config>
-	<config group="directory" name="crossed_category_path" type="radio" values="1,0" description="Use crossed category path in Listing URL" show="listing_crossed|1">1</config>
-	<config group="directory" name="directory_listings_perpage" type="text" description="Listings on page">10</config>
+	<config group="directory" name="listing_crossed" type="radio" values="1,0" description="Allow submission in multiple categories" private="0">0</config>
+	<config group="directory" name="listing_crossed_limit" type="text" description="Multiple categories submission default limit" show="listing_crossed|1" private="0">5</config>
+	<config group="directory" name="directory_listings_perpage" type="text" description="Listings per page">10</config>
 	<config group="directory" name="directory_summary_length" type="text" description="Summary length">700</config>
 	<config group="directory" name="directory_listing_limit" type="text" description="Listing limit for each member" show="0">6</config>
 	<config group="directory" name="directory_duplicate_check" type="radio" description="Check for duplicate listing's field">0</config>
-	<config group="directory" name="directory_duplicate_check_field" type="select" values="'url','domain','title'" description="Check for duplicate:" show="directory_duplicate_check|1">url</config>
+	<config group="directory" name="directory_duplicate_check_field" type="select" values="'url','domain','title'" description="Check for duplicate" show="directory_duplicate_check|1">url</config>
 	<config group="directory" name="directory_div3" type="divider">Blocks</config>
 	<config group="directory" name="directory_listings_tabs_new" type="radio" values="1,0" description="Display New Listings tab">1</config>
 	<config group="directory" name="directory_listings_tabs_popular" type="radio" values="1,0" description="Display Popular Listings tab">1</config>
 	<config group="directory" name="directory_listings_tabs_random" type="radio" values="1,0" description="Display Random Listings tab">1</config>
-	<config group="directory" name="directory_listings_perblock" type="text" description="Listings in Block">5</config>
-	<config group="directory" name="directory_new_listings_perblock" type="text" description="Listings in New Listings Tab">5</config>
-	<config group="directory" name="directory_popular_listings_perblock" type="text" description="Listings in Popular Listings Tab">5</config>
-	<config group="directory" name="directory_random_listings_perblock" type="text" description="Listings in Random Listings Tab">5</config>
+	<config group="directory" name="directory_listings_perblock" type="text" description="Listings in block">5</config>
+	<config group="directory" name="directory_new_listings_perblock" type="text" description="Listings in New Listings tab">5</config>
+	<config group="directory" name="directory_popular_listings_perblock" type="text" description="Listings in Popular Listings tab">5</config>
+	<config group="directory" name="directory_random_listings_perblock" type="text" description="Listings in Random Listings tab">5</config>
 
 	<!-- E-mail template for new listing submission notification (Administrators) -->
 	<config group="email_templates" name="new_listing" type="radio" values="1,0" description="New Listing Submitted">1</config>
@@ -220,6 +228,7 @@
 		<phrase category="admin" key="are_you_sure_to_delete_selected_listings">Are you sure you wish to delete these listings?</phrase>
 		<phrase category="admin" key="broken">Broken</phrase>
 		<phrase category="admin" key="category_added">Category added.</phrase>
+		<phrase category="admin" key="category_deleted">Category deleted.</phrase>
 		<phrase category="admin" key="directory_package">&quot;Directory&quot; package</phrase>
 		<phrase category="admin" key="no_crossed_categories">No Crossed Categories.</phrase>
 		<phrase category="admin" key="no_owner">No Owner</phrase>
@@ -234,6 +243,9 @@
 		<phrase category="admin" key="recount_directory_listings_success">Directory Listings have been successfully recounted.</phrase>
 		<phrase category="admin" key="reported_as_broken">Reported as Broken</phrase>
 		<phrase category="admin" key="reported_as_broken_comments">Broken report comments</phrase>
+		<phrase category="admin" key="category_already_exists">Category with similar title alias exists in this category.</phrase>
+		<phrase category="admin" key="edit_directory_category">Edit Category ":name"</phrase>
+		<phrase category="admin" key="directory_category_already_exists">Category already exists</phrase>
 
 		<phrase category="common" key="alexa_rank">Alexa Rank</phrase>
 		<phrase category="common" key="all_listings_num">Number of all listings</phrase>
@@ -256,7 +268,6 @@
 		<phrase category="common" key="no_web_listings2"><![CDATA[No listings have been submitted. <a href="{%URL%}">Click here</a> to add a listing.]]></phrase>
 		<phrase category="common" key="no_my_listings"><![CDATA[You have not submitted any listings. <a href="{%URL%}">Click here</a> to add a listing.]]></phrase>
 		<phrase category="common" key="prev_crossed">Previous crossed categories</phrase>
-		<phrase category="common" key="pagerank">Pagerank</phrase>
 		<phrase category="common" key="views_num">Number of clicks</phrase>
 
 		<phrase category="frontend" key="add_listing">Add Listing</phrase>
@@ -291,11 +302,22 @@
 		<phrase category="frontend" key="do_you_really_want_to_delete_listing">Do you really want to remove the listing?</phrase>
 	</phrases>
 
-	<cron name="listings_expiration">0 * * * * packages/directory/includes/cron/expiration.php</cron>
-
 	<tooltips>
+		<tooltip key="directory_categories_columns">Number of columns for categories display on directory index page.</tooltip>
+		<tooltip key="directory_display_subcategories">Display subcategories list on directory index page.</tooltip>
+		<tooltip key="directory_subcategories_number">Number of subcategories on directory index page.</tooltip>
+		<tooltip key="directory_show_amount">Display number of listings for category on directory index page.</tooltip>
+		<tooltip key="directory_hide_empty_categories">Hide categories without listings.</tooltip>
+
+		<tooltip key="directory_enable_thumbshots">Display thumbnails generated by pagepeeker.com website.</tooltip>
+		<tooltip key="directory_enable_alexarank">Display AlexaRank statistics for the listing domains.</tooltip>
+		<tooltip key="listing_tie_to_member">Members will own newly submitted listings that have same email addresses as registered members.</tooltip>
+		<tooltip key="directory_lowercase_urls">Transform listing and category URLs to lowercase during submission.</tooltip>
 		<tooltip key="display_children_listing">If this options is turned ON your visitors will see listings from inner children categories during categories browsing.</tooltip>
-		<tooltip key="listing_tie_to_member">Members will own newly submitted listings that have same email addresses as registered members</tooltip>
+		<tooltip key="listing_crossed">Allow listing submission in multiple categories.</tooltip>
+		<tooltip key="listing_crossed_limit">Max number of categories members are allowed to submit to.</tooltip>
+		<tooltip key="directory_duplicate_check">Enables listing duplicate checking by several fields.</tooltip>
+		<tooltip key="directory_duplicate_check_field">Specify field you wish to use for duplicate checking.</tooltip>
 	</tooltips>
 
 	<blocks>
@@ -468,7 +490,6 @@ CREATE TABLE IF NOT EXISTS `{prefix}listings`(
 	`domain` varchar(150) NOT NULL,
 	`ip` bigint(12) NOT NULL,
 	`status` enum('approval', 'banned', 'suspended', 'active') NOT NULL default 'approval',
-	`pagerank` tinyint(3) NOT NULL,
 	`alexa_rank` bigint(16) unsigned default NULL,
 	`rank` tinyint(3) NOT NULL,
 	`date_added` datetime NOT NULL,
@@ -517,18 +538,24 @@ $iaCategs->rebuildRelation();
 	</install>
 
 	<uninstall>
-		<sql><![CDATA[DROP TABLE IF EXISTS `{prefix}categs`;]]></sql>
-		<sql><![CDATA[DROP TABLE IF EXISTS `{prefix}listings_categs`;]]></sql>
-		<sql><![CDATA[DROP TABLE IF EXISTS `{prefix}listings`;]]></sql>
+		<sql>
+			<![CDATA[
+DROP TABLE IF EXISTS `{prefix}categs`, `{prefix}categs_crossed`, `{prefix}categs_flat`, `{prefix}listings_categs`, `{prefix}listings`;
+			]]>
+		</sql>
 	</uninstall>
 
 	<upgrade>
 		<sql version="4.0.1" external="1">includes{DS}dumps{DS}upgrades{DS}4.0.1.sql</sql>
-		<sql version="4.0.2"><![CDATA[
+		<sql version="4.0.2">
+			<![CDATA[
 DELETE FROM `{prefix}config` WHERE `config_group` = 'directory' AND `extras` = 'directory' AND `name` = 'duplicate_checking';
-		]]></sql>
-		<sql version="4.0.2"><![CDATA[
+			]]>
+		</sql>
+		<sql version="4.0.2">
+			<![CDATA[
 DELETE FROM `{prefix}config` WHERE `config_group` = 'directory' AND `extras` = 'directory' AND `name` = 'duplicate_type';
-		]]></sql>
+			]]>
+		</sql>
 	</upgrade>
 </package>

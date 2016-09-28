@@ -1,260 +1,143 @@
 <?php
 //##copyright##
 
-$iaCateg = $iaCore->factoryPackage('categ', IA_CURRENT_PACKAGE, iaCore::ADMIN);
-
-$iaDb->setTable(iaCateg::getTable());
-
-if (iaView::REQUEST_JSON == $iaView->getRequestType())
+class iaBackendController extends iaAbstractControllerPackageBackend
 {
-	$action = isset($_GET['get']) && in_array($_GET['get'], array('alias', 'tree')) ? $_GET['get'] : $pageAction;
+	protected $_name = 'categories';
 
-	$output = array();
+	protected $_helperName = 'categ';
 
-	switch ($action)
+	protected $_gridColumns = array('title', 'title_alias', 'num_all_listings', 'locked', 'date_added', 'date_modified', 'status');
+	protected $_gridFilters = array('title' => self::LIKE, 'status' => self::EQUAL);
+
+	protected $_activityLog = array('item' => 'category');
+	protected $_setQuickSearch = false;
+
+	protected $_phraseAddSuccess = 'category_added';
+	protected $_phraseGridEntryDeleted = 'category_deleted';
+
+	private $_root;
+
+
+	public function __construct()
 	{
-		case 'alias':
-			$title = $iaCateg->getTitleAlias(array('title_alias' => $_GET['title'], 'parent_id' => (int)$_GET['category']));
+		parent::__construct();
 
-			$output['data'] = $iaCateg->url('default', array('title_alias' => $title));
-
-			break;
-
-		case 'tree':
-			$output = array();
-
-			$categoryId = (isset($_GET['id']) && is_numeric($_GET['id'])) ? (int)$_GET['id'] : 0;
-			$categoryId = (isset($_POST['node']) && is_numeric($_POST['node'])) ? (int)$_POST['node'] : $categoryId;
-
-			$clause = '`parent_id` = ' . $categoryId . ' ORDER BY `title`';
-			$entries = $iaDb->all(array('id', 'title', 'child'), $clause, null, null, 'categs');
-
-			foreach ($entries as $entry)
-			{
-				$output[] = array(
-					'id' => (int)$entry['id'],
-					'text' => $entry['title'],
-					'children' => $entry['child'] && $entry['child'] != $entry['id']
-				);
-			}
-
-			break;
-
-		case iaCore::ACTION_READ:
-			if (isset($_POST['action']))
-			{
-				if ('pre_recount_listings' == $_POST['action'])
-				{
-					$iaCateg->clearListingsNum();
-
-					$output['categories_total'] = $iaCateg->getCount();
-				}
-
-				if ('recount_listings' == $_POST['action'])
-				{
-					$output = $iaCateg->recountListingsNum($_POST['start'], $_POST['limit']);
-				}
-			}
-			else
-			{
-				$columns = array('title', 'title_alias', 'date_added', 'date_modified', 'num_all_listings', 'status');
-				$filterParams = array(
-					'title' => 'like',
-					'status' => 'equal'
-				);
-
-				$output = $iaCateg->gridRead($_GET, $columns, $filterParams);
-			}
-
-			break;
-
-		case iaCore::ACTION_EDIT:
-			$output = $iaCateg->gridUpdate($_POST);
-
-			break;
-
-		case iaCore::ACTION_DELETE:
-			$output = $iaCateg->gridDelete($_POST);
+		$this->_root = $this->getHelper()->getRoot();
 	}
 
-	$iaView->assign($output);
-}
-
-if (iaView::REQUEST_HTML == $iaView->getRequestType())
-{
-	// process actions for manage categories page
-	if (iaCore::ACTION_READ == $pageAction)
+	protected function _entryAdd(array $entryData)
 	{
-		// use filter for categories status
-		if (isset($_GET['status']))
-		{
-			if (in_array($_GET['status'], array(iaCore::STATUS_ACTIVE, iaCore::STATUS_INACTIVE)))
-			{
-				$_SESSION['categ_status'] = $_GET['status'];
-			}
-		}
-		elseif (isset($_SESSION['categ_status']))
-		{
-			unset($_SESSION['categ_status']);
-		}
+		$entryData['date_added'] = date(iaDb::DATE_FORMAT);
+		$entryData['date_modified'] = date(iaDb::DATE_FORMAT);
 
-		$iaView->grid('_IA_URL_packages/' . $iaCateg->getPackageName() . '/js/admin/categories');
+		return $this->getHelper()->insert($entryData);
 	}
-	else
+
+	protected function _entryUpdate(array $entryData, $entryId)
 	{
-		// temporary
-		iaBreadcrumb::remove(iaBreadcrumb::POSITION_LAST);
-		iaBreadcrumb::preEnd(iaLanguage::get('categories'), $iaCateg->getModuleUrl());
-		iaBreadcrumb::remove(3);
-		iaBreadcrumb::replaceEnd($iaView->get('title'), IA_SELF);
+		$entryData['date_modified'] = date(iaDb::DATE_FORMAT);
 
-		$options = array('list' => 'go_to_list', 'add' => 'add_another_one', 'stay' => 'stay_here');
-		$iaView->assign('goto', $options);
-		//
+		$this->getHelper()->update($entryData, $entryId);
 
-		$categories = $iaCateg->get();
+		return (0 === $this->_iaDb->getErrorNumber());
+	}
 
-		$rootCategory = $iaCateg->getCategory('`parent_id` = -1');
-		$iaView->assign('root_cat', $rootCategory);
+	protected function _entryDelete($entryId)
+	{
+		return ($this->_root['id'] == $entryId) ? false : (bool)$this->getHelper()->delete($entryId);
+	}
 
-		$category = array(
-			'parent_id' => $rootCategory['id'],
-			'parents' => $rootCategory['parents'],
-			'crossed' => false,
+	protected function _setDefaultValues(array &$entry)
+	{
+		$entry = array(
+			'member_id' => iaUsers::getIdentity()->id,
+			'parent_id' => $this->_root['id'],
+			'parents' => 0,
 			'locked' => 0,
+			'featured' => false,
 			'icon' => false,
 			'status' => iaCore::STATUS_ACTIVE,
 			'title_alias' => ''
 		);
+	}
 
-		if (iaCore::ACTION_EDIT == $pageAction)
+	protected function _preSaveEntry(array &$entry, array $data, $action)
+	{
+		$fields = $this->_iaField->getByItemName($this->getHelper()->getItemName());
+		list($entry, , $this->_messages, ) = $this->_iaField->parsePost($fields, $entry);
+
+		$entry['parent_id'] = $data['parent_id'] ? $data['parent_id'] : $this->_root['id'];
+		$entry['locked'] = (int)$data['locked'];
+		$entry['status'] = $data['status'];
+		$entry['title_alias'] = empty($_POST['title_alias']) ? htmlspecialchars_decode($data['title']) : $data['title_alias'];
+		$entry['title_alias'] = $this->getHelper()->getTitleAlias($entry);
+		$entry['order'] = $this->_iaDb->getMaxOrder() + 1;
+
+		if ($this->getHelper()->exists($entry['title_alias'], $entry['parent_id'], $this->getEntryId()))
 		{
-			$category = $iaCateg->getById(((int)$iaCore->requestPath[0]));
-
-			$iaView->title($iaView->get('title') . ': "' . $category['title'] . '"');
-			$iaView->assign('id', $category['id']);
-			if (empty($category))
-			{
-				return iaView::errorPage(iaView::ERROR_NOT_FOUND);
-			}
+			$this->addMessage('directory_category_already_exists');
 		}
 
-		$iaField = $iaCore->factory('field');
+		return !$this->getMessages();
+	}
 
-		$fieldsGroups = $iaField->getGroups($iaCateg->getItemName());
-
-		if ($_POST)
+	protected function _postSaveEntry(array &$entry, array $data, $action)
+	{
+		if (!empty($data['crossed']))
 		{
-			$error = false;
-			$errorFields = array();
-			$messages = array();
+			$data['crossed'] = explode(',', $data['crossed']);
 
-			// get categories fields
-			$fields = $iaField->getByItemName($iaCateg->getItemName());
+			$entryData['category_id'] = $this->getHelper()->getLastId();
 
-			if ($fields)
+			if (iaCore::ACTION_EDIT == $action)
 			{
-				list($data, $error, $messages, $errorFields) = $iaField->parsePost($fields, $category);
+				$entryData['category_id'] = $data['id'];
+
+				$stmt = iaDb::convertIds($entryData['category_id'], 'category_id');
+
+				$this->_iaDb->delete($stmt, $this->getHelper()->getTableCrossed());
 			}
 
-			if (!$error)
+			foreach ($data['crossed'] as $row)
 			{
-				$iaCore->startHook('phpAdminBeforeCategorySubmit');
+				$entryData['crossed_id'] = $row;
 
-				$data['parent_id'] = iaUtil::checkPostParam('parent_id', $rootCategory['id']);
-				$data['status'] = iaUtil::checkPostParam('status', iaCore::STATUS_ACTIVE);
-				$data['locked'] = iaUtil::checkPostParam('locked');
-				$data['title_alias'] = empty($_POST['title_alias']) ? htmlspecialchars_decode($data['title']) : $_POST['title_alias'];
-				$data['title_alias'] = $iaCateg->getTitleAlias($data);
-				$data['crossed'] = $_POST['crossed'] ? $_POST['crossed'] : false;
-
-				if (iaCore::ACTION_ADD == $pageAction)
-				{
-					// add category
-					$iaCore->startHook('phpAdminBeforeCategoryAdd');
-
-					$data['id'] = $iaCateg->insert($data, $rootCategory);
-					$messages = iaLanguage::get('category_added');
-				}
-				else
-				{
-					// update category information
-					$data['id'] = $category['id'];
-
-					$iaCore->startHook('phpAdminBeforeCategoryUpdate');
-
-					$iaCateg->update($data, $data['id']);
-
-					$messages = iaLanguage::get('saved');
-				}
-
-				// get updated category information
-				$category = $iaCateg->getCategory("`id` = {$data['id']}");
-
-				// redirect to correct page
-				$iaView->setMessages($error ? iaLanguage::get('error_while_saving') : $messages, $error ? iaView::ERROR : iaView::SUCCESS);
-
-				$url = IA_ADMIN_URL . 'directory/categories/';
-				$goto = array('add'	=> $url . 'add/', 'list' => $url, 'stay' => $url . 'edit/' . $data['id']);
-
-				iaUtil::post_goto($goto);
+				$this->_iaDb->insert(array($entryData), null, $this->getHelper()->getTableCrossed());
 			}
-			else
-			{
-				iaField::keepValues($category, $fields);
-
-				$category['parent_id'] = (int)$_POST['parent_id'];
-			}
-
-			$iaView->setMessages($messages, $error ? iaView::ERROR : iaView::SUCCESS);
-		}
-
-		if (isset($category['id']))
-		{
-			$crossed = $iaDb->getAll("SELECT t.`id`, t.`title`
-				FROM `{$iaCore->iaDb->prefix}categs` t, `{$iaCore->iaDb->prefix}categs_crossed` cr
-				WHERE t.`id` = cr.`crossed_id` AND cr.`category_id` = '{$category['id']}'");
-			$category['crossed'] = array();
-			foreach ($crossed as $val)
-			{
-				$category['crossed'][$val['id']] = $val['title'];
-			}
-		}
-		if (isset($_POST['crossed']))
-		{
-			$crossed = explode(',', $_POST['crossed']);
-			$count = count($crossed);
-			$add = array();
-			for ($i = 0; $i < $count; $i++)
-			{
-				$add[] = (int)$crossed[$i];
-			}
-			if ($add)
-			{
-				$category['crossed'] = $iaDb->keyvalue(array('id', 'title'), "`id` IN (" . implode(',', $add) . ")", 'categs');
-			}
-		}
-
-		if (isset($category['parent_id']) && $category['parent_id'] != $rootCategory['parent_id'])
-		{
-			$parent = $iaDb->row(array('id', 'parent_id', 'title', 'title_alias', 'parents'), iaDb::convertIds($category['parent_id']), 'categs');
-			$category['title_alias'] = end(explode(IA_URL_DELIMITER, trim($category['title_alias'], IA_URL_DELIMITER)));
 		}
 		else
 		{
-			$parent = $rootCategory;
+			if (iaCore::ACTION_EDIT == $action) {
+				$stmt = iaDb::convertIds($data['id'], 'category_id');
+
+				$this->_iaDb->delete($stmt, $this->getHelper()->getTableCrossed());
+			}
 		}
-
-		$sections = $iaField->filterByGroup($category, $iaCateg->getItemName(), array('page' => iaCore::ADMIN, 'order' => '`order`'));
-
-		$iaView->assign('fields_groups', $fieldsGroups);
-		$iaView->assign('sections', $sections);
-		$iaView->assign('parent', $parent);
-		$iaView->assign('item', $category);
-		$iaView->assign('statuses', $iaCateg->getStatuses());
-
-		$iaView->display('categories');
 	}
 
-	$iaView->assign('quick_search_item', $iaCateg->getItemName());
+	protected function _assignValues(&$iaView, array &$entryData)
+	{
+		parent::_assignValues($iaView, $entryData);
+
+		$entryData['title_alias'] = end(explode(IA_URL_DELIMITER, $entryData['title_alias']));
+
+		$parent = $this->_iaDb->row(array('id', 'title', 'parents', 'child'), iaDb::convertIds($entryData['parent_id']));
+
+		if (!empty($this->_iaCore->requestPath[0])) {
+			$category = $this->getHelper()->getById((int)$this->_iaCore->requestPath[0]);
+
+			$crossed = $this->_iaDb->getAll("SELECT t.`id`, t.`title` FROM
+				{$this->_iaCore->iaDb->prefix}{$this->getHelper()->getTable()} t,
+				{$this->_iaCore->iaDb->prefix}{$this->getHelper()->getTableCrossed()} cr
+				WHERE t.`id` = cr.`crossed_id` AND cr.`category_id` = '{$category['id']}'");
+
+			foreach ($crossed as $item)
+			{
+				$entryData['crossed'][$item['id']] = $item['title'];
+			}
+		}
+
+		$iaView->assign('parent', $parent);
+	}
 }

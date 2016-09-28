@@ -28,6 +28,11 @@ class iaListing extends abstractDirectoryPackageAdmin
 		return self::$_tableCrossed;
 	}
 
+	public function getLastId()
+	{
+		return $this->iaDb->one('MAX(`id`)', null, self::$_table);
+	}
+
 	public function url($action, array $data)
 	{
 		$data['base'] = $this->getInfo('url');
@@ -54,196 +59,6 @@ class iaListing extends abstractDirectoryPackageAdmin
 		}
 
 		return $text;
-	}
-
-	public function insert(array $entryData)
-	{
-		$crossed = false;
-
-		$entryData['date_added'] = date(iaDb::DATETIME_FORMAT);
-		$entryData['date_modified'] = date(iaDb::DATETIME_FORMAT);
-
-		if (isset($entryData['description']))
-		{
-			$entryData['short_description'] = $this->_trim($entryData['description']);
-		}
-
-		if (isset($entryData['crossed_links']))
-		{
-			$crossed = $entryData['crossed_links'];
-			unset($entryData['crossed_links']);
-		}
-
-		$entryId = parent::insert($entryData);
-
-		if ($entryId)
-		{
-			if ($this->iaCore->get('listing_crossed'))
-			{
-				if (isset($crossed) && !empty($crossed))
-				{
-					$this->iaDb->setTable(self::getTableCrossed());
-
-					$crossedLimit = $this->iaCore->get('listing_crossed_limit', 5);
-					$crossed = explode(',', $crossed);
-					$count = count($crossed) > $crossedLimit ? $crossedLimit : count($crossed);
-					$crossedInput = array();
-
-					for ($i = 0; $i < $count; $i++)
-					{
-						if ($crossed[$i] != $entryData['category_id'])
-						{
-							$crossedInput[] = array('listing_id' => $entryId, 'category_id' => (int)$crossed[$i]);
-						}
-					}
-
-					if (count($crossedInput) > 0)
-					{
-						$this->iaDb->insert($crossedInput);
-					}
-
-					$this->iaDb->resetTable();
-				}
-			}
-		}
-
-		if (iaCore::STATUS_ACTIVE == $entryData['status'])
-		{
-			if ($crossed)
-			{
-				foreach ($crossedInput as $entry)
-				{
-					$this->_changeNumListing($entry['category_id'], 1);
-				}
-			}
-
-			$this->_changeNumListing($entryData['category_id'], 1);
-		}
-
-		return $entryId;
-	}
-
-	public function update(array $entryData, $id)
-	{
-		$crossed = false;
-
-		$aOldListing = $this->iaDb->row(iaDb::ALL_COLUMNS_SELECTION, iaDb::convertIds($id), self::getTable());
-		$status = isset($entryData['status']) ? $entryData['status'] : false;
-		$categ = isset($entryData['category_id']) ? $entryData['category_id'] : $aOldListing['category_id'];
-
-		if ($this->iaCore->get('listing_crossed'))
-		{
-			$crossed = $this->iaDb->onefield('category_id', iaDb::convertIds($id, 'listing_id'), 0, null, self::getTableCrossed());
-
-			if (isset($entryData['crossed_links']))
-			{
-				$crossed = $entryData['crossed_links'];
-				unset($entryData['crossed_links']);
-			}
-
-			if (isset($crossed) && $crossed)
-			{
-				$this->iaDb->setTable(self::getTableCrossed());
-
-				$this->iaDb->delete(iaDb::convertIds($id, 'listing_id'));
-
-				$crossedLimit = $this->iaCore->get('listing_crossed_limit', 5);
-
-				if (!is_array($crossed))
-				{
-					$crossed = explode(',', $crossed);
-				}
-
-				$count = count($crossed) > $crossedLimit ? $crossedLimit : count($crossed);
-				$crossedInput = array();
-
-				for ($i = 0; $i < $count; $i++)
-				{
-					if ($crossed[$i] != $entryData['category_id'])
-					{
-						$crossedInput[] = array('listing_id' => $id, 'category_id' => (int)$crossed[$i]);
-					}
-				}
-
-				if (count($crossedInput) > 0)
-				{
-					$this->iaDb->insert($crossedInput);
-				}
-
-				$this->iaDb->resetTable();
-			}
-		}
-		if (isset($entryData['description']))
-		{
-			$entryData['short_description'] = $this->_trim($entryData['description']);
-		}
-
-		$entryData['date_modified'] = date(iaDb::DATETIME_FORMAT);
-
-		$result = parent::update($entryData, $id);
-
-		// If status changed
-		if ($categ == $aOldListing['category_id'])
-		{
-			if (iaCore::STATUS_ACTIVE == $aOldListing['status'] && iaCore::STATUS_ACTIVE != $status)
-			{
-				$this->_changeNumListing($categ, -1);
-			}
-			elseif (iaCore::STATUS_ACTIVE != $aOldListing['status'] && iaCore::STATUS_ACTIVE == $status)
-			{
-				$this->_changeNumListing($categ, 1);
-			}
-		}
-		else // If category changed
-		{
-			if (iaCore::STATUS_ACTIVE == $status)
-			{
-				$this->_changeNumListing($categ, 1);
-			}
-			if (iaCore::STATUS_ACTIVE == $aOldListing['status'])
-			{
-				$this->_changeNumListing($aOldListing['category_id'], -1);
-			}
-		}
-
-		if ((iaCore::STATUS_ACTIVE == $aOldListing['status'] && iaCore::STATUS_ACTIVE != $status)
-			|| (iaCore::STATUS_ACTIVE != $aOldListing['status'] && iaCore::STATUS_ACTIVE == $status))
-		{
-			if (isset($aOldListing['member_id']) && !isset($entryData['member_id']))
-			{
-				$entryData['member_id'] = $aOldListing['member_id'];
-			}
-
-			if (isset($aOldListing['title_alias']) && !isset($entryData['title_alias']))
-			{
-				$entryData['title_alias'] = $aOldListing['title_alias'];
-			}
-
-			if (isset($aOldListing['category_alias']) && !isset($entryData['category_alias']))
-			{
-				$entryData['category_alias'] = $aOldListing['category_alias'];
-			}
-
-			if (isset($aOldListing['title']) && !isset($entryData['title']))
-			{
-				$entryData['title'] = $aOldListing['title'];
-			}
-			$entryData['email'] = (isset($aOldListing['email']) && $aOldListing['email']) ? $aOldListing['email'] : '';
-
-			if ($crossed)
-			{
-				$diff = (iaCore::STATUS_ACTIVE == $status) ? 1 : -1;
-
-				foreach ($crossedInput as $entry)
-				{
-					$this->_changeNumListing($entry['category_id'], $diff);
-				}
-			}
-			$entryData['id'] = $id;
-			$this->_sendUserNotification($entryData);
-		}
-
-		return $result;
 	}
 
 	public function delete($listingId)
@@ -275,13 +90,13 @@ class iaListing extends abstractDirectoryPackageAdmin
 		return $result;
 	}
 
-	protected function _changeNumListing($aCatId, $aInt = 1)
+	protected function _changeNumListing($categoryId, $aInt = 1)
 	{
 		$sql  = "UPDATE `{$this->iaDb->prefix}categs` ";
 		// `num_listings` changed only for ONE category
-		$sql .= "SET `num_listings`=if (`id` = $aCatId, `num_listings` + {$aInt}, `num_listings`) ";
+		$sql .= "SET `num_listings`=if (`id` = $categoryId, `num_listings` + {$aInt}, `num_listings`) ";
 		$sql .= ", `num_all_listings` = `num_all_listings` + {$aInt} ";
-		$sql .= "WHERE FIND_IN_SET({$aCatId}, `child`) ";
+		$sql .= "WHERE FIND_IN_SET({$categoryId}, `child`) ";
 
 		return $this->iaDb->query($sql);
 	}
@@ -309,7 +124,6 @@ class iaListing extends abstractDirectoryPackageAdmin
 
 		return false;
 	}
-
 
 	public function recountListingsNum()
 	{
@@ -356,21 +170,20 @@ class iaListing extends abstractDirectoryPackageAdmin
 		}
 
 		$this->iaDb->resetTable();
-
 	}
 
-	public function getById($aId)
+	public function getById($listingId)
 	{
 		$sql = "SELECT t1.*, ";
 		$sql .= "if (t2.`fullname` <> '', t2.`fullname`, t2.`username`) `member` ";
 		$sql .= "FROM `" . self::getTable(true) . "` t1 ";
 		$sql .= "LEFT JOIN `{$this->iaDb->prefix}members` t2 ON (t1.`member_id` = t2.`id`) ";
-		$sql .= "WHERE t1.`id` = '{$aId}'";
+		$sql .= "WHERE t1.`id` = '{$listingId}'";
 
 		return $this->iaDb->getRow($sql);
 	}
 
-	public function get($aWhere = null, $aStart = 0, $aLimit = '', $aOrder = '',
+	public function get($where = null, $start = 0, $limit = '', $order = '',
 		$fields = 't1.`id`, t1.`title`, t1.`title_alias`, t1.`reported_as_broken`, t1.`reported_as_broken_comments`, t1.`date_added`, t1.`date_modified`, t1.`status`')
 	{
 		$sql = "SELECT SQL_CALC_FOUND_ROWS $fields, '1' `update`, '1' `delete`, ";
@@ -381,9 +194,9 @@ class iaListing extends abstractDirectoryPackageAdmin
 		$sql .= "ON t1.`category_id` = t2.`id` ";
 		$sql .= "LEFT JOIN `{$this->iaDb->prefix}members` t3 ";
 		$sql .= "ON t1.`member_id` = t3.`id` ";
-		$sql .= $aWhere ? "WHERE $aWhere " : '';
-		$sql .= $aOrder ? " ORDER BY $aOrder " : '';
-		$sql .= $aStart || $aLimit ? " LIMIT $aStart, $aLimit " : '';
+		$sql .= $where ? "WHERE $where " : '';
+		$sql .= $order ? " ORDER BY $order " : '';
+		$sql .= $start || $limit ? " LIMIT $start, $limit " : '';
 
 		return $this->iaDb->getAll($sql);
 	}
@@ -425,47 +238,5 @@ class iaListing extends abstractDirectoryPackageAdmin
 		}
 
 		return false;
-	}
-
-	public function gridRead($params, array $filterParams = array(), array $persistentConditions = array())
-	{
-		$params || $params = array();
-
-		$start = isset($params['start']) ? (int)$params['start'] : 0;
-		$limit = isset($params['limit']) ? (int)$params['limit'] : 15;
-
-		$sort = $params['sort'];
-		$dir = in_array($params['dir'], array(iaDb::ORDER_ASC, iaDb::ORDER_DESC)) ? $params['dir'] : iaDb::ORDER_ASC;
-		$order = ($sort && $dir) ? "`{$sort}` {$dir}" : '';
-
-		$where = $values = array();
-		foreach ($filterParams as $name => $type)
-		{
-			if (isset($params[$name]) && $params[$name])
-			{
-				$value = iaSanitize::sql($params[$name]);
-
-				switch ($type)
-				{
-					case 'equal':
-						$where[] = sprintf('t1.`%s` = :%s', $name, $name);
-						$values[$name] = $value;
-						break;
-					case 'like':
-						$where[] = sprintf('t1.`%s` LIKE :%s', $name, $name);
-						$values[$name] = '%' . $value . '%';
-				}
-			}
-		}
-
-		$where = array_merge($where, $persistentConditions);
-		$where || $where[] = iaDb::EMPTY_CONDITION;
-		$where = implode(' AND ', $where);
-		$this->iaDb->bind($where, $values);
-
-		return array(
-			'data' => $this->get($where, $start, $limit, $order),
-			'total' => (int)$this->iaDb->foundRows()
-		);
 	}
 }

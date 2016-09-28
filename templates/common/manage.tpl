@@ -19,7 +19,7 @@ $(function()
 	new IntelliTree(
 	{
 		url: intelli.config.packages.directory.url + 'add/read.json?get=tree',
-		nodeOpened: [{$category.parents}],
+		nodeOpened: [0,{$category.parents}],
 		nodeSelected: {$category.id}
 	});
 });

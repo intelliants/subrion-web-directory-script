@@ -5,7 +5,7 @@ $iaCateg = $iaCore->factoryPackage('categ', IA_CURRENT_PACKAGE);
 
 if (iaView::REQUEST_JSON == $iaView->getRequestType() && isset($_GET['get']) && 'tree' == $_GET['get'])
 {
-	$categoryId = isset($_GET['id']) ? (int)$_GET['id'] : $iaDb->one('id', '`parent_id` = -1', iaCateg::getTable());
+	$categoryId = isset($_GET['id']) ? (int)$_GET['id'] : $iaDb->one('parent_id', '`id` = 0', iaCateg::getTable());
 
 	$output = array();
 	$entries = $iaDb->all(
@@ -17,7 +17,7 @@ if (iaView::REQUEST_JSON == $iaView->getRequestType() && isset($_GET['get']) && 
 	{
 		$entry = array('id' => $row['id'], 'text' => $row['title']);
 		empty($row['locked']) || $entry['state'] = array('disabled' => true);
-		$entry['children'] = $row['child'] && $row['child'] != $row['id'];
+		$entry['children'] = $row['child'] && $row['child'] != $row['id'] || empty($row['child']);
 
 		$output[] = $entry;
 	}
@@ -178,13 +178,6 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType())
 
 					$alexaData = $iaAlexaRank->getAlexa($item['domain']);
 					$data['alexa_rank'] = $alexaData['rank'];
-				}
-
-				if ($iaCore->get('directory_enable_pagerank'))
-				{
-					include IA_PACKAGES . $iaCore->packagesData['directory']['name'] . IA_DS . 'includes' . IA_DS . 'pagerank.inc.php';
-
-					$item['pagerank'] = PageRank::getPageRank($item['domain']);
 				}
 			}
 

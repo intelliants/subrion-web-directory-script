@@ -18,9 +18,17 @@ class iaCateg extends abstractDirectoryPackageAdmin
 		'default' => ':base:title_alias'
 	);
 
+	public $dashboardStatistics = array('icon' => 'folder');
+
+
 	public static function getTableCrossed()
 	{
 		return self::$_tableCrossed;
+	}
+
+	public function getLastId()
+	{
+		return $this->iaDb->one('MAX(`id`)', null, self::$_table);
 	}
 
 	public function url($action, $params)
@@ -47,6 +55,23 @@ class iaCateg extends abstractDirectoryPackageAdmin
 		return iaDb::printf($this->_urlPatterns[$action], $data);
 	}
 
+	public function exists($alias, $parentId, $id = null)
+	{
+		return is_null($id)
+			? (bool)$this->iaDb->exists('`title_alias` = :alias AND `parent_id` = :parent', array('alias' => $alias, 'parent' => $parentId), self::getTable())
+			: (bool)$this->iaDb->exists('`title_alias` = :alias AND `parent_id` = :parent AND `id` != :id', array('alias' => $alias, 'parent' => $parentId, 'id' => $id), self::getTable());
+	}
+
+	public function getRoot()
+	{
+		return $this->iaDb->row(iaDb::ALL_COLUMNS_SELECTION, '`parent_id` = -1', self::getTable());
+	}
+
+	public function getRootId()
+	{
+		return $this->iaDb->one(iaDb::ID_COLUMN_SELECTION, '`parent_id` = -1', self::getTable());
+	}
+
 	public function getSitemapEntries()
 	{
 		$result = array();
@@ -66,12 +91,12 @@ class iaCateg extends abstractDirectoryPackageAdmin
 		return $result;
 	}
 
-	public function get($where = '', $aStart = 0, $aLimit = null, $fields = '*')
+	public function get($where = '', $start = 0, $limit = null, $fields = '*')
 	{
 		$where || $where = iaDb::EMPTY_CONDITION;
 		$fields .= ', `num_all_listings` `num`';
 
-		return $this->iaDb->all($fields, $where . ' ORDER BY `level`, `title`', $aStart, $aLimit, self::getTable());
+		return $this->iaDb->all($fields, $where . ' ORDER BY `level`, `title`', $start, $limit, self::getTable());
 	}
 
 	public function getCategory($aWhere, $aFields = '*')
@@ -79,86 +104,32 @@ class iaCateg extends abstractDirectoryPackageAdmin
 		return $this->iaDb->row($aFields, $aWhere, self::getTable());
 	}
 
-	public function insert(array $entryData)
+	public function update(array $itemData, $id)
 	{
-		$entryData['date_added'] = date(iaDb::DATETIME_FORMAT);
-		$entryData['date_modified'] = date(iaDb::DATETIME_FORMAT);
+		$currentData = $this->getById($id);
 
-		if (isset($entryData['crossed']))
+		if (empty($currentData))
 		{
-			$crossed = $entryData['crossed'];
-			unset($entryData['crossed']);
+			return false;
 		}
 
-		$entryId = parent::insert($entryData);
+		$result = $this->iaDb->update($itemData, iaDb::convertIds($id), null, self::getTable());
 
-		if ($entryId)
+		if ($result)
 		{
-			if (isset($crossed) && !empty($crossed))
-			{
-				$this->iaDb->setTable(self::getTableCrossed());
+			$this->_writeLog(iaCore::ACTION_EDIT, $itemData, $id);
 
-				$crossed = explode(',', $crossed);
-				$count = count($crossed);
-				$crossedInput = array();
+			$this->updateCounters($id, $itemData, iaCore::ACTION_EDIT, $currentData);
 
-				for ($i = 0; $i < $count; $i++)
-				{
-					$crossedInput[] = array('crossed_id' => $entryId, 'category_id' => (int)$crossed[$i]);
-				}
-
-				if (count($crossedInput) > 0)
-				{
-					$this->iaDb->insert($crossedInput);
-				}
-
-				$this->iaDb->resetTable();
-			}
+			$this->iaCore->startHook('phpListingUpdated', array(
+				'itemId' => $id,
+				'itemName' => $this->getItemName(),
+				'itemData' => $itemData,
+				'previousData' => $currentData
+			));
 		}
 
-		return $entryId;
-	}
-
-	public function update(array $entryData, $id)
-	{
-		$entryData['date_modified'] = date(iaDb::DATETIME_FORMAT);
-
-		$crossed = $this->iaDb->onefield('category_id', iaDb::convertIds($id, 'crossed_id'), 0, null, self::getTableCrossed());
-
-		if (isset($entryData['crossed']))
-		{
-			$crossed = $entryData['crossed'];
-			unset($entryData['crossed']);
-		}
-
-		if (isset($crossed) && $crossed)
-		{
-			$this->iaDb->setTable(self::getTableCrossed());
-
-			$this->iaDb->delete(iaDb::convertIds($id, 'category_id'));
-
-			if (!is_array($crossed))
-			{
-				$crossed = explode(',', $crossed);
-			}
-
-			$count = count($crossed);
-			$crossedInput = array();
-
-			for ($i = 0; $i < $count; $i++)
-			{
-				$crossedInput[] = array('category_id' => $id, 'crossed_id' => (int)$crossed[$i]);
-			}
-
-			if (count($crossedInput) > 0)
-			{
-				$this->iaDb->insert($crossedInput);
-			}
-
-			$this->iaDb->resetTable();
-		}
-
-		return parent::update($entryData, $id);
+		return $result;
 	}
 
 	public function delete($itemId)
@@ -168,10 +139,16 @@ class iaCateg extends abstractDirectoryPackageAdmin
 		if ($result)
 		{
 			$stmt = iaDb::convertIds($itemId, 'category_id');
+			$this->iaDb->delete($stmt, 'listings_categs');
+
+			$stmt = iaDb::convertIds($itemId, 'category_id');
+			$this->iaDb->delete($stmt, self::getTableCrossed());
+
+			$stmt = iaDb::convertIds($itemId, 'crossed_id');
 			$this->iaDb->delete($stmt, self::getTableCrossed());
 
 			$stmt = sprintf('`id` IN (SELECT `category_id` FROM `%s%s` WHERE `parent_id` = %d)',
-				$this->iaDb->prefix, $this->_tableFlat, $itemId);
+			$this->iaDb->prefix, $this->_tableFlat, $itemId);
 
 			$this->iaDb->delete($stmt, self::getTable());
 			$this->iaDb->delete(iaDb::convertIds($itemId, 'parent_id'), $this->_tableFlat);
@@ -185,8 +162,8 @@ class iaCateg extends abstractDirectoryPackageAdmin
 		$this->rebuildRelation();
 	}
 
-	/*
-	 * Rebuild categories relations.
+	/**
+	 * Rebuild categories relations
 	 * Fields that will be updated: parents, child, level, title_alias
 	 */
 	public function rebuildRelation()
@@ -298,14 +275,14 @@ class iaCateg extends abstractDirectoryPackageAdmin
 		return $this->iaDb->one(iaDb::STMT_COUNT_ROWS, null, self::getTable());
 	}
 
-	public function getTitleAlias($aCategory, $aParent = array())
+	public function getTitleAlias($category, $parent = array())
 	{
-		if (-1 == $aCategory['parent_id'])
+		if (-1 == $category['parent_id'])
 		{
 			return '';
 		}
 
-		$title = iaSanitize::alias($aCategory['title_alias']);
+		$title = iaSanitize::alias($category['title_alias']);
 
 		if ('category' == $title)
 		{
@@ -313,12 +290,12 @@ class iaCateg extends abstractDirectoryPackageAdmin
 			$title .= '-' . $id;
 		}
 
-		if (empty($aParent) || $aCategory['parent_id'] != $aParent['id'])
+		if (empty($parent) || $category['parent_id'] != $parent['id'])
 		{
-			$aParent = $this->getCategory("`id` = {$aCategory['parent_id']}", "`id`, `title_alias`");
+			$parent = $this->getCategory("`id` = {$category['parent_id']}", "`id`, `title_alias`");
 		}
 
-		$title = ltrim($aParent['title_alias'] . $title . IA_URL_DELIMITER, IA_URL_DELIMITER);
+		$title = ltrim($parent['title_alias'] . $title . IA_URL_DELIMITER, IA_URL_DELIMITER);
 
 		if ($this->iaCore->get('directory_lowercase_urls', true))
 		{
