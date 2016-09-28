@@ -7,7 +7,7 @@ class iaBackendController extends iaAbstractControllerPackageBackend
 
 	protected $_helperName = 'categ';
 
-	protected $_gridColumns = array('title', 'title_alias', 'num_all_listings', 'date_added', 'date_modified', 'status');
+	protected $_gridColumns = array('title', 'title_alias', 'num_all_listings', 'locked', 'date_added', 'date_modified', 'status');
 	protected $_gridFilters = array('title' => self::LIKE, 'status' => self::EQUAL);
 
 	protected $_activityLog = array('item' => 'category');
@@ -17,6 +17,7 @@ class iaBackendController extends iaAbstractControllerPackageBackend
 	protected $_phraseGridEntryDeleted = 'category_deleted';
 
 	private $_root;
+
 
 	public function __construct()
 	{
@@ -32,7 +33,8 @@ class iaBackendController extends iaAbstractControllerPackageBackend
 
 	protected function _entryAdd(array $entryData)
 	{
-		$entryData['date_added'] = date(iaDb::DATETIME_FORMAT);
+		$entryData['date_added'] = date(iaDb::DATE_FORMAT);
+		$entryData['date_modified'] = date(iaDb::DATE_FORMAT);
 
 		return $this->getHelper()->insert($entryData);
 	}

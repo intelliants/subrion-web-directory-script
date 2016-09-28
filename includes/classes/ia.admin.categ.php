@@ -18,6 +18,9 @@ class iaCateg extends abstractDirectoryPackageAdmin
 		'default' => ':base:title_alias'
 	);
 
+	public $dashboardStatistics = array('icon' => 'folder');
+
+
 	public static function getTableCrossed()
 	{
 		return self::$_tableCrossed;

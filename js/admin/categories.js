@@ -9,6 +9,15 @@ Ext.onReady(function()
 				{name: 'title', title: _t('title'), width: 1, editor: 'text'},
 				{name: 'title_alias', title: _t('path'), width: 1},
 				{name: 'num_all_listings', title: _t('listings_num'), width: 140},
+				{name: 'locked', title: _t('locked'), width: 60, align: intelli.gridHelper.constants.ALIGN_CENTER, renderer: intelli.gridHelper.renderer.check, editor: Ext.create('Ext.form.ComboBox',
+				{
+					typeAhead: false,
+					editable: false,
+					lazyRender: true,
+					store: Ext.create('Ext.data.SimpleStore', {fields: ['value','title'], data: [[0, _t('no')],[1, _t('yes')]]}),
+					displayField: 'title',
+					valueField: 'value'
+				})},
 				{name: 'date_added', title: _t('date_added'), width: 100},
 				{name: 'date_modified', title: _t('date_modified'), width: 100},
 				'status',
@@ -20,6 +29,7 @@ Ext.onReady(function()
 				delete_single: _t('are_you_sure_to_delete_selected_categ')
 			}
 		}, false);
+
 		intelli.categs.toolbar = new Ext.Toolbar({items:[
 		{
 			emptyText: _t('title'),
@@ -31,6 +41,7 @@ Ext.onReady(function()
 			displayField: 'title',
 			editable: false,
 			emptyText: _t('status'),
+			id: 'fltStatus',
 			name: 'status',
 			store: intelli.categs.stores.statuses,
 			typeAhead: true,
@@ -47,6 +58,13 @@ Ext.onReady(function()
 		}]});
 
 		intelli.categs.init();
+
+		var searchStatus = intelli.urlVal('status');
+		if (searchStatus)
+		{
+			Ext.getCmp('fltStatus').setValue(searchStatus);
+			intelli.gridHelper.search(intelli.categs);
+		}
 	}
 	else
 	{

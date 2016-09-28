@@ -11,6 +11,7 @@ class iaBackendController extends iaAbstractControllerPackageBackend
 
 	protected $_activityLog = array('item' => 'listing');
 
+
 	public function init()
 	{
 		$this->_iaCateg = $this->_iaCore->factoryPackage('categ', $this->getPackageName(), iaCore::ADMIN);

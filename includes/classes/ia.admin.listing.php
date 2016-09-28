@@ -22,6 +22,7 @@ class iaListing extends abstractDirectoryPackageAdmin
 
 	public $dashboardStatistics = array('icon' => 'link');
 
+
 	public static function getTableCrossed()
 	{
 		return self::$_tableCrossed;
