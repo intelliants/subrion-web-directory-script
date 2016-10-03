@@ -58,7 +58,7 @@ $(function()
 				<label for="" class="col col-lg-2 control-label">{lang key='title_alias'}</label>
 				<div class="col col-lg-4">
 					<input type="text" name="title_alias" id="field_title_alias" value="{if isset($item.title_alias)}{$item.title_alias}{/if}">
-					<p class="help-block text-break-word">{lang key='page_url_will_be'}: <span class="text-danger" id="title_url">{$smarty.const.IA_URL}{if $item.title_alias && $parent.title_alias}{$parent.title_alias}{$item.title_alias}/{/if}</span></p>
+					<p class="help-block text-break-word">{lang key='page_url_will_be'}: <span class="text-danger" id="title_url"></span></p>
 				</div>
 			</div>
 		{/capture}

@@ -30,10 +30,10 @@ if (iaView::REQUEST_JSON == $iaView->getRequestType())
 	foreach ($rows as &$row)
 	{
 		$data[] = array(
-				'id' => $row['id'],
-				'text' => $row['title'],
-				'children' => $row['child'] && $row['child'] != $row['id'] || empty($row['child']),
-				'state' => $state
+			'id' => $row['id'],
+			'text' => $row['title'],
+			'children' => $row['child'] && $row['child'] != $row['id'] || empty($row['child']),
+			'state' => $state
 		);
 	}
 
