@@ -26,11 +26,6 @@ class iaCateg extends abstractDirectoryPackageAdmin
 		return self::$_tableCrossed;
 	}
 
-	public function getLastId()
-	{
-		return $this->iaDb->one('MAX(`id`)', null, self::$_table);
-	}
-
 	public function url($action, $params)
 	{
 		$data = array();
@@ -76,9 +71,10 @@ class iaCateg extends abstractDirectoryPackageAdmin
 	{
 		$result = array();
 
-		$stmt = '`status` = :status AND `parent_id` != -1';
-		$this->iaDb->bind($stmt, array('status' => iaCore::STATUS_ACTIVE));
-		if ($entries = $this->get($stmt))
+		$where = '`status` = :status AND `parent_id` != -1 ORDER BY `level`, `title`';
+		$this->iaDb->bind($where, array('status' => iaCore::STATUS_ACTIVE));
+
+		if ($entries = $this->iaDb->all(array('title_alias'), $where, null, null, self::getTable()))
 		{
 			$baseUrl = $this->getInfo('url');
 
@@ -86,47 +82,6 @@ class iaCateg extends abstractDirectoryPackageAdmin
 			{
 				$result[] = $baseUrl . $entry['title_alias'];
 			}
-		}
-
-		return $result;
-	}
-
-	public function get($where = '', $start = 0, $limit = null, $fields = '*')
-	{
-		$where || $where = iaDb::EMPTY_CONDITION;
-		$fields .= ', `num_all_listings` `num`';
-
-		return $this->iaDb->all($fields, $where . ' ORDER BY `level`, `title`', $start, $limit, self::getTable());
-	}
-
-	public function getCategory($aWhere, $aFields = '*')
-	{
-		return $this->iaDb->row($aFields, $aWhere, self::getTable());
-	}
-
-	public function update(array $itemData, $id)
-	{
-		$currentData = $this->getById($id);
-
-		if (empty($currentData))
-		{
-			return false;
-		}
-
-		$result = $this->iaDb->update($itemData, iaDb::convertIds($id), null, self::getTable());
-
-		if ($result)
-		{
-			$this->_writeLog(iaCore::ACTION_EDIT, $itemData, $id);
-
-			$this->updateCounters($id, $itemData, iaCore::ACTION_EDIT, $currentData);
-
-			$this->iaCore->startHook('phpListingUpdated', array(
-				'itemId' => $id,
-				'itemName' => $this->getItemName(),
-				'itemData' => $itemData,
-				'previousData' => $currentData
-			));
 		}
 
 		return $result;
@@ -155,11 +110,6 @@ class iaCateg extends abstractDirectoryPackageAdmin
 		}
 
 		return $result;
-	}
-
-	public function updateCounters($itemId, array $itemData, $action, $previousData = null)
-	{
-		$this->rebuildRelation();
 	}
 
 	/**
@@ -265,11 +215,6 @@ class iaCateg extends abstractDirectoryPackageAdmin
 		return true;
 	}
 
-	public function clearListingsNum()
-	{
-		$this->iaDb->update(array('num_listings' => 0, 'num_all_listings' => 0), iaDb::EMPTY_CONDITION, self::getTable());
-	}
-
 	public function getCount()
 	{
 		return $this->iaDb->one(iaDb::STMT_COUNT_ROWS, null, self::getTable());
@@ -286,13 +231,13 @@ class iaCateg extends abstractDirectoryPackageAdmin
 
 		if ('category' == $title)
 		{
-			$id = $this->iaDb->getNextId();
+			$id = $this->iaDb->getNextId(self::getTable());
 			$title .= '-' . $id;
 		}
 
 		if (empty($parent) || $category['parent_id'] != $parent['id'])
 		{
-			$parent = $this->getCategory("`id` = {$category['parent_id']}", "`id`, `title_alias`");
+			$parent = $this->iaDb->row(array('id', 'title_alias'), iaDb::convertIds($category['parent_id']), self::getTable());
 		}
 
 		$title = ltrim($parent['title_alias'] . $title . IA_URL_DELIMITER, IA_URL_DELIMITER);

@@ -6,8 +6,6 @@ class iaListing extends abstractDirectoryPackageAdmin
 	protected static $_table = 'listings';
 	protected static $_tableCrossed = 'listings_categs';
 
-	protected $_activityLog = true;
-
 	protected $_itemName = 'listings';
 
 	protected $_statuses = array(iaCore::STATUS_ACTIVE, iaCore::STATUS_APPROVAL, self::STATUS_BANNED, self::STATUS_SUSPENDED);
@@ -28,11 +26,6 @@ class iaListing extends abstractDirectoryPackageAdmin
 		return self::$_tableCrossed;
 	}
 
-	public function getLastId()
-	{
-		return $this->iaDb->one('MAX(`id`)', null, self::$_table);
-	}
-
 	public function url($action, array $data)
 	{
 		$data['base'] = $this->getInfo('url');
@@ -40,8 +33,7 @@ class iaListing extends abstractDirectoryPackageAdmin
 		$data['category_alias'] = (!isset($data['category_alias']) ? '' : $data['category_alias']);
 		$data['title_alias'] = (!isset($data['title_alias']) ? '' : '-' . $data['title_alias']);
 
-		unset($data['title']);
-		unset($data['category']);
+		unset($data['title'], $data['category']);
 
 		if (!isset($this->_urlPatterns[$action]))
 		{
@@ -51,14 +43,30 @@ class iaListing extends abstractDirectoryPackageAdmin
 		return iaDb::printf($this->_urlPatterns[$action], $data);
 	}
 
-	private function _trim($text, $len = 600)
+	public function get($columns, $where, $order, $start = null, $limit = null)
 	{
-		if (strlen($text) > $len)
-		{
-			return iaSanitize::snippet($text);
-		}
+		$sql = 'SELECT :columns, '
+				. 'c.`title` `category_title`, c.`title_alias` `category_alias`, '
+				. 'm.`fullname` `member` '
+			. 'FROM `:prefix:table_listings` l '
+			. 'LEFT JOIN `:prefix:table_categories` c ON (l.`category_id` = c.`id`) '
+			. 'LEFT JOIN `:prefix:table_members` m ON (l.`member_id` = m.`id`) '
+			. 'WHERE :where :order'
+			. ($start || $limit ? ' LIMIT :start, :limit' : '');
 
-		return $text;
+		$sql = iaDb::printf($sql, array(
+			'prefix' => $this->iaDb->prefix,
+			'table_listings' => $this->getTable(),
+			'table_categories' => 'categs',
+			'table_members' => iaUsers::getTable(),
+			'columns' => $columns,
+			'where' => $where,
+			'order' => $order,
+			'start' => $start,
+			'limit' => $limit
+		));
+
+		return $this->iaDb->getAll($sql);
 	}
 
 	public function delete($listingId)
@@ -183,31 +191,14 @@ class iaListing extends abstractDirectoryPackageAdmin
 		return $this->iaDb->getRow($sql);
 	}
 
-	public function get($where = null, $start = 0, $limit = '', $order = '',
-		$fields = 't1.`id`, t1.`title`, t1.`title_alias`, t1.`reported_as_broken`, t1.`reported_as_broken_comments`, t1.`date_added`, t1.`date_modified`, t1.`status`')
-	{
-		$sql = "SELECT SQL_CALC_FOUND_ROWS $fields, '1' `update`, '1' `delete`, ";
-		$sql .= "t2.`title` `category_title`, t2.`title_alias` `category_alias`, ";
-		$sql .= "if (t3.`fullname` <> '', t3.`fullname`, t3.`username`) `member` ";
-		$sql .= "FROM `" . self::getTable(true) . "` t1 ";
-		$sql .= "LEFT JOIN `{$this->iaDb->prefix}categs` t2 ";
-		$sql .= "ON t1.`category_id` = t2.`id` ";
-		$sql .= "LEFT JOIN `{$this->iaDb->prefix}members` t3 ";
-		$sql .= "ON t1.`member_id` = t3.`id` ";
-		$sql .= $where ? "WHERE $where " : '';
-		$sql .= $order ? " ORDER BY $order " : '';
-		$sql .= $start || $limit ? " LIMIT $start, $limit " : '';
-
-		return $this->iaDb->getAll($sql);
-	}
-
 	public function getSitemapEntries()
 	{
 		$result = array();
 
 		$stmt = 't1.`status` = :status';
 		$this->iaDb->bind($stmt, array('status' => iaCore::STATUS_ACTIVE));
-		if ($entries = $this->get($stmt, null, null, 't1.`date_modified` DESC'))
+
+		if ($entries = $this->get('l.`title_alias`', $stmt, 'l.`date_modified` DESC'))
 		{
 			foreach ($entries as $entry)
 			{

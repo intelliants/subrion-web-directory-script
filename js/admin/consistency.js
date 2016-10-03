@@ -10,7 +10,7 @@ $(function()
 			total = 0,
 			progress = 0,
 			interval = 2000,
-			url = intelli.config.ia_url + '/directory/categories/read.json';
+			url = intelli.config.admin_url + '/directory/categories/consistency.json';
 
 		var barHolder = $('#recount-listings-progress');
 		var bar = $('.progress-bar', barHolder);
@@ -23,13 +23,13 @@ $(function()
 
 		$.post(url, {action: 'pre_recount_listings'}, function(response)
 		{
-			total = response.categories_total;
+			total = response.total;
 		});
 
 		var timer = setInterval(function()
 		{
 			$.post(url, {start: start, limit: limit, action: action}, function(response)
-			{
+			{ console.log(response)
 				start += limit;
 				progress = Math.round(start / total * 100);
 

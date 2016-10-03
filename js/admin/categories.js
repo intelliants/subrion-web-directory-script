@@ -2,7 +2,7 @@ Ext.onReady(function()
 {
 	if (Ext.get('js-grid-placeholder'))
 	{
-		intelli.categs = new IntelliGrid(
+		var grid = new IntelliGrid(
 		{
 			columns:[
 				'selection',
@@ -30,7 +30,7 @@ Ext.onReady(function()
 			}
 		}, false);
 
-		intelli.categs.toolbar = new Ext.Toolbar({items:[
+		grid.toolbar = new Ext.Toolbar({items:[
 		{
 			emptyText: _t('title'),
 			listeners: intelli.gridHelper.listener.specialKey,
@@ -43,27 +43,27 @@ Ext.onReady(function()
 			emptyText: _t('status'),
 			id: 'fltStatus',
 			name: 'status',
-			store: intelli.categs.stores.statuses,
+			store: grid.stores.statuses,
 			typeAhead: true,
 			valueField: 'value',
 			width: 100,
 			xtype: 'combo'
 		},{
-			handler: function(){intelli.gridHelper.search(intelli.categs)},
+			handler: function(){intelli.gridHelper.search(grid)},
 			id: 'fltBtn',
 			text: '<i class="i-search"></i> ' + _t('search')
 		},{
-			handler: function(){intelli.gridHelper.search(intelli.categs, true)},
+			handler: function(){intelli.gridHelper.search(grid, true)},
 			text: '<i class="i-close"></i> ' + _t('reset')
 		}]});
 
-		intelli.categs.init();
+		grid.init();
 
 		var searchStatus = intelli.urlVal('status');
 		if (searchStatus)
 		{
 			Ext.getCmp('fltStatus').setValue(searchStatus);
-			intelli.gridHelper.search(intelli.categs);
+			intelli.gridHelper.search(grid);
 		}
 	}
 	else

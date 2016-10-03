@@ -39,13 +39,13 @@ $(function()
 		{if $core.config.listing_crossed}
 			<div id="crossed_fieldzone" class="row">
 				<label for="" class="col col-lg-2 control-label">
-					{lang key='crossed_categories'} <span class="label label-info" id="crossed-limit">{$core.config.listing_crossed_limit - count($category.crossed)|default:0}</span><br>
+					{lang key='crossed_categories'} <span class="label label-info" id="crossed-limit">{$core.config.listing_crossed_limit - count($crossed)|default:0}</span><br>
 					<a href="#" class="categories-toggle js-categories-toggle" data-toggle="#tree-crossed">{lang key='open_close'}</a>
 				</label>
 				<div class="col col-lg-4" style="margin: 8px 0">
 					<div id="crossed-list">
-						{if $category && isset($category.crossed) && $category.crossed}
-							{foreach $category.crossed as $crid => $link}
+						{if $crossed}
+							{foreach $crossed as $crid => $link}
 								<span data-id="{$crid}">{$link}</span>{if !$link@last}, {/if}
 							{/foreach}
 						{else}
@@ -53,8 +53,8 @@ $(function()
 						{/if}
 					</div>
 
-					<div id="tree-crossed" class="tree categories-tree"{if (isset($category.crossed) && $category.crossed) || ('edit' == $pageAction)} style="display:none"{/if}></div>
-					<input type="hidden" id="crossed-links" name="crossed_links" value="{if isset($category.crossed) && $category.crossed}{','|implode:array_keys($category.crossed)}{elseif isset($smarty.post.crossed_links)}{$smarty.post.crossed_links}{/if}">
+					<div id="tree-crossed" class="tree categories-tree"{if $crossed || iaCore::ACTION_EDIT == $pageAction} style="display: none"{/if}></div>
+					<input type="hidden" id="crossed-links" name="crossed_links" value="{if $crossed}{','|implode:array_keys($crossed)}{elseif isset($smarty.post.crossed_links)}{$smarty.post.crossed_links}{/if}">
 				</div>
 			</div>
 		{/if}

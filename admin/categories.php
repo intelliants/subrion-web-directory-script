@@ -19,10 +19,8 @@ class iaBackendController extends iaAbstractControllerPackageBackend
 	private $_root;
 
 
-	public function __construct()
+	public function init()
 	{
-		parent::__construct();
-
 		$this->_root = $this->getHelper()->getRoot();
 	}
 
@@ -31,16 +29,14 @@ class iaBackendController extends iaAbstractControllerPackageBackend
 		$entryData['date_added'] = date(iaDb::DATE_FORMAT);
 		$entryData['date_modified'] = date(iaDb::DATE_FORMAT);
 
-		return $this->getHelper()->insert($entryData);
+		return parent::_entryAdd($entryData);
 	}
 
 	protected function _entryUpdate(array $entryData, $entryId)
 	{
 		$entryData['date_modified'] = date(iaDb::DATE_FORMAT);
 
-		$this->getHelper()->update($entryData, $entryId);
-
-		return (0 === $this->_iaDb->getErrorNumber());
+		return parent::_entryUpdate($entryData, $entryId);
 	}
 
 	protected function _entryDelete($entryId)
@@ -54,9 +50,8 @@ class iaBackendController extends iaAbstractControllerPackageBackend
 			'member_id' => iaUsers::getIdentity()->id,
 			'parent_id' => $this->_root['id'],
 			'parents' => 0,
-			'locked' => 0,
+			'locked' => false,
 			'featured' => false,
-			'icon' => false,
 			'status' => iaCore::STATUS_ACTIVE,
 			'title_alias' => ''
 		);
@@ -67,12 +62,13 @@ class iaBackendController extends iaAbstractControllerPackageBackend
 		$fields = $this->_iaField->getByItemName($this->getHelper()->getItemName());
 		list($entry, , $this->_messages, ) = $this->_iaField->parsePost($fields, $entry);
 
-		$entry['parent_id'] = $data['parent_id'] ? $data['parent_id'] : $this->_root['id'];
+		$entry['parent_id'] = empty($data['parent_id']) ? $this->_root['id'] : $data['parent_id'];
 		$entry['locked'] = (int)$data['locked'];
 		$entry['status'] = $data['status'];
-		$entry['title_alias'] = empty($_POST['title_alias']) ? htmlspecialchars_decode($data['title']) : $data['title_alias'];
-		$entry['title_alias'] = $this->getHelper()->getTitleAlias($entry);
 		$entry['order'] = $this->_iaDb->getMaxOrder() + 1;
+
+		$entry['title_alias'] = empty($data['title_alias']) ? $data['title'] : $data['title_alias'];
+		$entry['title_alias'] = $this->getHelper()->getTitleAlias($entry);
 
 		if ($this->getHelper()->exists($entry['title_alias'], $entry['parent_id'], $this->getEntryId()))
 		{
@@ -84,36 +80,31 @@ class iaBackendController extends iaAbstractControllerPackageBackend
 
 	protected function _postSaveEntry(array &$entry, array $data, $action)
 	{
+		$this->_iaDb->setTable($this->getHelper()->getTableCrossed());
+
+		if (iaCore::ACTION_EDIT == $action)
+		{
+			$this->_iaDb->delete(iaDb::convertIds($this->getEntryId(), 'category_id'));
+		}
+
 		if (!empty($data['crossed']))
 		{
-			$data['crossed'] = explode(',', $data['crossed']);
-
-			$entryData['category_id'] = $this->getHelper()->getLastId();
-
-			if (iaCore::ACTION_EDIT == $action)
+			foreach (explode(',', $data['crossed']) as $id)
 			{
-				$entryData['category_id'] = $data['id'];
-
-				$stmt = iaDb::convertIds($entryData['category_id'], 'category_id');
-
-				$this->_iaDb->delete($stmt, $this->getHelper()->getTableCrossed());
-			}
-
-			foreach ($data['crossed'] as $row)
-			{
-				$entryData['crossed_id'] = $row;
-
-				$this->_iaDb->insert(array($entryData), null, $this->getHelper()->getTableCrossed());
+				if (!$id) continue;
+				$this->_iaDb->insert(array(
+					'category_id' => $this->getEntryId(),
+					'crossed_id' => $id
+				));
 			}
 		}
-		else
-		{
-			if (iaCore::ACTION_EDIT == $action) {
-				$stmt = iaDb::convertIds($data['id'], 'category_id');
 
-				$this->_iaDb->delete($stmt, $this->getHelper()->getTableCrossed());
-			}
-		}
+		$this->_iaDb->resetTable();
+	}
+
+	public function updateCounters($entryId, array $entryData, $action, $previousData = null)
+	{
+		$this->getHelper()->rebuildRelation();
 	}
 
 	protected function _assignValues(&$iaView, array &$entryData)
@@ -124,20 +115,44 @@ class iaBackendController extends iaAbstractControllerPackageBackend
 
 		$parent = $this->_iaDb->row(array('id', 'title', 'parents', 'child'), iaDb::convertIds($entryData['parent_id']));
 
-		if (!empty($this->_iaCore->requestPath[0])) {
-			$category = $this->getHelper()->getById((int)$this->_iaCore->requestPath[0]);
+		$entryData['crossed'] = $this->_fetchCrossed();
 
-			$crossed = $this->_iaDb->getAll("SELECT t.`id`, t.`title` FROM
-				{$this->_iaCore->iaDb->prefix}{$this->getHelper()->getTable()} t,
-				{$this->_iaCore->iaDb->prefix}{$this->getHelper()->getTableCrossed()} cr
-				WHERE t.`id` = cr.`crossed_id` AND cr.`category_id` = '{$category['id']}'");
+		$iaView->assign('parent', $parent);
+	}
 
-			foreach ($crossed as $item)
+	protected function _fetchCrossed()
+	{
+		$sql = 'SELECT c.`id`, c.`title` '
+			. 'FROM `:prefix:table_categories` c, `:prefix:table_crossed` cr '
+			. 'WHERE c.`id` = cr.`crossed_id` AND cr.`category_id` = :id';
+
+		$sql = iaDb::printf($sql, array(
+			'prefix' => $this->_iaDb->prefix,
+			'table_categories' => self::getTable(),
+			'table_crossed' => $this->getHelper()->getTableCrossed(),
+			'id' => $this->getEntryId()
+		));
+
+		return $this->_iaDb->getKeyValue($sql);
+	}
+
+	protected function _getJsonConsistency(array $params)
+	{
+		$output = array();
+
+		if (isset($_POST['action']))
+		{
+			switch ($_POST['action'])
 			{
-				$entryData['crossed'][$item['id']] = $item['title'];
+				case 'recount_listings':
+					$this->getHelper()->recountListingsNum((int)$_POST['start'], (int)$_POST['limit']);
+					break;
+
+				case 'pre_recount_listings':
+					$output['total'] = $this->getHelper()->getCount();
 			}
 		}
 
-		$iaView->assign('parent', $parent);
+		return $output;
 	}
 }
