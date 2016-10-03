@@ -229,6 +229,12 @@ class iaCateg extends abstractDirectoryPackageAdmin
 
 		$title = iaSanitize::alias($category['title_alias']);
 
+		if ('category' == $title)
+		{
+			$id = $this->iaDb->getNextId(self::getTable());
+			$title .= '-' . $id;
+		}
+
 		if (empty($parent) || $category['parent_id'] != $parent['id'])
 		{
 			$parent = $this->iaDb->row(array('id', 'title_alias'), iaDb::convertIds($category['parent_id']), self::getTable());

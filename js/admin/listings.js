@@ -189,7 +189,7 @@ intelli.fillUrlBox = function()
 			params.alias = 1;
 		}
 
-		$.get(intelli.config.ia_url + '/directory/listings/read.json?get=alias', params, function(response)
+		$.get(intelli.config.ia_url + 'directory/listings/read.json?get=alias', params, function(response)
 		{
 			if (response.data)
 			{
@@ -200,3 +200,8 @@ intelli.fillUrlBox = function()
 	}
 	intelli.titleCache = cache;
 };
+
+$(function()
+{
+	$('input[name="title"], input[name="title_alias"]').blur(intelli.fillUrlBox).blur();
+});
