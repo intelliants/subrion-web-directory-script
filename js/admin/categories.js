@@ -147,7 +147,7 @@ intelli.fillUrlBox = function()
 
 	if ('' != title && intelli.titleCache != cache)
 	{
-		var params = {get: 'alias', title: title, category: category};
+		var params = {get: 'alias', title: title, category: category, item: 'category'};
 
 		if ('' != alias)
 		{

@@ -182,14 +182,14 @@ intelli.fillUrlBox = function()
 
 	if ('' != title && intelli.titleCache != cache)
 	{
-		var params = {get: 'alias', title: title, category: category, id: id};
+		var params = {get: 'alias', title: title, category: category, id: id, item: 'listing'};
 
 		if (titleAlias)
 		{
 			params.alias = 1;
 		}
 
-		$.get(intelli.config.ia_url + 'directory/listings/read.json?get=alias', params, function(response)
+		$.get(intelli.config.ia_url + 'directory/listings/read.json', params, function(response)
 		{
 			if (response.data)
 			{

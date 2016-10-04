@@ -2,6 +2,7 @@
 //##copyright##
 
 $iaListing = $iaCore->factoryPackage('listing', IA_CURRENT_PACKAGE);
+$iaCateg = $iaCore->factoryPackage('categ', IA_CURRENT_PACKAGE);
 
 if (iaView::REQUEST_JSON == $iaView->getRequestType())
 {
@@ -37,36 +38,37 @@ if (iaView::REQUEST_JSON == $iaView->getRequestType())
 		);
 	}
 
-	if (isset($_GET['title']) && isset($_GET['category']) && isset($_GET['get']) && 'alias' == $_GET['get'])
+	if (isset($_GET['title']) && isset($_GET['category']) && isset($_GET['get']) && isset($_GET['item']) && 'alias' == $_GET['get'])
 	{
-			$iaListing = $iaCore->factoryPackage('listing', IA_CURRENT_PACKAGE);
+		switch ($_GET['item']) {
+			case 'listing':
+				$title = $iaListing->getTitleAlias(isset($_GET['title']) ? $_GET['title'] : '', isset($_GET['alias']));
 
-			$title = $iaListing->getTitleAlias(isset($_GET['title']) ? $_GET['title'] : '', isset($_GET['alias']));
+				$category = isset($_GET['category']) ? (int)$_GET['category'] : 0;
+				$category_alias = false;
 
-			$category = isset($_GET['category']) ? (int)$_GET['category'] : 0;
-			$category_alias = false;
-			if ($category > 0)
-			{
-				$category_alias = $iaDb->one('title_alias', '`id` = ' . $category, 'categs');
-			}
+				if ($category > 0)
+				{
+					$category_alias = $iaDb->one('title_alias', '`id` = ' . $category, 'categs');
+				}
 
-			$data = array(
-				'id' => (isset($_GET['id']) && (int)$_GET['id'] > 0 ? (int)$_GET['id'] : $iaDb->getNextId(iaListing::getTable(true))),
-				'title_alias' => $title,
-				'category_alias' => $category_alias ? $category_alias : '',
-			);
+				$data = array(
+					'id' => (isset($_GET['id']) && (int)$_GET['id'] > 0 ? (int)$_GET['id'] : $iaDb->getNextId(iaListing::getTable(true))),
+					'title_alias' => $title,
+					'category_alias' => $category_alias ? $category_alias : ''
+				);
 
-			$data['data'] = $iaListing->url('view', $data);
+				$data['data'] = $iaListing->url('view', $data);
 
-		// $iaCateg = $iaCore->factoryPackage('categ', IA_CURRENT_PACKAGE, iaCore::ADMIN);
+				break;
 
-		// $iaDb->setTable(iaCateg::getTable());
+			case 'category':
+				$title = $iaCateg->getTitleAlias(array('title_alias' => $_GET['title'], 'parent_id' => (int)$_GET['category']));
 
-		// $title = $iaCateg->getTitleAlias(array('title_alias' => $_GET['title'], 'parent_id' => (int)$_GET['category']));
+				$data['data'] = $iaCateg->url('default', array('title_alias' => $title));
 
-		// $data['data'] = $iaCateg->url('default', array('title_alias' => $title));
-
-		// $iaDb->resetTable();
+				break;
+		}
 	}
 
 	$iaView->assign($data);
@@ -198,7 +200,6 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType())
 			$iaView->set('subpage', $category['id']);
 
 			// start breadcrumb
-			$iaCateg = $iaCore->factoryPackage('categ', IA_CURRENT_PACKAGE);
 			if ($category && trim($category['parents']))
 			{
 				$condition = "`id` IN({$category['parents']}) AND `parent_id` != -1 AND `status` = 'active'";
