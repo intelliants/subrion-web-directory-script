@@ -88,10 +88,19 @@ class iaBackendController extends iaAbstractControllerPackageBackend
 
 		if (isset($data['reported_as_broken']))
 		{
-			$entry['reported_as_broken'] = $_POST['reported_as_broken'];
-			if (!$data['reported_as_broken'])
+			$entry['reported_as_broken'] = (int)$data['reported_as_broken'];
+			$data['reported_as_broken'] || $entry['reported_as_broken_comments'] = '';
+		}
+
+		if (!empty($entry['url']) && !iaValidate::isUrl($entry['url']))
+		{
+			if (iaValidate::isUrl($entry['url'], false))
 			{
-				$entry['reported_as_broken_comments'] = '';
+				$entry['url'] = 'http://' . $entry['url'];
+			}
+			else
+			{
+				$this->addMessage('error_url');
 			}
 		}
 

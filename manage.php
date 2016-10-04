@@ -103,13 +103,20 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType())
 			$messages[] = iaLanguage::get('confirmation_code_incorrect');
 		}
 
-		if (isset($item['url']) && $item['url'] && !iaValidate::isUrl($item['url']))
+		if (!empty($item['url']) && !iaValidate::isUrl($item['url']))
 		{
-			$error = true;
-			$messages[] = iaLanguage::get('error_url');
+			if (iaValidate::isUrl($item['url'], false))
+			{
+				$item['url'] = 'http://' . $item['url'];
+			}
+			else
+			{
+				$error = true;
+				$messages[] = iaLanguage::get('error_url');
+			}
 		}
 
-		if (isset($item['email']) && $item['email'] && !iaValidate::isEmail($item['email']))
+		if (!empty($item['email']) && !iaValidate::isEmail($item['email']))
 		{
 			$error = true;
 			$messages[] = iaLanguage::get('error_email_incorrect');
