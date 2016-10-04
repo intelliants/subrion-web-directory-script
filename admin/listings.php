@@ -15,6 +15,8 @@ class iaBackendController extends iaAbstractControllerPackageBackend
 
 	protected $_activityLog = array('item' => 'listing');
 
+	private $_iaCateg;
+
 
 	public function init()
 	{
@@ -125,7 +127,10 @@ class iaBackendController extends iaAbstractControllerPackageBackend
 		if (!empty($data['crossed_links']))
 		{
 			foreach (explode(',', $data['crossed_links']) as $categoryId)
+			{
 				$this->_iaDb->insert(array('listing_id' => $this->getEntryId(), 'category_id' => $categoryId));
+				$this->_iaCateg->changeNumListing($categoryId);
+			}
 		}
 
 		$this->_iaDb->resetTable();

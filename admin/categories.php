@@ -92,10 +92,7 @@ class iaBackendController extends iaAbstractControllerPackageBackend
 			foreach (explode(',', $data['crossed']) as $id)
 			{
 				if (!$id) continue;
-				$this->_iaDb->insert(array(
-					'category_id' => $this->getEntryId(),
-					'crossed_id' => $id
-				));
+				$this->_iaDb->insert(array('category_id' => $this->getEntryId(), 'crossed_id' => $id));
 			}
 		}
 
