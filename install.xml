@@ -223,6 +223,7 @@
 	</fields>
 
 	<phrases>
+		<phrase category="admin" key="add_category">Add Category</phrase>
 		<phrase category="admin" key="are_you_sure_to_delete_selected_categ">Are you sure you wish to delete this category?</phrase>
 		<phrase category="admin" key="are_you_sure_to_delete_selected_categs">Are you sure you wish to delete these categories?</phrase>
 		<phrase category="admin" key="are_you_sure_to_delete_selected_listings">Are you sure you wish to delete these listings?</phrase>
@@ -230,6 +231,7 @@
 		<phrase category="admin" key="category_added">Category added.</phrase>
 		<phrase category="admin" key="category_deleted">Category deleted.</phrase>
 		<phrase category="admin" key="directory_package">&quot;Directory&quot; package</phrase>
+		<phrase category="admin" key="edit_category">Edit Category</phrase>
 		<phrase category="admin" key="no_crossed_categories">No Crossed Categories.</phrase>
 		<phrase category="admin" key="no_owner">No Owner</phrase>
 		<phrase category="admin" key="repair_listings_num">Recount listings categories</phrase>

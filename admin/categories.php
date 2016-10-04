@@ -24,6 +24,11 @@ class iaBackendController extends iaAbstractControllerPackageBackend
 		$this->_root = $this->getHelper()->getRoot();
 	}
 
+	protected function _setPageTitle(&$iaView, array $entryData, $action)
+	{
+		$iaView->title(iaLanguage::get($action . '_category', $iaView->title()));
+	}
+
 	protected function _entryAdd(array $entryData)
 	{
 		$entryData['date_added'] = date(iaDb::DATE_FORMAT);
