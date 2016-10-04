@@ -5,7 +5,7 @@ $iaCateg = $iaCore->factoryPackage('categ', IA_CURRENT_PACKAGE);
 
 if (iaView::REQUEST_JSON == $iaView->getRequestType() && isset($_GET['get']) && 'tree' == $_GET['get'])
 {
-	$categoryId = isset($_GET['id']) ? (int)$_GET['id'] : $iaDb->one('parent_id', '`id` = 0', iaCateg::getTable());
+	$categoryId = empty($_GET['id']) ? 0 : (int)$_GET['id'];
 
 	$output = array();
 	$entries = $iaDb->all(
