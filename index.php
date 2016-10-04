@@ -214,7 +214,7 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType())
 					}
 					else
 					{
-						iaBreadcrumb::toEnd($parent['title'], $url);
+						iaBreadcrumb::add($parent['title'], $url);
 					}
 				}
 			}
