@@ -209,7 +209,7 @@ class iaListing extends abstractDirectoryPackageAdmin
 		return $result;
 	}
 
-	public function titleAlias($title, $convertLowercase = false)
+	public function getTitleAlias($title, $convertLowercase = false)
 	{
 		$title = iaSanitize::alias($title);
 

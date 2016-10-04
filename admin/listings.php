@@ -98,7 +98,7 @@ class iaBackendController extends iaAbstractControllerPackageBackend
 		$entry['category_id'] = (int)$data['category_id'];
 
 		$entry['title_alias'] = empty($data['title_alias']) ? $data['title'] : $data['title_alias'];
-		$entry['title_alias'] = $this->getHelper()->titleAlias($entry['title_alias']);
+		$entry['title_alias'] = $this->getHelper()->getTitleAlias($entry['title_alias']);
 
 		if (iaValidate::isUrl($entry['url']))
 		{

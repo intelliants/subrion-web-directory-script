@@ -164,6 +164,18 @@ class iaListing extends abstractDirectoryPackageFront
 		return $this->_process($rows);
 	}
 
+	public function getTitleAlias($title, $convertLowercase = false)
+	{
+		$title = iaSanitize::alias($title);
+
+		if ($this->iaCore->get('directory_lowercase_urls', true) && !$convertLowercase)
+		{
+			$title = strtolower($title);
+		}
+
+		return $title;
+	}
+
 	/**
 	 * Returns domain name by a given URL
 	 *
