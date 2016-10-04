@@ -31,13 +31,16 @@ class iaBackendController extends iaAbstractControllerPackageBackend
 			$values['text'] = '%' . iaSanitize::sql($params['text']) . '%';
 		}
 
-		if (!empty($params['member']))
+		if(isset($params['no_owner']))
+		{
+			$conditions[] = 'l.`member_id` = 0';
+		}
+		elseif (!empty($params['member']))
 		{
 			$conditions[] = '(m.`fullname` LIKE :member OR m.`username` LIKE :member)';
 			$values['member'] = '%' . iaSanitize::sql($params['member']) . '%';
 		}
 
-		isset($params['no_owner']) && $conditions[] = 'l.`member_id` = 0';
 		isset($params['reported_as_broken']) && $conditions[] = 'l.`reported_as_broken` = 1';
 	}
 
