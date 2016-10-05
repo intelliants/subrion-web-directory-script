@@ -224,7 +224,6 @@
 
 	<phrases>
 		<phrase category="admin" key="add_category">Add Category</phrase>
-		<phrase category="admin" key="add_listing">Add Listing</phrase>
 		<phrase category="admin" key="are_you_sure_to_delete_selected_categ">Are you sure you wish to delete this category?</phrase>
 		<phrase category="admin" key="are_you_sure_to_delete_selected_categs">Are you sure you wish to delete these categories?</phrase>
 		<phrase category="admin" key="are_you_sure_to_delete_selected_listings">Are you sure you wish to delete these listings?</phrase>
@@ -251,6 +250,7 @@
 		<phrase category="admin" key="edit_directory_category">Edit Category ":name"</phrase>
 		<phrase category="admin" key="directory_category_already_exists">Category already exists</phrase>
 
+		<phrase category="common" key="add_listing">Add Listing</phrase>
 		<phrase category="common" key="alexa_rank">Alexa Rank</phrase>
 		<phrase category="common" key="all_listings_num">Number of all listings</phrase>
 		<phrase category="common" key="are_you_sure_to_delete_selected_listing">Are you sure you wish to delete this listing?</phrase>
@@ -274,7 +274,6 @@
 		<phrase category="common" key="prev_crossed">Previous crossed categories</phrase>
 		<phrase category="common" key="views_num">Number of clicks</phrase>
 
-		<phrase category="frontend" key="add_listing">Add Listing</phrase>
 		<phrase category="frontend" key="ascending">Ascending</phrase>
 		<phrase category="frontend" key="author_activity">Author Activity</phrase>
 		<phrase category="frontend" key="cant_remove_listing">Unable to remove the listing.</phrase>
