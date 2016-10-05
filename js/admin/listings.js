@@ -95,29 +95,20 @@ Ext.onReady(function()
 			}
 		}).keyup();
 
-		if ('#tree-crossed'.length)
+		var $ccTree = $('#tree-crossed');
+
+		if ($ccTree.length)
 		{
 			var nodes = $('#crossed-links').val().split(',');
 
-			$('#tree-crossed').jstree(
+			$ccTree.jstree(
 			{
 				core:
 				{
 					data: {
 						data: function(n)
 						{
-							var params = {};
-
-							if(n.id != '#')
-							{
-								params.id = n.id;
-							}
-							else
-							{
-								params.id = 0;
-							}
-
-							return params;
+							return {id: n.id == '#' ? 0 : n.id};
 						},
 						url: intelli.config.ia_url + 'directory/categories/read.json?get=tree'
 					},
@@ -132,7 +123,7 @@ Ext.onReady(function()
 			})
 			.on('click.jstree', function(e)
 			{
-				var crossedJsTree = $('#tree-crossed').jstree(true);
+				var crossedJsTree = $ccTree.jstree(true);
 				var selectedNodes = crossedJsTree.get_selected();
 
 				if (selectedNodes.length > intelli.config.listing_crossed_limit)
