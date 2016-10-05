@@ -143,7 +143,6 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType())
 
 		$item['category_id'] = (int)$_POST['category_id'];
 		$item['status'] = $iaCore->get('listing_auto_approval') ? iaCore::STATUS_ACTIVE : iaCore::STATUS_APPROVAL;
-		$item['short_description'] = iaSanitize::snippet($_POST['description'], $iaCore->get('directory_summary_length'));
 
 		if ($iaCore->get('listing_crossed'))
 		{

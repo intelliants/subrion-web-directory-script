@@ -21,7 +21,7 @@
 						{/if}
 					</p>
 
-					<p>{$listing.short_description|strip_tags|truncate:80}</p>
+					<p>{$listing.description|strip_tags|truncate:80}</p>
 				</div>
 			</div>
 		{/foreach}

@@ -176,7 +176,7 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType())
 		'listing' => $listingId,
 		'item' => 'listings',
 		'title' => $listing['title'],
-		'desc' => $listing['short_description'],
+		'desc' => substr(strip_tags($listing['description']), 0, 200),
 	));
 
 	$author = $iaDb->row_bind(iaDb::ALL_COLUMNS_SELECTION, '`status` = :status AND `id` = :id', array('status' => iaCore::STATUS_ACTIVE, 'id' => $listing['member_id']), iaUsers::getTable());

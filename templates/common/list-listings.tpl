@@ -50,7 +50,7 @@
 			<p><span class="fa fa-eye"></span> {$listing.views_num} {lang key='views'}</p>
 		</div>
 
-		<p>{$listing.short_description|strip_tags|truncate:200:'...'}</p>
+		<p>{$listing.description|strip_tags|truncate:200:'...'}</p>
 	</div>
 
 	<div class="ia-item__panel">

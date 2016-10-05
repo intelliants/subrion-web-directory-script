@@ -108,7 +108,6 @@
 	<config group="directory" name="listing_crossed" type="radio" values="1,0" description="Allow submission in multiple categories" private="0">0</config>
 	<config group="directory" name="listing_crossed_limit" type="text" description="Multiple categories submission default limit" show="listing_crossed|1" private="0">5</config>
 	<config group="directory" name="directory_listings_perpage" type="text" description="Listings per page">10</config>
-	<config group="directory" name="directory_summary_length" type="text" description="Summary length">700</config>
 	<config group="directory" name="directory_listing_limit" type="text" description="Listing limit for each member" show="0">6</config>
 	<config group="directory" name="directory_duplicate_check" type="radio" description="Check for duplicate listing's field">0</config>
 	<config group="directory" name="directory_duplicate_check_field" type="select" values="'url','domain','title'" description="Check for duplicate" show="directory_duplicate_check|1">url</config>
@@ -486,7 +485,6 @@ CREATE TABLE IF NOT EXISTS `{prefix}listings`(
 	`title_alias` varchar(150) NOT NULL,
 	`url` tinytext NOT NULL,
 	`reciprocal` tinytext NOT NULL,
-	`short_description` mediumtext NOT NULL,
 	`description` text NULL,
 	`meta_description` mediumtext NOT NULL,
 	`meta_keywords` mediumtext NOT NULL,
