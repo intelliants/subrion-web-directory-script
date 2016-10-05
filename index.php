@@ -202,6 +202,11 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType())
 			// start breadcrumb
 			if ($category && trim($category['parents']))
 			{
+				if (IA_CURRENT_PACKAGE == $iaCore->get('default_package'))
+				{
+					iaBreadcrumb::remove(iaBreadcrumb::POSITION_LAST);
+				}
+
 				$condition = "`id` IN({$category['parents']}) AND `parent_id` != -1 AND `status` = 'active'";
 				$parents = $iaCateg->get($condition, 0, null, null, 'c.*', 'level');
 

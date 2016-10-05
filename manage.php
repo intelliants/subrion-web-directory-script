@@ -32,7 +32,7 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType())
 
 	$iaListing = $iaCore->factoryPackage('listing', IA_CURRENT_PACKAGE);
 
-	iaBreadcrumb::replace(iaLanguage::get(IA_CURRENT_PACKAGE), $iaCore->packagesData[IA_CURRENT_PACKAGE]['url'], 2);
+	iaBreadcrumb::replace(iaLanguage::get(IA_CURRENT_PACKAGE), $iaCore->factory('page', iaCore::FRONT)->getUrlByName('directory_home'), 2);
 
 	switch ($pageAction)
 	{
