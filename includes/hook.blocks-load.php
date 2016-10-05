@@ -65,7 +65,7 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType())
 		{
 			foreach ($children as $key => $cat)
 			{
-				$condition = "c.`parent_id` = {$cat['id']} AND c.`status`='active'";
+				$condition = "c.`parent_id` = {$cat['id']} AND c.`status` = 'active'";
 				$hideIfEmpty && ($condition .= ' AND c.`num_all_listings` != 0');
 
 				$children[$key]['subcategories'] = $iaCateg->get($condition, $cat['id'], 0, $iaCore->get('directory_subcategories_number'), 'c.`title`, c.`title_alias`');

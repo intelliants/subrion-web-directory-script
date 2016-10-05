@@ -51,7 +51,7 @@ class iaCateg extends abstractDirectoryPackageFront
 		return $this->iaDb->row($aFields, $where, self::getTable());
 	}
 
-	public function get($where = '', $catId = '0', $start = 0, $limit = null, $fields = 'c.*')
+	public function get($where = '', $catId = '0', $start = 0, $limit = null, $fields = 'c.*', $order = 'title')
 	{
 		if (empty($where))
 		{
@@ -67,15 +67,16 @@ class iaCateg extends abstractDirectoryPackageFront
 			. 'FROM `:prefix:table_categories` c '
 			. 'LEFT JOIN `:prefix:table_crossed_categories` cr '
 			. 'ON c.`id` = cr.`crossed_id` '
-			. 'WHERE cr.`category_id` = :id ORDER BY c.`title`) ORDER BY `title`';
+			. 'WHERE cr.`category_id` = :id ORDER BY c.`title`) ORDER BY `:order`';
 		$sql = iaDb::printf($sql, array(
 			'fields' => $fields,
 			'prefix' => $this->iaDb->prefix,
 			'table_categories' => self::getTable(),
 			'table_crossed_categories' => self::getTableCrossed(),
 			'id' => $catId,
-			'where' => $where . ' ORDER BY c.`level`, c.`title`'
-			));
+			'where' => $where . ' ORDER BY c.`level`, c.`title`',
+			'order' => $order
+		));
 
 		$return = $this->iaDb->getAll($sql, $start, $limit);
 

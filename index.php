@@ -200,23 +200,20 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType())
 			$iaView->set('subpage', $category['id']);
 
 			// start breadcrumb
-			if ($category && trim($category['parents']))
+			if ($category)
 			{
-				$condition = "`id` IN({$category['parents']}) AND `parent_id` != -1 AND `status` = 'active'";
-				$parents = $iaCateg->get($condition);
-
-				foreach ($parents as $key => $parent)
+				if (IA_CURRENT_PACKAGE == $iaCore->get('default_package'))
 				{
-					$url = $iaCateg->url('default', $parent);
+					iaBreadcrumb::remove(iaBreadcrumb::POSITION_LAST);
+				}
 
-					if (IA_CURRENT_PACKAGE == $iaCore->get('default_package') && 0 == $key)
-					{
-						iaBreadcrumb::replaceEnd($parent['title'], $url);
-					}
-					else
-					{
-						iaBreadcrumb::add($parent['title'], $url);
-					}
+				if (trim($category['parents']))
+				{
+					$condition = "`id` IN({$category['parents']}) AND `parent_id` != -1 AND `status` = 'active'";
+					$parents = $iaCateg->get($condition, 0, null, null, 'c.*', 'level');
+
+					foreach ($parents as $key => $parent)
+						iaBreadcrumb::toEnd($parent['title'], $iaCateg->url('default', $parent));
 				}
 			}
 			// end
