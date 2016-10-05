@@ -41,7 +41,34 @@ class iaBackendController extends iaAbstractControllerPackageBackend
 	{
 		$entryData['date_modified'] = date(iaDb::DATE_FORMAT);
 
-		return parent::_entryUpdate($entryData, $entryId);
+		if (empty($entryId) && '0' !== $entryId)
+		{
+			return false;
+		}
+
+		$currentData = $this->getById($entryId);
+
+		if (empty($currentData))
+		{
+			return false;
+		}
+
+		$result = $this->_update($entryData, $entryId);
+
+		if ($result)
+		{
+			$this->_writeLog(iaCore::ACTION_EDIT, $entryData, $entryId);
+			$this->updateCounters($entryId, $entryData, iaCore::ACTION_EDIT, $currentData);
+
+			$this->_iaCore->startHook('phpListingUpdated', array(
+				'itemId' => $entryId,
+				'itemName' => $this->getItemName(),
+				'itemData' => $entryData,
+				'previousData' => $currentData
+			));
+		}
+
+		return $result;
 	}
 
 	protected function _entryDelete($entryId)
