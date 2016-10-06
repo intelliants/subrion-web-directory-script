@@ -90,23 +90,21 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType())
 		iaUtil::go_to($validUrl);
 	}
 
-	$iaCategory = $iaCore->factoryPackage('categ', IA_CURRENT_PACKAGE);
+	$iaCateg = $iaCore->factoryPackage('categ', IA_CURRENT_PACKAGE);
 
-	$category = $iaCategory->getById($listing['category_id']);
+	$category = $iaCateg->getById($listing['category_id']);
 
 	$listing['item'] = $iaListing->getItemName();
 
 	$iaView->set('subpage', $category['id']);
 
-	if ($category && isset($category['parents']) && $category['parents'])
+	if (!empty($category['parents']))
 	{
-		$parents = $iaCategory->get("`id` IN({$category['parents']}) AND `parent_id` > -1");
+		$condition = "`id` IN({$category['parents']}) AND `parent_id` != -1 AND `status` = 'active'";
+		$parents = $iaCateg->get($condition, 0, null, null, 'c.*', 'level');
 
 		foreach ($parents as $p)
-		{
-			$url = $iaCategory->url('view', $p);
-			iaBreadcrumb::add($p['title'], $url);
-		}
+			iaBreadcrumb::add($p['title'], $iaCateg->url('view', $p));
 	}
 
 	$iaItem = $iaCore->factory('item');
