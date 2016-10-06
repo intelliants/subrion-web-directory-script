@@ -231,25 +231,24 @@
 		<phrase category="admin" key="broken">Broken</phrase>
 		<phrase category="admin" key="category_added">Category added.</phrase>
 		<phrase category="admin" key="category_deleted">Category deleted.</phrase>
+		<phrase category="admin" key="categories_repaired">Your listings categories have been repaired.</phrase>
+		<phrase category="admin" key="directory_category_already_exists">Category with similar title alias exists in this category.</phrase>
 		<phrase category="admin" key="directory_package">&quot;Directory&quot; package</phrase>
 		<phrase category="admin" key="edit_category">Edit Category</phrase>
 		<phrase category="admin" key="edit_listing">Edit Listing</phrase>
-		<phrase category="admin" key="no_crossed_categories">No Crossed Categories.</phrase>
+		<phrase category="admin" key="no_crossed_categories">No crossed categories.</phrase>
 		<phrase category="admin" key="no_owner">No Owner</phrase>
+		<phrase category="admin" key="parent_category">Parent category</phrase>
+		<phrase category="admin" key="recount_directory_listings">Recount directory listings</phrase>
+		<phrase category="admin" key="recount_directory_listings_success">Directory listings have been successfully recounted.</phrase>
 		<phrase category="admin" key="repair_listings_num">Recount listings categories</phrase>
 		<phrase category="admin" key="repair_categs">Repair listings categories</phrase>
 		<phrase category="admin" key="repair_listings_num_success">Your listings categories have been recounted.</phrase>
-		<phrase category="admin" key="categories_repaired">Your listings categories have been repaired.</phrase>
+		<phrase category="admin" key="repair_directorycats">Repair directory categories</phrase>
+		<phrase category="admin" key="reported_as_broken">Reported as broken</phrase>
+		<phrase category="admin" key="reported_as_broken_comments">Broken report comments</phrase>
 		<phrase category="admin" key="reset_listings">Reset listings</phrase>
 		<phrase category="admin" key="reset_categs">Reset categories</phrase>
-		<phrase category="admin" key="repair_directorycats">Repair Directory categories</phrase>
-		<phrase category="admin" key="recount_directory_listings">Recount Directory Listings</phrase>
-		<phrase category="admin" key="recount_directory_listings_success">Directory Listings have been successfully recounted.</phrase>
-		<phrase category="admin" key="reported_as_broken">Reported as Broken</phrase>
-		<phrase category="admin" key="reported_as_broken_comments">Broken report comments</phrase>
-		<phrase category="admin" key="category_already_exists">Category with similar title alias exists in this category.</phrase>
-		<phrase category="admin" key="edit_directory_category">Edit Category ":name"</phrase>
-		<phrase category="admin" key="directory_category_already_exists">Category already exists</phrase>
 
 		<phrase category="common" key="add_listing">Add Listing</phrase>
 		<phrase category="common" key="alexa_rank">Alexa Rank</phrase>
@@ -260,10 +259,6 @@
 		<phrase category="common" key="crossed_categories">Crossed categories</phrase>
 		<phrase category="common" key="directory">Directory</phrase>
 		<phrase category="common" key="field_category_id">Category</phrase>
-		<phrase category="common" key="fieldgroup_description_categs____empty___"><![CDATA[]]></phrase>
-		<phrase category="common" key="fieldgroup_description_categs_general"><![CDATA[]]></phrase>
-		<phrase category="common" key="fieldgroup_description_listings____empty___"><![CDATA[]]></phrase>
-		<phrase category="common" key="fieldgroup_description_listings_general"><![CDATA[]]></phrase>
 		<phrase category="common" key="limit">Limit</phrase>
 		<phrase category="common" key="listings">Listings</phrase>
 		<phrase category="common" key="listing_added">Listing added.</phrase>
@@ -271,16 +266,12 @@
 		<phrase category="common" key="listings_num">Number of listings</phrase>
 		<phrase category="common" key="no_web_listings"><![CDATA[No listings have been submitted here. <a href="{%URL%}">Click here</a> to add a listing in this category.]]></phrase>
 		<phrase category="common" key="no_web_listings2"><![CDATA[No listings have been submitted. <a href="{%URL%}">Click here</a> to add a listing.]]></phrase>
-		<phrase category="common" key="no_my_listings"><![CDATA[You have not submitted any listings. <a href="{%URL%}">Click here</a> to add a listing.]]></phrase>
+		<phrase category="common" key="no_my_listings"><![CDATA[You have not submitted any listings. Start <a href="{%URL%}">adding a new listing</a> now.]]></phrase>
 		<phrase category="common" key="prev_crossed">Previous crossed categories</phrase>
-		<phrase category="common" key="views_num">Number of clicks</phrase>
 
-		<phrase category="frontend" key="ascending">Ascending</phrase>
 		<phrase category="frontend" key="author_activity">Author Activity</phrase>
 		<phrase category="frontend" key="cant_remove_listing">Unable to remove the listing.</phrase>
 		<phrase category="frontend" key="comment">Comment</phrase>
-		<phrase category="frontend" key="date">Date</phrase>
-		<phrase category="frontend" key="descending">Descending</phrase>
 		<phrase category="frontend" key="do_you_want_report_broken">Do you want to report this listing as broken?</phrase>
 		<phrase category="frontend" key="error_update_listing">Unknown error occured during listing editing. Please contact the site administrator if you have this error again.</phrase>
 		<phrase category="frontend" key="error_add_listing">Unknown error occured during listing submission. Please contact the site administrator if you have this error again.</phrase>

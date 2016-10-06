@@ -8,7 +8,7 @@
 		{capture name='general' append='fieldset_before'}
 			<div id="parent_fieldzone" class="row">
 				<label class="col col-lg-2 control-label">
-					{lang key='field_category_id'}<br>
+					{lang key='parent_category'}<br>
 					<a href="#" class="categories-toggle" id="js-tree-toggler">{lang key='open_close'}</a>
 				</label>
 				<div class="col col-lg-4">

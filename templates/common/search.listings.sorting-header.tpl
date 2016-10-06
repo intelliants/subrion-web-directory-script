@@ -6,8 +6,8 @@
 		<a class="btn btn-small" href="#" data-field="rank">{lang key='rank'}</a>
 	</p>
 	<p class="btn-group">
-		<a class="btn btn-small" href="#" data-order="asc">{lang key='ascending'}</a>
-		<a class="btn btn-small" href="#" data-order="desc">{lang key='descending'}</a>
+		<a class="btn btn-small" href="#" data-order="asc">{lang key='asc'}</a>
+		<a class="btn btn-small" href="#" data-order="desc">{lang key='desc'}</a>
 	</p>
 </div>
 {ia_add_js}
