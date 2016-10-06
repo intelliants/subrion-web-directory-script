@@ -5,39 +5,37 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType())
 {
 	$iaListing = $iaCore->factoryPackage('listing', 'directory');
 
-	$limit = $iaCore->get('directory_listings_perblock', 5);
-
 	if ($iaView->blockExists('directory_listings_tabs'))
 	{
 		if ($iaCore->get('directory_listings_tabs_new'))
 		{
-			$iaView->assign('latest_listings', $iaListing->getLatest($iaCore->get('directory_new_listings_perblock', 5)));
+			$iaView->assign('latest_listings', $iaListing->getLatest($iaCore->get('directory_new_listings_perblock', 6)));
 		}
 
 		if ($iaCore->get('directory_listings_tabs_popular'))
 		{
-			$iaView->assign('popular_listings', $iaListing->getPopular($iaCore->get('directory_popular_listings_perblock', 5)));
+			$iaView->assign('popular_listings', $iaListing->getPopular($iaCore->get('directory_popular_listings_perblock', 6)));
 		}
 
 		if ($iaCore->get('directory_listings_tabs_random'))
 		{
-			$iaView->assign('random_listings', $iaListing->getRandom($iaCore->get('directory_random_listings_perblock', 5)));
+			$iaView->assign('random_listings', $iaListing->getRandom($iaCore->get('directory_random_listings_perblock', 6)));
 		}
 	}
 
 	if ($iaView->blockExists('recent_listings'))
 	{
-		$iaView->assign('latest_listings', $iaListing->getLatest($limit));
+		$iaView->assign('latest_listings', $iaListing->getLatest($iaCore->get('directory_listings_recent_perblock', 6)));
 	}
 
 	if ($iaView->blockExists('featured_listings'))
 	{
-		$iaView->assign('featured_listings', $iaListing->get("t1.`featured` != 0", 0, $limit, "t1.`featured_start` DESC"));
+		$iaView->assign('featured_listings', $iaListing->get("t1.`featured` != 0", 0, $iaCore->get('directory_listings_featured_perblock', 6), "t1.`featured_start` DESC"));
 	}
 
 	if ($iaView->blockExists('sponsored_listings'))
 	{
-		$iaView->assign('sponsored_listings', $iaListing->get("t1.`sponsored` != 0", 0, $limit, "t1.`sponsored_start` DESC"));
+		$iaView->assign('sponsored_listings', $iaListing->get("t1.`sponsored` != 0", 0, $iaCore->get('directory_listings_sponsored_perblock', 6), "t1.`sponsored_start` DESC"));
 	}
 
 	if ($iaView->blockExists('directory_categories_tree'))

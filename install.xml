@@ -113,12 +113,14 @@
 	<config group="directory" name="directory_duplicate_check_field" type="select" values="'url','domain','title'" description="Check for duplicate" show="directory_duplicate_check|1">url</config>
 	<config group="directory" name="directory_div3" type="divider">Blocks</config>
 	<config group="directory" name="directory_listings_tabs_new" type="radio" values="1,0" description="Display New Listings tab">1</config>
+	<config group="directory" name="directory_new_listings_perblock" type="text" description="Listings in New tab" show="directory_listings_tabs_new|1">6</config>
 	<config group="directory" name="directory_listings_tabs_popular" type="radio" values="1,0" description="Display Popular Listings tab">1</config>
+	<config group="directory" name="directory_popular_listings_perblock" type="text" description="Listings in Popular tab" show="directory_listings_tabs_popular|1">6</config>
 	<config group="directory" name="directory_listings_tabs_random" type="radio" values="1,0" description="Display Random Listings tab">1</config>
-	<config group="directory" name="directory_listings_perblock" type="text" description="Listings in block">5</config>
-	<config group="directory" name="directory_new_listings_perblock" type="text" description="Listings in New Listings tab">5</config>
-	<config group="directory" name="directory_popular_listings_perblock" type="text" description="Listings in Popular Listings tab">5</config>
-	<config group="directory" name="directory_random_listings_perblock" type="text" description="Listings in Random Listings tab">5</config>
+	<config group="directory" name="directory_random_listings_perblock" type="text" description="Listings in Random tab" show="directory_listings_tabs_random|1">6</config>
+	<config group="directory" name="directory_listings_recent_perblock" type="text" description="Listings in Recent block">6</config>
+	<config group="directory" name="directory_listings_featured_perblock" type="text" description="Listings in Featured block">6</config>
+	<config group="directory" name="directory_listings_sponsored_perblock" type="text" description="Listings in Sponsored block">6</config>
 
 	<!-- E-mail template for new listing submission notification (Administrators) -->
 	<config group="email_templates" name="new_listing" type="radio" values="1,0" description="New Listing Submitted">1</config>
