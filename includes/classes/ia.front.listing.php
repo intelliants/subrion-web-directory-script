@@ -26,6 +26,8 @@ class iaListing extends abstractDirectoryPackageFront
 		'my' => ':iaurlprofile/listings/'
 	);
 
+	protected $_foundRows = 0;
+
 
 	public static function getTableCrossed()
 	{
@@ -50,26 +52,33 @@ class iaListing extends abstractDirectoryPackageFront
 		return iaDb::printf($this->_urlPatterns[$action], $data);
 	}
 
-	public function get($where, $start = 0, $limit = 0, $order = false)
+	public function getFoundRows()
+	{
+		return $this->_foundRows;
+	}
+
+	public function get($where, $start = null, $limit = null, $order = null, $prioritizedSorting = false)
 	{
 		$sql = 'SELECT SQL_CALC_FOUND_ROWS t1.*, ';
-		$sql .= 'cat.`title` `category_title`, cat.`title_alias` `category_alias`, `cat`.`parents` `category_parents`, ';
-		$sql .= 't3.`fullname` `member`, t3.`username` `account_username` ';
-		$sql .= 'FROM `' . self::getTable(true) . '` t1 ';
-		$sql .= "LEFT JOIN `{$this->iaDb->prefix}categs` cat ON t1.`category_id` = cat.`id` ";
-		$sql .= "LEFT JOIN `{$this->iaDb->prefix}members` t3 ON t1.`member_id` = t3.`id` ";
-		$sql .= 'WHERE ' . ($where ? $where . ' AND' : '') . " t1.`status` != 'banned' ";
-		$sql .= 'ORDER BY `sponsored` DESC, `featured` DESC ' . ($order ? ", $order " : '');
-		$sql .= $start || $limit ? " LIMIT $start, $limit" : '';
+		$sql.= 'cat.`title` `category_title`, cat.`title_alias` `category_alias`, `cat`.`parents` `category_parents`, ';
+		$sql.= 't3.`fullname` `member`, t3.`username` `account_username` ';
+		$sql.= 'FROM `' . self::getTable(true) . '` t1 ';
+		$sql.= "LEFT JOIN `{$this->iaDb->prefix}categs` cat ON t1.`category_id` = cat.`id` ";
+		$sql.= "LEFT JOIN `{$this->iaDb->prefix}members` t3 ON t1.`member_id` = t3.`id` ";
+		$sql.= 'WHERE ' . ($where ? $where . ' AND' : '') . " t1.`status` != 'banned' ";
+		$sql.= 'ORDER BY ' . ($prioritizedSorting ? 't1.`sponsored` DESC, t1.`featured` DESC, ' : '')
+			. ($order ? $order : 't1.`date_modified` DESC') . ' ';
+		$sql.= $start || $limit ? "LIMIT $start, $limit" : '';
 
 		$rows = $this->iaDb->getAll($sql);
+		$this->_foundRows = $this->iaDb->foundRows();
 
 		return $this->_process($rows);
 	}
 
 	public function coreSearch($stmt, $start, $limit, $order)
 	{
-		$rows = $this->get($stmt, $start, $limit, $order);
+		$rows = $this->get($stmt, $start, $limit, $order, true);
 
 		return array($this->iaDb->foundRows(), $rows);
 	}
@@ -146,9 +155,9 @@ class iaListing extends abstractDirectoryPackageFront
 		$tmp = explode(',', $cat_list);
 		$cat_id = $tmp[0];
 		$sql =
-			'SELECT SQL_CALC_FOUND_ROWS  `li`.*,'
-				. 'IF(li.`category_id`  IN( ' . $cat_list . ' ), li.`category_id`, cr.`category_id`) `category`, '
-				. 'IF(li.`category_id` = ' . $cat_id . ', 0, 1) `crossed`, '
+			'SELECT SQL_CALC_FOUND_ROWS `li`.*,'
+				. 'IF(li.`category_id` IN( ' . $cat_list . ' ), li.`category_id`, cr.`category_id`) `category`, '
+				//. 'IF(li.`category_id` = ' . $cat_id . ', 0, 1) `crossed`, '
 				. 'ca.`title` `category_title`, ca.`title_alias` `category_alias`, `ca`.`parents` `category_parents`, '
 				. 'ac.`fullname` `member`, ac.`username` `account_username` '
 			. 'FROM `' . $this->iaDb->prefix . 'categs` ca, ' . self::getTable(true) . ' li '
@@ -157,10 +166,11 @@ class iaListing extends abstractDirectoryPackageFront
 			. 'WHERE li.`status` = \'' . $status . '\' '
 				. '&& (li.`category_id` IN( ' . $cat_list . ' ) OR cr.`category_id` is not NULL) && ca.`id` = li.`category_id` '
 				. $where
-				. ($order ? " ORDER BY `sponsored` DESC, `featured` DESC, $order " : '')
+				. " ORDER BY `sponsored` DESC, `featured` DESC, $order "
 				. ($start || $limit ? " LIMIT $start, $limit " : '');
 
 		$rows = $this->iaDb->getAll($sql);
+		$this->_foundRows = $this->iaDb->foundRows();
 
 		return $this->_process($rows);
 	}

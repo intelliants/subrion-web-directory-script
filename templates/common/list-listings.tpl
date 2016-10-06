@@ -25,7 +25,7 @@
 		</div>
 
 		<div class="ia-item__title">
-			{if isset($listing.crossed) && $listing.crossed}@ {/if}
+			{* if isset($listing.crossed) && $listing.crossed}@ {/if*}
 			{if !$core.config.directory_redirect_to_site}
 				{ia_url type='link' item='listings' data=$listing text=$listing.title}
 			{else}
