@@ -45,7 +45,7 @@ $(function()
 		intelli.search.run();
 	});
 
-	'search' == intelli.pageName || (doNotRespond = true);
+	'search' == intelli.pageName || (intelli.flags.doNotRespond = true);
 	$scSelect.data('value') && (intelli.flags.waitingTrigger = true);
 
 	$cSelect.trigger('change');

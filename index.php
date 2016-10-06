@@ -212,8 +212,15 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType())
 				$condition = "`id` IN({$category['parents']}) AND `parent_id` != -1 AND `status` = 'active'";
 				$parents = $iaCateg->get($condition, 0, null, null, 'c.*', 'level');
 
+				$filters = array(); // pre-fill filters
+
 				foreach ($parents as $key => $parent)
+				{
+					(0 === $key || 1 === $key) && $filters[0 == $key ? 'c' : 'sc'] = $parent['id'];
 					iaBreadcrumb::toEnd($parent['title'], $iaCateg->url('default', $parent));
+				}
+_d($filters);
+				$iaView->set('filtersParams', $filters);
 			}
 			// end
 
@@ -229,14 +236,6 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType())
 			{
 				$iaView->set('description', $category['meta_description']);
 				$iaView->set('keywords', $category['meta_keywords']);
-
-				// pre-fill filters
-				$filters = array(
-					'c' => 1 == $category['level'] ? $category['id'] : $category['parent_id'],
-					'sc' => 1 < $category['level'] ? $category['id'] : null
-				);
-_d($filters);
-				$iaView->set('filtersParams', $filters);
 			}
 			$iaView->assign('category', $category);
 
