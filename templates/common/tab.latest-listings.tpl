@@ -1,5 +1,5 @@
 <div class="ia-items directory-latest-listings">
-	{foreach $latest_listings as $listing name=latest_listings}
+	{foreach $listingsBlocksData.tabs_new as $listing}
 		<div class="ia-item ia-item--border-bottom">
 			<div class="ia-item__content">
 				<div class="ia-item__title">

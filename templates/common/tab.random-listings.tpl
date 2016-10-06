@@ -1,5 +1,5 @@
 <div class="ia-items directory-random-listings">
-	{foreach $random_listings as $listing name=random_listings}
+	{foreach $listingsBlocksData.tabs_random as $listing}
 		<div class="ia-item ia-item--border-bottom">
 			<div class="ia-item__content">
 				<div class="ia-item__title">

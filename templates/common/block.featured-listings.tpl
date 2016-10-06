@@ -1,6 +1,6 @@
-{if !empty($featured_listings)}
+{if $listingsBlocksData.featured}
 	<div class="ia-items directory-featured-listings">
-		{foreach $featured_listings as $listing name=featured_listings}
+		{foreach $listingsBlocksData.featured as $listing}
 			<div class="ia-item ia-item--border-bottom">
 				{if $core.config.directory_enable_thumbshots}
 					<img src="http://free.pagepeeker.com/v2/thumbs.php?size=m&url={$listing.url|escape:url}" class="m-b img-responsive">
