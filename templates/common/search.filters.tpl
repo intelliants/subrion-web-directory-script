@@ -14,7 +14,7 @@
 	</div>
 	<div class="form-group">
 		<label>{lang key='subcategory'}</label>
-		<select name="sc" class="form-control no-js" id="js-l-sc" disabled{if !empty($filters.params.sc)} data-id="{$filters.params.sc|intval}"{/if}>
+		<select name="sc" class="form-control no-js" id="js-l-sc" disabled{if !empty($filters.params.sc)} data-value="{$filters.params.sc|intval}"{/if}>
 			<option value="">{lang key='any'}</option>
 		</select>
 	</div>

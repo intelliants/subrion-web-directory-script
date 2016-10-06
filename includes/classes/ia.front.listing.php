@@ -13,10 +13,8 @@ class iaListing extends abstractDirectoryPackageFront
 	public $coreSearchEnabled = true;
 	public $coreSearchOptions = array(
 		'tableAlias' => 't1',
-		'columnAlias' => array(
-			'date' => 'date_added'
-		),
-		'regularSearchStatements' => array("(t1.`title` LIKE '%:query%' OR t1.`domain` LIKE '%:query%') AND t1.`status` != 'banned'"),
+		'columnAlias' => array('date' => 'date_added'),
+		'regularSearchStatements' => array("t1.`title` LIKE '%:query%' OR t1.`domain` LIKE '%:query%'"),
 		'customColumns' => array('keywords', 'c', 'sc')
 	);
 
@@ -60,9 +58,8 @@ class iaListing extends abstractDirectoryPackageFront
 		$sql .= 'FROM `' . self::getTable(true) . '` t1 ';
 		$sql .= "LEFT JOIN `{$this->iaDb->prefix}categs` cat ON t1.`category_id` = cat.`id` ";
 		$sql .= "LEFT JOIN `{$this->iaDb->prefix}members` t3 ON t1.`member_id` = t3.`id` ";
-
-		$sql .= $where ? "WHERE ($where) AND t1.`status` != 'banned'" : "WHERE t1.`status` != 'banned'";
-		$sql .= " ORDER BY `sponsored` DESC, `featured` DESC " . ($order ? ", $order " : '');
+		$sql .= 'WHERE ' . ($where ? $where . ' AND' : '') . " t1.`status` != 'banned' ";
+		$sql .= 'ORDER BY `sponsored` DESC, `featured` DESC ' . ($order ? ", $order " : '');
 		$sql .= $start || $limit ? " LIMIT $start, $limit" : '';
 
 		$rows = $this->iaDb->getAll($sql);
@@ -79,6 +76,7 @@ class iaListing extends abstractDirectoryPackageFront
 
 	public function coreSearchTranslateColumn($column, $value)
 	{
+
 		switch ($column)
 		{
 			case 'keywords':
@@ -94,14 +92,17 @@ class iaListing extends abstractDirectoryPackageFront
 				return $result;
 
 			case 'c':
+			case 'sc':
 				$iaCateg = $this->iaCore->factoryPackage('categ', $this->getPackageName());
 
-				$sql = sprintf('SELECT `id` FROM `%s` WHERE `parent_id` = %d', $iaCateg::getTable(true), $value);
+				$child = $this->iaDb->one('child', iaDb::convertIds((int)$value), $iaCateg::getTable());
 
-				return array('col' => ':column', 'cond' => 'IN', 'val' => '(' . $sql . ')', 'field' => 'category_id');
+				if (!$child) // it's abnormal situation if the value is empty, it probably means that DB structure is not valid/updated
+				{
+					return array('col' => ':column', 'cond' => '=', 'val' => (int)$value, 'field' => 'category_id');
+				}
 
-			case 'sc':
-				return array('col' => ':column', 'cond' => '=', 'val' => (int)$value, 'field' => 'category_id');
+				return array('col' => ':column', 'cond' => 'IN', 'val' => '(' . $child . ')', 'field' => 'category_id');
 		}
 	}
 
@@ -463,14 +464,16 @@ class iaListing extends abstractDirectoryPackageFront
 
 	protected function _process($rows)
 	{
+		$iaCateg = $this->iaCore->factoryPackage('categ', $this->getPackageName());
+
 		foreach ($rows as &$row)
 		{
-			$iaCateg = $this->iaCore->factoryPackage('categ', $this->getPackageName());
-
-			if ($row['category_parents'])
+			if (!empty($row['category_parents']))
 			{
-				$parents = $iaCateg->get("`id` IN({$row['category_parents']}) AND `parent_id` > -1");
+				$condition = "`id` IN({$row['category_parents']}) AND `parent_id` != -1 AND `status` = 'active'";
+				$parents = $iaCateg->get($condition, 0, null, null, 'c.*', 'level');
 
+				$row['breadcrumb'] = array();
 				foreach ($parents as $parent)
 				{
 					$row['breadcrumb'][] = array(

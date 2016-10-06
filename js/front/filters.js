@@ -9,13 +9,18 @@ $(function()
 
 		$scSelect.val(0).prop('disabled', true).find('option:not(:first)').remove();
 
+		if ('search' == intelli.pageName)
+		{
+			intelli.search.run()
+		}
+
 		if (value != '')
 		{
 			$.getJSON(intelli.config.packages.directory.url + 'directory/read.json', {id: value}, function(response)
 			{
 				if (response && response.length > 0)
 				{
-					var d = $scSelect.data('id');
+					var d = $scSelect.data('value');
 					$.each(response, function(index, item)
 					{
 						var $option = $('<option>').val(item.id).text(item.text);
@@ -32,7 +37,7 @@ $(function()
 		}
 	});
 
-	if ($scSelect.data('id')) $cSelect.trigger('change');
+	if ($scSelect.data('value')) $cSelect.trigger('change');
 
 	$scSelect.on('change', function()
 	{

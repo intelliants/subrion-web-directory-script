@@ -40,7 +40,7 @@
 				<p>
 					<span class="fa fa-folder-o"></span>
 					{foreach $listing.breadcrumb as $item}
-						{if 1 !==  $item@iteration} <span class="fa fa-angle-right"></span> {/if}
+						{if !$item@first} <span class="fa fa-angle-right"></span> {/if}
 						<a href="{$item.url}">{$item.title}</a>
 					{/foreach}
 				</p>
