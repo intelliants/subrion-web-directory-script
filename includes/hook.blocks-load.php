@@ -23,7 +23,7 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType())
 
 		if ($iaCore->get('directory_listings_tabs_random'))
 		{
-			$blocksData['tabs_popular'] = $iaListing->getRandom($iaCore->get('directory_listings_tabs_random_limit', 6));
+			$blocksData['tabs_random'] = $iaListing->getRandom($iaCore->get('directory_listings_tabs_random_limit', 6));
 		}
 	}
 
