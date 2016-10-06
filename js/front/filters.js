@@ -1,5 +1,7 @@
 $(function()
 {
+	intelli.flags = {doNotRespond: false, waitingTrigger: false};
+
 	var $cSelect = $('#js-l-c'),
 		$scSelect = $('#js-l-sc');
 
@@ -9,10 +11,7 @@ $(function()
 
 		$scSelect.val(0).prop('disabled', true).find('option:not(:first)').remove();
 
-		if ('search' == intelli.pageName)
-		{
-			intelli.search.run()
-		}
+		intelli.flags.doNotRespond || intelli.search.run();
 
 		if (value != '')
 		{
@@ -29,18 +28,25 @@ $(function()
 					});
 
 					$scSelect.prop('disabled', false);
+					intelli.flags.waitingTrigger && $scSelect.trigger('change');
 				}
 			});
 		}
 		else {
 			$scSelect.prop('disabled', true);
 		}
-	});
 
-	if ($scSelect.data('value')) $cSelect.trigger('change');
+		intelli.flags.doNotRespond = false;
+		intelli.flags.waitingTrigger = false;
+	});
 
 	$scSelect.on('change', function()
 	{
 		intelli.search.run();
 	});
+
+	'search' == intelli.pageName || (doNotRespond = true);
+	$scSelect.data('value') && (intelli.flags.waitingTrigger = true);
+
+	$cSelect.trigger('change');
 });

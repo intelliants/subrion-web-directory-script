@@ -45,7 +45,7 @@
 
 	<div class="ia-items">
 		{foreach $listings as $listing}
-			{include file='extra:directory/list-listings'}
+			{include 'extra:directory/list-listings'}
 		{/foreach}
 
 		{navigation aTotal=$pagination.total aTemplate=$pagination.url aItemsPerPage=$pagination.limit aIgnore=true aTruncateParam=1}

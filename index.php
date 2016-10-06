@@ -190,7 +190,9 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType())
 
 			$rssFeed = empty($iaCore->requestPath) ? false : implode(IA_URL_DELIMITER, $iaCore->requestPath);
 
-			$category = $iaDb->row_bind(array('id', 'child', 'num_all_listings', 'num_listings', 'parent_id', 'title', 'parents', 'description', 'meta_description', 'meta_keywords', 'title_alias'), '`title_alias`= :alias', array('alias' => $categoryAlias), 'categs');
+			$category = $iaDb->row_bind(array('id', 'level', 'child', 'num_all_listings', 'num_listings',
+				'parent_id', 'title', 'parents', 'description', 'meta_description', 'meta_keywords', 'title_alias'),
+				'`title_alias`= :alias', array('alias' => $categoryAlias), 'categs');
 
 			// requested category not found
 			if ($categoryAlias && (-1 == $category['parent_id']))
@@ -227,6 +229,14 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType())
 			{
 				$iaView->set('description', $category['meta_description']);
 				$iaView->set('keywords', $category['meta_keywords']);
+
+				// pre-fill filters
+				$filters = array(
+					'c' => 1 == $category['level'] ? $category['id'] : $category['parent_id'],
+					'sc' => 1 < $category['level'] ? $category['id'] : null
+				);
+_d($filters);
+				$iaView->set('filtersParams', $filters);
 			}
 			$iaView->assign('category', $category);
 
