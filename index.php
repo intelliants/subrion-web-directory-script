@@ -219,7 +219,7 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType())
 					(0 === $key || 1 === $key) && $filters[0 == $key ? 'c' : 'sc'] = $parent['id'];
 					iaBreadcrumb::toEnd($parent['title'], $iaCateg->url('default', $parent));
 				}
-_d($filters);
+
 				$iaView->set('filtersParams', $filters);
 			}
 			// end
