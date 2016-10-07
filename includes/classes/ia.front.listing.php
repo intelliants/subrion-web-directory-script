@@ -14,7 +14,7 @@ class iaListing extends abstractDirectoryPackageFront
 	public $coreSearchOptions = array(
 		'tableAlias' => 't1',
 		'columnAlias' => array('date' => 'date_added'),
-		'regularSearchStatements' => array("t1.`title` LIKE '%:query%' OR t1.`domain` LIKE '%:query%'"),
+		'regularSearchStatements' => array("t1.`title` LIKE '%:query%' || t1.`domain` LIKE '%:query%' || t1.`description` LIKE '%:query%'"),
 		'customColumns' => array('keywords', 'c', 'sc')
 	);
 
