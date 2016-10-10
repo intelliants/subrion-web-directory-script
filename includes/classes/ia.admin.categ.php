@@ -249,4 +249,44 @@ class iaCateg extends abstractDirectoryPackageAdmin
 
 		return $title;
 	}
+
+	public function updateAliases($categoryId)
+	{
+		if (!$child = $this->getById($categoryId))
+		{
+			return;
+		}
+
+		foreach(explode(',', $child['child']) as $id)
+		{
+			if (!trim($id)) continue;
+			$this->_updateAliasById($id);
+		}
+	}
+
+	protected function _updateAliasById($categoryId)
+	{
+		$category = $this->getById($categoryId);
+		$parent = $this->getById($category['parent_id']);
+
+		$breadcrumbs = array();
+		$baseUrl = str_replace(IA_URL, '', $this->getInfo('url'));
+
+		if (!empty($parent['parents']))
+		{
+			$parents = $this->iaDb->all(array('title', 'title_alias'), "`id` IN({$parent['parents']}) AND `parent_id` != -1 AND `status` = 'active' ORDER BY `level`");
+
+			foreach ($parents as $p)
+				$breadcrumbs[$p['title']] = $baseUrl . $p['title_alias'];
+		}
+
+		$breadcrumbs[$category['title']] = str_replace(IA_URL, '', $baseUrl . $category['title_alias']);
+
+		$values = array(
+			//'title_alias' => $this->getTitleAlias($category, $parent),
+			'breadcrumb' => serialize($breadcrumbs)
+		);
+
+		$this->iaDb->update($values, iaDb::convertIds($categoryId), null, self::getTable());
+	}
 }

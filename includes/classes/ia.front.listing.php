@@ -12,9 +12,9 @@ class iaListing extends abstractDirectoryPackageFront
 
 	public $coreSearchEnabled = true;
 	public $coreSearchOptions = array(
-		'tableAlias' => 't1',
-		'columnAlias' => array('date' => 'date_added'),
-		'regularSearchStatements' => array("t1.`title` LIKE '%:query%' || t1.`domain` LIKE '%:query%' || t1.`description` LIKE '%:query%'"),
+		'tableAlias' => 'l',
+		'columnAlias' => array('date' => 'date_modified'),
+		'regularSearchStatements' => array("l.`title` LIKE '%:query%' || l.`domain` LIKE '%:query%' || l.`description` LIKE '%:query%'"),
 		'customColumns' => array('keywords', 'c', 'sc')
 	);
 
@@ -59,15 +59,15 @@ class iaListing extends abstractDirectoryPackageFront
 
 	public function get($where, $start = null, $limit = null, $order = null, $prioritizedSorting = false)
 	{
-		$sql = 'SELECT SQL_CALC_FOUND_ROWS t1.*, ';
-		$sql.= 'cat.`title` `category_title`, cat.`title_alias` `category_alias`, `cat`.`parents` `category_parents`, ';
-		$sql.= 't3.`fullname` `member`, t3.`username` `account_username` ';
-		$sql.= 'FROM `' . self::getTable(true) . '` t1 ';
-		$sql.= "LEFT JOIN `{$this->iaDb->prefix}categs` cat ON t1.`category_id` = cat.`id` ";
-		$sql.= "LEFT JOIN `{$this->iaDb->prefix}members` t3 ON t1.`member_id` = t3.`id` ";
-		$sql.= 'WHERE ' . ($where ? $where . ' AND' : '') . " t1.`status` != 'banned' ";
-		$sql.= 'ORDER BY ' . ($prioritizedSorting ? 't1.`sponsored` DESC, t1.`featured` DESC, ' : '')
-			. ($order ? $order : 't1.`date_modified` DESC') . ' ';
+		$sql = 'SELECT SQL_CALC_FOUND_ROWS l.*, ';
+		$sql.= 'c.`title` `category_title`, c.`title_alias` `category_alias`, c.`parents` `category_parents`, c.`breadcrumb` `category_breadcrumb`, ';
+		$sql.= 'm.`fullname` `member`, m.`username` `account_username` ';
+		$sql.= 'FROM `' . self::getTable(true) . '` l ';
+		$sql.= "LEFT JOIN `{$this->iaDb->prefix}categs` c ON (l.`category_id` = c.`id`) ";
+		$sql.= "LEFT JOIN `{$this->iaDb->prefix}members` m ON (l.`member_id` = m.`id`) ";
+		$sql.= 'WHERE ' . ($where ? $where . ' AND' : '') . " l.`status` != 'banned' ";
+		$sql.= 'ORDER BY ' . ($prioritizedSorting ? 'l.`sponsored` DESC, l.`featured` DESC, ' : '')
+			. ($order ? $order : 'l.`date_modified` DESC') . ' ';
 		$sql.= $start || $limit ? "LIMIT $start, $limit" : '';
 
 		$rows = $this->iaDb->getAll($sql);
@@ -80,12 +80,11 @@ class iaListing extends abstractDirectoryPackageFront
 	{
 		$rows = $this->get($stmt, $start, $limit, $order, true);
 
-		return array($this->iaDb->foundRows(), $rows);
+		return array($this->getFoundRows(), $rows);
 	}
 
 	public function coreSearchTranslateColumn($column, $value)
 	{
-
 		switch ($column)
 		{
 			case 'keywords':
@@ -131,7 +130,7 @@ class iaListing extends abstractDirectoryPackageFront
 	 */
 	public function fetchMemberListings($memberId, $start, $limit)
 	{
-		$stmtWhere = 't1.`status` = :status AND t1.`member_id` = :member';
+		$stmtWhere = 'l.`status` = :status AND l.`member_id` = :member';
 		$this->iaDb->bind($stmtWhere, array(
 			'status' => iaCore::STATUS_ACTIVE,
 			'member' => (int)$memberId
@@ -155,10 +154,10 @@ class iaListing extends abstractDirectoryPackageFront
 		$tmp = explode(',', $cat_list);
 		$cat_id = $tmp[0];
 		$sql =
-			'SELECT SQL_CALC_FOUND_ROWS `li`.*,'
+			'SELECT SQL_CALC_FOUND_ROWS li.*,'
 				. 'IF(li.`category_id` IN( ' . $cat_list . ' ), li.`category_id`, cr.`category_id`) `category`, '
 				//. 'IF(li.`category_id` = ' . $cat_id . ', 0, 1) `crossed`, '
-				. 'ca.`title` `category_title`, ca.`title_alias` `category_alias`, `ca`.`parents` `category_parents`, '
+				. 'ca.`title` `category_title`, ca.`title_alias` `category_alias`, ca.`parents` `category_parents`, ca.`breadcrumb` `category_breadcrumb`, '
 				. 'ac.`fullname` `member`, ac.`username` `account_username` '
 			. 'FROM `' . $this->iaDb->prefix . 'categs` ca, ' . self::getTable(true) . ' li '
 				. 'LEFT JOIN `' . $this->iaDb->prefix . 'listings_categs` cr ON (cr.`listing_id` = li.`id` AND cr.`category_id` = ' . $cat_id . ') '
@@ -312,7 +311,7 @@ class iaListing extends abstractDirectoryPackageFront
 			{
 				$this->iaDb->setTable(self::getTableCrossed());
 
-				$this->iaDb->delete("`listing_id` = '{$listing['id']}'");
+				$this->iaDb->delete(iaDb::convertIds($listing['id'], 'listing_id'));
 
 				$crossedLimit = $this->iaCore->get('listing_crossed_limit', 5);
 
@@ -478,19 +477,22 @@ class iaListing extends abstractDirectoryPackageFront
 
 		foreach ($rows as &$row)
 		{
-			if (!empty($row['category_parents']))
+			if (!empty($row['category_breadcrumb'])) // primary case
+			{
+				$row['breadcrumb'] = unserialize($row['category_breadcrumb']);
+			}
+			elseif (!empty($row['category_parents'])) // alternative way (will be removed later)
 			{
 				$condition = "`id` IN({$row['category_parents']}) AND `parent_id` != -1 AND `status` = 'active'";
 				$parents = $iaCateg->get($condition, 0, null, null, 'c.*', 'level');
 
 				$row['breadcrumb'] = array();
 				foreach ($parents as $parent)
-				{
-					$row['breadcrumb'][] = array(
-						'title' => $parent['title'],
-						'url' => $iaCateg->url('view', $parent)
-					);
-				}
+					$row['breadcrumb'][$parent['title']] = str_replace(IA_URL, '', $iaCateg->url('view', $parent));
+			}
+			else
+			{
+				$row['breadcrumb'] = array();
 			}
 		}
 
@@ -506,29 +508,29 @@ class iaListing extends abstractDirectoryPackageFront
 	 */
 	public function getById($itemId)
 	{
-		$listings = $this->get("t1.`id` = '{$itemId}'", 0, 1);
+		$listings = $this->get('l.`id` = ' . (int)$itemId, 0, 1);
 
 		return $listings ? $listings[0] : array();
 	}
 
 	public function getTop($limit = 10, $start = 0)
 	{
-		return $this->get("t1.`status` = 'active'", $start, $limit, "t1.`rank` DESC");
+		return $this->get("l.`status` = 'active'", $start, $limit, 'l.`rank` DESC');
 	}
 
 	public function getPopular($limit = 10, $start = 0)
 	{
-		return $this->get("t1.`status` = 'active'", $start, $limit, "t1.`views_num` DESC");
+		return $this->get("l.`status` = 'active'", $start, $limit, 'l.`views_num` DESC');
 	}
 
 	public function getLatest($limit = 10, $start = 0)
 	{
-		return $this->get("t1.`status` = 'active'", $start, $limit, "t1.`date_added` DESC");
+		return $this->get("l.`status` = 'active'", $start, $limit, 'l.`date_added` DESC');
 	}
 
 	public function getRandom($limit = 10, $start = 0)
 	{
-		return $this->get("t1.`status` = 'active'", $start, $limit, iaDb::FUNCTION_RAND);
+		return $this->get("l.`status` = 'active'", $start, $limit, iaDb::FUNCTION_RAND);
 	}
 
 	public function isSubmissionAllowed($memberId)

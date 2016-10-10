@@ -182,11 +182,11 @@ class iaListing extends abstractDirectoryPackageAdmin
 
 	public function getById($listingId)
 	{
-		$sql = "SELECT t1.*, ";
-		$sql .= "if (t2.`fullname` <> '', t2.`fullname`, t2.`username`) `member` ";
-		$sql .= "FROM `" . self::getTable(true) . "` t1 ";
-		$sql .= "LEFT JOIN `{$this->iaDb->prefix}members` t2 ON (t1.`member_id` = t2.`id`) ";
-		$sql .= "WHERE t1.`id` = '{$listingId}'";
+		$sql = "SELECT l.*, ";
+		$sql .= "IF(m.`fullname` <> '', m.`fullname`, m.`username`) `member` ";
+		$sql .= "FROM `" . self::getTable(true) . "` l ";
+		$sql .= "LEFT JOIN `{$this->iaDb->prefix}members` m ON (l.`member_id` = m.`id`) ";
+		$sql .= "WHERE l.`id` = '{$listingId}'";
 
 		return $this->iaDb->getRow($sql);
 	}
@@ -195,7 +195,7 @@ class iaListing extends abstractDirectoryPackageAdmin
 	{
 		$result = array();
 
-		$stmt = 't1.`status` = :status';
+		$stmt = 'l.`status` = :status';
 		$this->iaDb->bind($stmt, array('status' => iaCore::STATUS_ACTIVE));
 
 		if ($entries = $this->get('l.`title_alias`', $stmt, 'l.`date_modified` DESC'))

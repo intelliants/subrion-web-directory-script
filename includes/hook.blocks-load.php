@@ -34,12 +34,12 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType())
 
 	if ($iaView->blockExists('featured_listings'))
 	{
-		$blocksData['featured'] = $iaListing->get("t1.`featured` != 0", 0, $iaCore->get('directory_listings_featured_limit', 6), 't1.`featured_start` DESC');
+		$blocksData['featured'] = $iaListing->get('l.`featured` != 0', 0, $iaCore->get('directory_listings_featured_limit', 6), 'l.`featured_start` DESC');
 	}
 
 	if ($iaView->blockExists('sponsored_listings'))
 	{
-		$blocksData['sponsored'] = $iaListing->get("t1.`sponsored` != 0", 0, $iaCore->get('directory_listings_sponsored_limit', 6), 't1.`sponsored_start` DESC');
+		$blocksData['sponsored'] = $iaListing->get('l.`sponsored` != 0', 0, $iaCore->get('directory_listings_sponsored_limit', 6), 'l.`sponsored_start` DESC');
 	}
 
 	if ($iaView->blockExists('directory_categories_tree'))

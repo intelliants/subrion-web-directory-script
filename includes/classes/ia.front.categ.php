@@ -53,11 +53,8 @@ class iaCateg extends abstractDirectoryPackageFront
 
 	public function get($where = '', $catId = '0', $start = 0, $limit = null, $fields = 'c.*', $order = 'title')
 	{
-		if (empty($where))
-		{
-			$where = iaDb::EMPTY_CONDITION;
-		}
-		$fields .= ", c.`num_all_listings` `num`";
+		$where || $where = iaDb::EMPTY_CONDITION;
+		$fields.= ', c.`num_all_listings` `num`';
 
 		$sql = "(SELECT :fields, '0' `crossed` "
 			. 'FROM `:prefix:table_categories` c '
@@ -78,17 +75,17 @@ class iaCateg extends abstractDirectoryPackageFront
 			'order' => $order
 		));
 
-		$return = $this->iaDb->getAll($sql, $start, $limit);
+		$result = $this->iaDb->getAll($sql, $start, $limit);
 
-		if ($return)
+		if ($result)
 		{
-			foreach ($return as &$entry)
+			foreach ($result as &$entry)
 			{
 				empty($entry['icon']) || $entry['icon'] = unserialize($entry['icon']);
 			}
 		}
 
-		return $return;
+		return $result;
 	}
 
 	/**
@@ -125,13 +122,14 @@ class iaCateg extends abstractDirectoryPackageFront
 			for($i = 1; $i <= $count; $i++)
 			{
 				$sql .= 'LEFT JOIN ' . $table . ' h' . $i . ' ON (h' . $i . '.`parent_id` = h' . ($i - 1) . '.`id`) ';
-				$where .= ' AND h' . $i . '.`id` is not null';
+				$where .= ' AND h' . $i . '.`id` IS NOT NULL';
 			}
 			if ($iaDb->query($sql . $where))
 			{
 				$num = $iaDb->getAffected();
 			}
 		}
+
 		$iaDb->query($update_level);
 		$iaDb->query($update_child);
 		$iaDb->query($update_parent);

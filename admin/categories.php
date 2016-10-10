@@ -79,7 +79,6 @@ class iaBackendController extends iaAbstractControllerPackageBackend
 	protected function _setDefaultValues(array &$entry)
 	{
 		$entry = array(
-			'member_id' => iaUsers::getIdentity()->id,
 			'parent_id' => $this->_root['id'],
 			'parents' => 0,
 			'locked' => false,
@@ -134,6 +133,7 @@ class iaBackendController extends iaAbstractControllerPackageBackend
 	public function updateCounters($entryId, array $entryData, $action, $previousData = null)
 	{
 		$this->getHelper()->rebuildRelation();
+		$this->getHelper()->updateAliases($entryId);
 	}
 
 	protected function _assignValues(&$iaView, array &$entryData)

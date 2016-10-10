@@ -409,7 +409,6 @@ $items['categs'] = array('title' => iaLanguage::get('categories'), 'url' => 'dir
 CREATE TABLE IF NOT EXISTS `{prefix}categs`(
 	`id` int(8) unsigned NOT NULL auto_increment,
 	`parent_id` int(8) NOT NULL,
-	`member_id` int(11) unsigned NOT NULL,
 	`title` varchar(150) NOT NULL,
 	`title_alias` varchar(150) NOT NULL,
 	`date_added` date NOT NULL,
@@ -428,6 +427,7 @@ CREATE TABLE IF NOT EXISTS `{prefix}categs`(
 	`no_follow` tinyint(1) unsigned NOT NULL,
 	`locked` tinyint(1) unsigned NOT NULL,
 	`views_num` mediumint(8) unsigned NOT NULL,
+	`breadcrumb` text NOT NULL,
 	`featured` tinyint(1) unsigned NOT NULL,
 	`featured_start` datetime NULL,
 	`featured_end` datetime NULL,
@@ -545,12 +545,14 @@ DROP TABLE IF EXISTS `{prefix}categs`, `{prefix}categs_crossed`, `{prefix}categs
 		<sql version="4.0.1" external="1">includes{DS}dumps{DS}upgrades{DS}4.0.1.sql</sql>
 		<sql version="4.0.2">
 			<![CDATA[
-DELETE FROM `{prefix}config` WHERE `config_group` = 'directory' AND `extras` = 'directory' AND `name` = 'duplicate_checking';
+DELETE FROM `{prefix}config` WHERE `config_group` = 'directory' AND `extras` = 'directory' AND `name` IN('duplicate_checking', 'duplicate_type');
 			]]>
 		</sql>
 		<sql version="4.0.2">
 			<![CDATA[
-DELETE FROM `{prefix}config` WHERE `config_group` = 'directory' AND `extras` = 'directory' AND `name` = 'duplicate_type';
+ALTER TABLE `{prefix}categs`
+  DROP `member_id`,
+  ADD `breadcrumb` text NOT NULL after `views_num`;
 			]]>
 		</sql>
 	</upgrade>

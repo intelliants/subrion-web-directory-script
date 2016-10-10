@@ -39,9 +39,9 @@
 				<div class="clearfix"></div>
 				<p>
 					<span class="fa fa-folder-o"></span>
-					{foreach $listing.breadcrumb as $item}
-						{if !$item@first} <span class="fa fa-angle-right"></span> {/if}
-						<a href="{$item.url}">{$item.title}</a>
+					{foreach $listing.breadcrumb as $title => $url}
+						{if !$url@first} <span class="fa fa-angle-right"></span> {/if}
+						<a href="{$smarty.const.IA_URL}{$url}">{$title|escape:'html'}</a>
 					{/foreach}
 				</p>
 				<div class="clearfix"></div>

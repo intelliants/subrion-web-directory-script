@@ -290,7 +290,7 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType())
 if (iaView::REQUEST_XML == $iaView->getRequestType())
 {
 	$stmt = '';
-	$order = ' ORDER BY t1.`date_added` DESC';
+	$order = ' ORDER BY l.`date_added` DESC';
 	$limit = (int)$iaCore->get('directory_listings_perpage', 10);
 
 	if (isset($iaCore->requestPath[0]) && $iaCore->requestPath[0] == 'top')
@@ -303,7 +303,7 @@ if (iaView::REQUEST_XML == $iaView->getRequestType())
 	}
 	else
 	{
-		$stmt = "cat.`title_alias` = '" . (implode(IA_URL_DELIMITER, $iaCore->requestPath) . IA_URL_DELIMITER) . "'" . $stmt;
+		$stmt = "c.`title_alias` = '" . (implode(IA_URL_DELIMITER, $iaCore->requestPath) . IA_URL_DELIMITER) . "'" . $stmt;
 		$listings = $iaListing->get($stmt, 0, $limit);
 	}
 
