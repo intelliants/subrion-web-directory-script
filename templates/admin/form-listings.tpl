@@ -101,7 +101,7 @@ $(function()
 
 	{ia_hooker name='smartyAdminSubmitItemBeforeFields'}
 
-	{include file='field-type-content-fieldset.tpl' isSystem=true statuses=$statuses}
+	{include 'field-type-content-fieldset.tpl' isSystem=true statuses=$statuses}
 </form>
 
 {ia_hooker name='smartyAdminSubmitItemBeforeFooter'}

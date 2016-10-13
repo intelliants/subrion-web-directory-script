@@ -40,7 +40,7 @@
 	<div class="ia-item-view__section">
 		<div>{$item.description}</div>
 	</div>
-	{include file='item-view-tabs.tpl' isView=true exceptions=array('title', 'url', 'reciprocal', 'description')}
+	{include 'item-view-tabs.tpl' isView=true exceptions=array('title', 'url', 'reciprocal', 'description')}
 
 	{if isset($actionClaimListing)}
 		<a id="{$actionClaimListing.id}" {foreach $actionClaimListing.attributes as $attr => $value}{$attr}="{$value}" {/foreach}>{$actionClaimListing.title}</a>

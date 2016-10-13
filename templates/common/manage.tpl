@@ -1,7 +1,7 @@
 <form method="post" enctype="multipart/form-data" class="ia-form">
 	{preventCsrf}
 
-	{include file='plans.tpl'}
+	{include 'plans.tpl'}
 
 	{capture name='general' append='fieldset_before'}
 		<div class="fieldset">
@@ -51,7 +51,7 @@ $(function()
 	{/capture}
 
 	{capture append='tabs_after' name='__all__'}
-		{include file='captcha.tpl'}
+		{include 'captcha.tpl'}
 
 		<div class="fieldset__actions">
 			<button type="submit" class="btn btn-primary" name="data-listing">{lang key='save'}</button>
@@ -60,7 +60,7 @@ $(function()
 
 	{ia_hooker name='smartyListingSubmitBeforeFooter'}
 
-	{include file='item-view-tabs.tpl'}
+	{include 'item-view-tabs.tpl'}
 </form>
 {ia_add_media files='js:_IA_URL_packages/directory/js/front/listings'}
 {ia_hooker name='smartyDirectoryListingSubmitAfterJs'}

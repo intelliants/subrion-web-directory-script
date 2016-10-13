@@ -70,6 +70,6 @@ $(function()
 		{$exceptions = ['meta_description', 'meta_keywords', 'icon']}
 	{/if}
 
-	{include file='field-type-content-fieldset.tpl' isSystem=true exceptions=$exceptions}
+	{include 'field-type-content-fieldset.tpl' isSystem=true exceptions=$exceptions}
 </form>
 {ia_add_media files='tree, js:_IA_URL_packages/directory/js/admin/categories'}
