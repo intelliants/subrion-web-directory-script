@@ -77,10 +77,7 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType())
 	{
 		$categories = $iaDb->all(array('id', 'title'), "`status` = 'active' AND `level` = 1 ORDER BY `title`", null, null, $iaCateg::getTable());
 
-		if (!empty($categories))
-		{
-			$iaView->assign('directoryFiltersCategories', $categories);
-		}
+		$iaView->assign('directoryFiltersCategories', $categories ? $categories : array());
 	}
 
 	$iaView->assign('listingsBlocksData', $blocksData);
