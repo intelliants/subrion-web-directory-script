@@ -65,7 +65,7 @@ COMMENT;
 
 if (iaView::REQUEST_HTML == $iaView->getRequestType())
 {
-	$listingId = (count($iaView->url) > 0) ? (int)$iaView->url[count($iaView->url) - 1] : 0;
+	$listingId = (int)end($iaCore->requestPath);
 	if (!$listingId)
 	{
 		return iaView::errorPage(iaView::ERROR_NOT_FOUND);
