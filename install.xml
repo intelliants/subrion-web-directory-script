@@ -197,28 +197,24 @@
 
 	<fields>
 		<field name="title" item="listings" type="text" group="general" length="70" required="1"
-			page="advsearch,add_listing,edit_listing,view_member,view_listing,favorites,rss_listings">Title</field>
+			page="add_listing,edit_listing,view_member,view_listing,favorites,rss_listings">Title</field>
 		<field name="url" item="listings" type="text" group="general" length="70" required="1" default="http://"
-			page="advsearch,add_listing,edit_listing,view_member,view_listing,favorites,rss_listings">URL</field>
+			page="add_listing,edit_listing,view_member,view_listing,favorites,rss_listings">URL</field>
 		<field name="description" item="listings" type="textarea" group="general" editor="1" required="1" length="" default=""
-			page="advsearch,add_listing,edit_listing,view_listing,rss_listings">Description</field>
+			page="add_listing,edit_listing,view_listing,rss_listings">Description</field>
 		<field name="reciprocal" item="listings" type="text" group="general" length="70" default="http://"
 			page="add_listing,edit_listing,view_listing,favorites">Reciprocal URL</field>
 		<field name="email" item="listings" type="text" group="general" length="70"
 			page="add_listing,edit_listing">Email</field>
-		<field name="meta_description" item="listings" type="textarea" group="general" editor="0" adminonly="1" length="" default=""
-			page="advsearch">Meta-Description</field>
-		<field name="meta_keywords" item="listings" type="text" group="general" length="70" required="0" adminonly="1"
-			page="advsearch">Meta-Keywords</field>
+		<field name="meta_description" item="listings" type="textarea" group="general" editor="0" adminonly="1" length="" default="">Meta-Description</field>
+		<field name="meta_keywords" item="listings" type="text" group="general" length="70" required="0" adminonly="1">Meta-Keywords</field>
 
 		<field name="title" item="categs" type="text" group="general" length="70" required="1" searchable="1"
-			page="advsearch,directory_home,rss_listings">Title</field>
+			page="directory_home,rss_listings">Title</field>
 		<field name="description" item="categs" type="textarea" group="general" editor="1" required="0" searchable="1" length="" default=""
-			page="advsearch,directory_home,rss_listings">Description</field>
-		<field name="meta_description" item="categs" type="textarea" group="general" editor="0" required="0" adminonly="1" length="" default=""
-			page="advsearch">Meta-Description</field>
-		<field name="meta_keywords" item="categs" type="text" group="general" length="70" required="0" adminonly="1"
-			page="advsearch">Meta-Keywords</field>
+			page="directory_home,rss_listings">Description</field>
+		<field name="meta_description" item="categs" type="textarea" group="general" editor="0" required="0" adminonly="1" length="" default="">Meta-Description</field>
+		<field name="meta_keywords" item="categs" type="text" group="general" length="70" required="0" adminonly="1">Meta-Keywords</field>
 		<field name="icon" item="categs" type="image" group="general" width="16" height="16" editable="0" adminonly="1"
 			page="directory_home,rss_listings" folder_name="directory_categs_icons">Category Icon</field>
 	</fields>
