@@ -83,8 +83,7 @@ class iaBackendController extends iaAbstractControllerPackageBackend
 
 	protected function _preSaveEntry(array &$entry, array $data, $action)
 	{
-		$fields = $this->_iaField->getByItemName($this->getHelper()->getItemName());
-		list($entry, , $this->_messages, ) = $this->_iaField->parsePost($fields, $entry);
+		parent::_preSaveEntry($entry, $data, $action);
 
 		if (isset($data['reported_as_broken']))
 		{

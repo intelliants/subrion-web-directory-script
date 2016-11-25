@@ -144,13 +144,12 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType())
 	switch ($pageName)
 	{
 		case 'my_listings':
-
 			if (!iaUsers::hasIdentity())
 			{
 				return iaView::errorPage(iaView::ERROR_UNAUTHORIZED);
 			}
 
-			$listings = $iaListing->get(' t3.`id` = ' . iaUsers::getIdentity()->id . ' ', $pagination['start'], $pagination['limit'], $order);
+			$listings = $iaListing->get('l.`member_id` = ' . iaUsers::getIdentity()->id . ' ', $pagination['start'], $pagination['limit'], $order);
 			iaLanguage::set('no_web_listings', iaLanguage::get('no_my_listings'));
 
 			break;
@@ -253,7 +252,7 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType())
 	{
 		$listings = $iaCore->factory('item')->updateItemsFavorites($listings, $iaListing->getItemName());
 
-		$iaCore->factory('field')->filter($listings, $iaListing->getItemName());
+		$iaCore->factory('field')->filter($iaListing->getItemName(), $listings);
 	}
 
 	if ($iaAcl->isAccessible('add_listing', iaCore::ACTION_ADD))

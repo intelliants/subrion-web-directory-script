@@ -89,13 +89,12 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType())
 
 	if (isset($_POST['data-listing']))
 	{
-		$fields = iaField::getAcoFieldsList(null, $iaListing->getItemName(), $where, true);
 		$item = false;
 		$error = false;
 		$plan = false;
 		$messages = array();
 
-		list($item, $error, $messages) = $iaField->parsePost($fields, $listing);
+		list($item, $error, $messages) = $iaField->parsePost($iaListing->getItemName(), $listing);
 
 		if (!iaUsers::hasIdentity() && !iaValidate::isCaptchaValid())
 		{
@@ -233,7 +232,7 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType())
 		}
 		else
 		{
-			iaField::keepValues($listing, $fields);
+			$listing = $item; // keep user input
 		}
 
 		if (!$error)
@@ -294,10 +293,7 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType())
 
 	$listing['item'] = $iaListing->getItemName();
 
-	// get fieldgroups
-	list($tabs, $fieldgroups) = $iaField->generateTabs($iaField->filterByGroup($item, $iaListing->getItemName()));
-	// compose tabs
-	$sections = array_merge(array('common' => $fieldgroups), $tabs);
+	$sections = $iaField->getTabs($iaListing->getItemName(), $listing);
 
 	$iaView->assign('sections', $sections);
 	$iaView->assign('item', $listing);

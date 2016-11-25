@@ -162,14 +162,6 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType())
 
 	$iaListing->incrementViewsCounter($listingId);
 
-	// get fieldgroups
-	$iaField = $iaCore->factory('field');
-	list($tabs, $fieldgroups) = $iaField->generateTabs($iaField->filterByGroup($item, $iaListing->getItemName()));
-
-	// compose tabs
-	$sections = array_merge(array('common' => $fieldgroups), $tabs);
-	$iaView->assign('sections', $sections);
-
 	$iaCore->startHook('phpViewListingBeforeStart', array(
 		'listing' => $listingId,
 		'item' => 'listings',
@@ -179,10 +171,12 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType())
 
 	$author = $iaDb->row_bind(iaDb::ALL_COLUMNS_SELECTION, '`status` = :status AND `id` = :id', array('status' => iaCore::STATUS_ACTIVE, 'id' => $listing['member_id']), iaUsers::getTable());
 	$counter = $iaDb->one(iaDb::STMT_COUNT_ROWS, iaDb::convertIds($listing['member_id'], 'member_id'), iaListing::getTable());
+	$sections = $iaCore->factory('field')->getTabs($iaListing->getItemName(), $listing);
 
 	$iaView->assign('author', $author);
 	$iaView->assign('listings_num', $counter);
 	$iaView->assign('item', $listing);
+	$iaView->assign('sections', $sections);
 
 	$iaView->set('keywords', $listing['meta_keywords']);
 	$iaView->set('description', $listing['meta_description']);

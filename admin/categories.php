@@ -90,8 +90,7 @@ class iaBackendController extends iaAbstractControllerPackageBackend
 
 	protected function _preSaveEntry(array &$entry, array $data, $action)
 	{
-		$fields = $this->_iaField->getByItemName($this->getHelper()->getItemName());
-		list($entry, , $this->_messages, ) = $this->_iaField->parsePost($fields, $entry);
+		parent::_preSaveEntry($entry, $data, $action);
 
 		$entry['parent_id'] = empty($data['parent_id']) ? $this->_root['id'] : $data['parent_id'];
 		$entry['locked'] = (int)$data['locked'];

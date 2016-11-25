@@ -7,7 +7,7 @@ $(function()
 
 	$cSelect.on('change', function(e)
 	{
-		var value = $(this).val();
+		var value = $(this).val(), doNotRespond = intelli.flags.doNotRespond;
 
 		$scSelect.val(0).prop('disabled', true).find('option:not(:first)').remove();
 
@@ -28,7 +28,7 @@ $(function()
 					});
 
 					$scSelect.prop('disabled', false);
-					intelli.flags.waitingTrigger && $scSelect.trigger('change');
+					//waitingTrigger && $scSelect.trigger('change');
 				}
 			});
 		}
