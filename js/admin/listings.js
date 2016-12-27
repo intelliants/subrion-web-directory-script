@@ -26,8 +26,8 @@ Ext.onReady(function()
 			sorters: [{property: 'date_modified', direction: 'DESC'}],
 			statuses: ['active', 'approval', 'banned', 'suspended'],
 			texts: {
-				delete_multiple: _t('are_you_sure_to_delete_selected_categs'),
-				delete_single: _t('are_you_sure_to_delete_selected_categ')
+				delete_multiple: _t('are_you_sure_to_delete_selected_listings'),
+				delete_single: _t('are_you_sure_to_delete_selected_listing')
 			}
 		}, false);
 
