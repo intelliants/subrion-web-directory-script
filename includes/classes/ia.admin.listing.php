@@ -43,7 +43,7 @@ class iaListing extends abstractDirectoryPackageAdmin
 		return iaDb::printf($this->_urlPatterns[$action], $data);
 	}
 
-	public function get($columns, $where, $order, $start = null, $limit = null)
+	public function get($columns, $where, $order = '', $start = null, $limit = null)
 	{
 		$sql = 'SELECT :columns, '
 				. 'c.`title` `category_title`, c.`title_alias` `category_alias`, '
@@ -109,7 +109,7 @@ class iaListing extends abstractDirectoryPackageAdmin
 		return $this->iaDb->query($sql);
 	}
 
-	public function sendUserNotification(array $listingData)
+	public function sendUserNotification(array $listingData, $listingId = null)
 	{
 		if ($this->iaCore->get('listing_' . $listingData['status']))
 		{
@@ -117,6 +117,11 @@ class iaListing extends abstractDirectoryPackageAdmin
 
 			if ($email)
 			{
+				if ($listingId)
+				{
+					$listing = $this->get('l.`id`, l.`title`, l.`title_alias`, l.`status` ', 'l.`id` = ' . $listingId);
+					$listingData = is_array($listing) && $listing ? array_shift($listing) : $listingData;
+				}
 				$iaMailer = $this->iaCore->factory('mailer');
 
 				$iaMailer->loadTemplate('listing_' . $listingData['status']);
