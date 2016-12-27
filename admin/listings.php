@@ -60,6 +60,7 @@ class iaBackendController extends iaAbstractControllerPackageBackend
 	protected function _entryUpdate(array $entryData, $entryId)
 	{
 		$entryData['date_modified'] = date(iaDb::DATETIME_FORMAT);
+		$this->getHelper()->sendUserNotification($entryData);
 
 		return parent::_entryUpdate($entryData, $entryId);
 	}

@@ -92,7 +92,7 @@ class iaListing extends abstractDirectoryPackageAdmin
 			$this->_changeNumListing($listingData['category_id'], -1);
 
 			$listingData['status'] = 'removed';
-			$this->_sendUserNotification($listingData);
+			$this->sendUserNotification($listingData);
 		}
 
 		return $result;
@@ -109,7 +109,7 @@ class iaListing extends abstractDirectoryPackageAdmin
 		return $this->iaDb->query($sql);
 	}
 
-	protected function _sendUserNotification(array $listingData)
+	public function sendUserNotification(array $listingData)
 	{
 		if ($this->iaCore->get('listing_' . $listingData['status']))
 		{
