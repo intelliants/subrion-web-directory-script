@@ -11,7 +11,6 @@ class iaBackendController extends iaAbstractControllerPackageBackend
 	protected $_gridFilters = array('title' => self::LIKE, 'status' => self::EQUAL);
 
 	protected $_activityLog = array('item' => 'category');
-	protected $_setQuickSearch = false;
 
 	protected $_phraseAddSuccess = 'category_added';
 	protected $_phraseGridEntryDeleted = 'category_deleted';

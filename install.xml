@@ -390,12 +390,6 @@ $statistics['directory'] = array(
 );
 			]]>
 		</hook>
-		<hook name="adminQuickSearch" page_type="admin">
-			<![CDATA[
-$items['listings'] = array('title' => iaLanguage::get('listings'), 'url' => 'directory/listings/');
-$items['categs'] = array('title' => iaLanguage::get('categories'), 'url' => 'directory/categories/');
-			]]>
-		</hook>
 		<hook name="smartyViewListingBeforeFooter" type="smarty" page_type="front" filename="hook.report-modal"><![CDATA[]]></hook>
 	</hooks>
 
