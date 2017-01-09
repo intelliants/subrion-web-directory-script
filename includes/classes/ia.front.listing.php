@@ -73,7 +73,9 @@ class iaListing extends abstractDirectoryPackageFront
 		$rows = $this->iaDb->getAll($sql);
 		$this->_foundRows = $this->iaDb->foundRows();
 
-		return $this->_process($rows);
+		$this->_processValues($rows);
+
+		return $rows;
 	}
 
 	public function coreSearch($stmt, $start, $limit, $order)
@@ -171,7 +173,9 @@ class iaListing extends abstractDirectoryPackageFront
 		$rows = $this->iaDb->getAll($sql);
 		$this->_foundRows = $this->iaDb->foundRows();
 
-		return $this->_process($rows);
+		$this->_processValues($rows);
+
+		return $rows;
 	}
 
 	public function getTitleAlias($title, $convertLowercase = false)
@@ -471,28 +475,33 @@ class iaListing extends abstractDirectoryPackageFront
 		return $this->iaDb->query($sql);
 	}
 
-	protected function _process($rows)
+	protected function _processValues(array &$rows, $singleRow = false, $fieldNames = array())
 	{
-		$iaCateg = $this->iaCore->factoryPackage('categ', $this->getPackageName());
+		parent::_processValues($rows, $singleRow, $fieldNames);
 
-		foreach ($rows as &$row)
+		if ($rows)
 		{
-			if (!empty($row['category_breadcrumb'])) // primary case
-			{
-				$row['breadcrumb'] = unserialize($row['category_breadcrumb']);
-			}
-			elseif (!empty($row['category_parents'])) // alternative way (will be removed later)
-			{
-				$condition = "`id` IN({$row['category_parents']}) AND `parent_id` != -1 AND `status` = 'active'";
-				$parents = $iaCateg->get($condition, 0, null, null, 'c.*', 'level');
+			$iaCateg = $this->iaCore->factoryPackage('categ', $this->getPackageName());
 
-				$row['breadcrumb'] = array();
-				foreach ($parents as $parent)
-					$row['breadcrumb'][$parent['title']] = str_replace(IA_URL, '', $iaCateg->url('view', $parent));
-			}
-			else
+			foreach ($rows as &$row)
 			{
-				$row['breadcrumb'] = array();
+				if (!empty($row['category_breadcrumb'])) // primary case
+				{
+					$row['breadcrumb'] = unserialize($row['category_breadcrumb']);
+				}
+				elseif (!empty($row['category_parents'])) // alternative way (will be removed later)
+				{
+					$condition = "`id` IN({$row['category_parents']}) AND `parent_id` != -1 AND `status` = 'active'";
+					$parents = $iaCateg->get($condition, 0, null, null, 'c.*', 'level');
+
+					$row['breadcrumb'] = array();
+					foreach ($parents as $parent)
+						$row['breadcrumb'][$parent['title']] = str_replace(IA_URL, '', $iaCateg->url('view', $parent));
+				}
+				else
+				{
+					$row['breadcrumb'] = array();
+				}
 			}
 		}
 

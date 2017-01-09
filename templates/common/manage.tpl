@@ -4,6 +4,7 @@
 	{include 'plans.tpl'}
 
 	{capture name='general' append='fieldset_before'}
+		{*include 'tree.tpl' url="{$core.config.packages.directory.url}add/read.json?get=tree"*}
 		<div class="fieldset">
 			<div class="fieldset__header">{lang key='field_category_id'}</div>
 			<div class="fieldset__content">
