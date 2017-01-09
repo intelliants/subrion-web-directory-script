@@ -475,7 +475,7 @@ class iaListing extends abstractDirectoryPackageFront
 		return $this->iaDb->query($sql);
 	}
 
-	protected function _processValues(array &$rows, $singleRow = false, $fieldNames = array())
+	protected function _processValues(&$rows, $singleRow = false, $fieldNames = array())
 	{
 		parent::_processValues($rows, $singleRow, $fieldNames);
 
