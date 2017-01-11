@@ -12,7 +12,7 @@
 					<a href="#" class="categories-toggle" id="js-tree-toggler">{lang key='open_close'}</a>
 				</label>
 				<div class="col col-lg-4">
-					<input type="text" id="js-category-label" value="{if $parent}{$parent.title}{else}{lang key='field_category_id_annotation'}{/if}" disabled>
+					<input type="text" id="js-category-label" value="{if $parent}{$parent.title}{else}{lang key='field_category_id'}{/if}" disabled>
 					<div id="js-tree" class="tree categories-tree"{if iaCore::ACTION_EDIT == $pageAction} style="display:none"{/if}></div>
 					<input type="hidden" name="parent_id" id="input-category" value="{$item.parent_id}">
 				</div>

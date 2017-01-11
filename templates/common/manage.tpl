@@ -8,7 +8,7 @@
 		<div class="fieldset">
 			<div class="fieldset__header">{lang key='field_category_id'}</div>
 			<div class="fieldset__content">
-				<input type="text" id="js-category-label" value="{if isset($category.title)}{$category.title|escape:'html'}{else}{lang key="field_category_id_annotation"}{/if}" disabled class="form-control">
+				<input type="text" id="js-category-label" value="{if isset($category.title)}{$category.title|escape:'html'}{else}{lang key="field_tooltip_category_id"}{/if}" disabled class="form-control">
 				<a href="#" class="categories-toggle" id="js-tree-toggler">{lang key='open_close'}</a>
 				<div id="js-tree" class="tree categories-tree"{if iaCore::ACTION_EDIT == $pageAction} style="display:none"{/if}></div>
 				<input type="hidden" name="category_id" id="input-category" value="{$category.id}">

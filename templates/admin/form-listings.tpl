@@ -11,7 +11,7 @@
 				<a href="#" class="categories-toggle" id="js-tree-toggler">{lang key='open_close'}</a>
 			</label>
 			<div class="col col-lg-4">
-				<input type="text" id="js-category-label" value="{if $category}{$category.title|escape:'html'}{else}{lang key='field_category_id_annotation'}{/if}" disabled>
+				<input type="text" id="js-category-label" value="{if $category}{$category.title|escape:'html'}{else}{lang key='field_category_id'}{/if}" disabled>
 				<div id="js-tree" class="tree categories-tree"></div>
 				<input type="hidden" name="category_id" id="input-category" value="{if !isset($item.category_id)}1{else}{$item.category_id}{/if}">
 			</div>
