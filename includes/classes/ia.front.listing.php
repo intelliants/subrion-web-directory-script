@@ -285,22 +285,12 @@ class iaListing extends abstractDirectoryPackageFront
 		return $entryData['id'];
 	}
 
-	/**
-	 * Updates listing data
-	 *
-	 * @param array $listing new listing details
-	 * @param array $oldData previous listing details
-	 *
-	 * @return mixed
-	 */
-	public function update(array $listing, array $oldData)
+	public function update(array $listing, $id)
 	{
-		$iaDb = &$this->iaDb;
-		$oldData = $oldData
-			? $oldData
-			: $iaDb->row(iaDb::ALL_COLUMNS_SELECTION, iaDb::convertIds($listing['id']), self::getTable());
+		$oldData = $this->getById($id);
 		$status = isset($listing['status']) ? $listing['status'] : false;
 		$categ = isset($listing['category_id']) ? $listing['category_id'] : $oldData['category_id'];
+
 		if ($this->iaCore->get('listing_crossed'))
 		{
 			$crossed = $this->iaDb->onefield('category_id', "`listing_id` = '{$listing['id']}'", 0, null, self::getTableCrossed());
@@ -345,7 +335,7 @@ class iaListing extends abstractDirectoryPackageFront
 			}
 		}
 
-		$return = $iaDb->update($listing, iaDb::convertIds($listing['id']), array('date_modified' => iaDb::FUNCTION_NOW), self::getTable());
+		$return = $this->iaDb->update($listing, iaDb::convertIds($listing['id']), array('date_modified' => iaDb::FUNCTION_NOW), self::getTable());
 
 		// If status changed
 		if ($categ == $oldData['category_id'])
@@ -392,11 +382,8 @@ class iaListing extends abstractDirectoryPackageFront
 			if ($crossed)
 			{
 				$diff = ($status == iaCore::STATUS_ACTIVE) ? 1 : -1;
-
 				foreach ($crossedInput as $entry)
-				{
 					$this->_changeNumListing($entry['category_id'], $diff);
-				}
 			}
 		}
 
@@ -516,7 +503,7 @@ class iaListing extends abstractDirectoryPackageFront
 	 *
 	 * @return array
 	 */
-	public function getById($itemId)
+	public function getById($itemId, $decorate = true)
 	{
 		$listings = $this->get('l.`id` = ' . (int)$itemId, 0, 1);
 

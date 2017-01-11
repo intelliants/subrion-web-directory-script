@@ -80,19 +80,11 @@ Ext.onReady(function()
 						data: function(n)
 						{
 							var params = {};
-
-							if(n.id != '#')
-							{
-								params.id = n.id;
-							}
-							else
-							{
-								params.id = 0;
-							}
+							if(n.id != '#') params.id = n.id;
 
 							return params;
 						},
-						url: intelli.config.ia_url + 'directory/categories/read.json?get=tree'
+						url: intelli.config.admin_url + '/directory/categories/tree.json'
 					},
 					multiple: true
 				},
@@ -141,7 +133,7 @@ intelli.titleCache = '';
 intelli.fillUrlBox = function()
 {
 	var alias = $('#field_title_alias').val();
-	var title = ('' == alias ? $('#field_title').val() : alias);
+	var title = ('' == alias ? $('input:first', '#title_fieldzone').val() : alias);
 	var category = $('#input-category').val();
 	var cache = title + '%%' + category;
 

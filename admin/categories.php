@@ -141,7 +141,7 @@ class iaBackendController extends iaAbstractControllerPackageBackend
 		$alias = explode(IA_URL_DELIMITER, substr($entryData['title_alias'], 0, -1));
 		$entryData['title_alias'] = end($alias);
 
-		$parent = $this->_iaDb->row(array('id', 'title', 'parents', 'child'), iaDb::convertIds($entryData['parent_id']));
+		$parent = $this->getHelper()->getById($entryData['parent_id']);
 
 		$entryData['crossed'] = $this->_fetchCrossed();
 
@@ -150,11 +150,12 @@ class iaBackendController extends iaAbstractControllerPackageBackend
 
 	protected function _fetchCrossed()
 	{
-		$sql = 'SELECT c.`id`, c.`title` '
+		$sql = 'SELECT c.`id`, c.`title_:lang` '
 			. 'FROM `:prefix:table_categories` c, `:prefix:table_crossed` cr '
 			. 'WHERE c.`id` = cr.`crossed_id` AND cr.`category_id` = :id';
 
 		$sql = iaDb::printf($sql, array(
+			'lang' => $this->_iaCore->language['iso'],
 			'prefix' => $this->_iaDb->prefix,
 			'table_categories' => self::getTable(),
 			'table_crossed' => $this->getHelper()->getTableCrossed(),
@@ -169,9 +170,12 @@ class iaBackendController extends iaAbstractControllerPackageBackend
 		$output = array();
 
 		$rowsCount = $this->_iaDb->one(iaDb::STMT_COUNT_ROWS);
-		$dynamicLoadMode = ($rowsCount > 500);
 
-		$where = $dynamicLoadMode ? sprintf('`parent_id` = %d', (int)$data['id']) : iaDb::EMPTY_CONDITION;
+		$dynamicLoadMode = ($rowsCount > 1);
+		$noRootMode = isset($data['noroot']) && '' == $data['noroot'];
+
+		$where = $dynamicLoadMode ? '`parent_id` = ' . (int)$data['id'] : iaDb::EMPTY_CONDITION;
+		$noRootMode && $where.= ' AND `id` != 0';
 		$where.= ' ORDER BY `title`';
 
 		$rows = $this->_iaDb->all(array('id', 'title' => 'title_' . $this->_iaCore->language['iso'], 'parent_id', 'child'), $where);
@@ -180,9 +184,16 @@ class iaBackendController extends iaAbstractControllerPackageBackend
 		{
 			$entry = array('id' => $row['id'], 'text' => $row['title']);
 
-			$dynamicLoadMode
-				? $entry['children'] = $row['child'] && $row['child'] != $row['id']
-				: $entry['parent'] = (0 == $row['parent_id']) ? '#' : $row['parent_id'];
+			if ($dynamicLoadMode)
+			{
+				$entry['children'] = $row['child'] && $row['child'] != $row['id'];
+			}
+			else
+			{
+				$entry['parent'] = $noRootMode
+					? (0 == $row['parent_id'] ? '#' : $row['parent_id'])
+					: (0 == $row['id'] ? '#' : $row['parent_id']);
+			}
 
 			$output[] = $entry;
 		}

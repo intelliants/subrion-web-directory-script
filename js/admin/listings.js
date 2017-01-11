@@ -110,7 +110,7 @@ Ext.onReady(function()
 						{
 							return {id: n.id == '#' ? 0 : n.id};
 						},
-						url: intelli.config.ia_url + 'directory/categories/read.json?get=tree'
+						url: intelli.config.admin_url + '/directory/categories/tree.json?noroot'
 					},
 					multiple: true
 				},
@@ -171,7 +171,7 @@ intelli.titleCache = '';
 intelli.fillUrlBox = function()
 {
 	var titleAlias = $('#field_title_alias').val();
-	var title = ('' == titleAlias ? $('#field_title').val() : titleAlias);
+	var title = ('' == titleAlias ? $('#field_listings_title').val() : titleAlias);
 	var category = $('#input-category').val();
 	var id = $('#js-listing-id').val();
 
@@ -186,7 +186,7 @@ intelli.fillUrlBox = function()
 			params.alias = 1;
 		}
 
-		$.get(intelli.config.ia_url + 'directory/listings/read.json', params, function(response)
+		$.get(intelli.config.admin_url + 'directory/categories/tree.json', params, function(response)
 		{
 			if (response.data)
 			{
@@ -195,6 +195,7 @@ intelli.fillUrlBox = function()
 			}
 		});
 	}
+
 	intelli.titleCache = cache;
 };
 

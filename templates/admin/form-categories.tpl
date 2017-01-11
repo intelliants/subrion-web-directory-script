@@ -24,7 +24,7 @@ $(function()
 
 	new IntelliTree(
 	{
-		url: intelli.config.ia_url + 'directory/categories/read.json?get=tree&current_category=' + current_category,
+		url: intelli.config.admin_url + '/directory/categories/tree.json?current_category=' + current_category,
 		onchange: intelli.fillUrlBox,
 		nodeOpened: [0,{if isset($item.parents)}{$item.parents}{/if}],
 		nodeSelected: {$parent.id}

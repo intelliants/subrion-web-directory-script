@@ -8,8 +8,13 @@ if (iaView::REQUEST_JSON == $iaView->getRequestType() && isset($_GET['get']) && 
 	$categoryId = empty($_GET['id']) ? 0 : (int)$_GET['id'];
 
 	$output = array();
-	$entries = $iaCateg->getAll("`parent_id` = $categoryId && `status` = 'active' ORDER BY `title`",
-		array('id', 'title' => 'title_' . $iaCore->language['iso'], 'title_alias', 'locked', 'child', 'value' => 'id'));
+
+	$where = "`parent_id` = $categoryId AND `status` = 'active'";
+	empty($_GET['current_category']) || $where.= ' AND `id` != ' .(int)$_GET['current_category'];
+	$where.= ' ORDER BY `title`';
+
+	$entries = $iaCateg->getAll($where, array('id', 'title' => 'title_' . $iaCore->language['iso'],
+		'title_alias', 'locked', 'child', 'value' => 'id'));
 
 	foreach ($entries as $row)
 	{
@@ -203,9 +208,9 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType())
 
 			if (iaCore::ACTION_ADD == $pageAction)
 			{
-				$item['id'] = $iaListing->insert($item);
+				$id = $iaListing->insert($item);
 
-				if (!$item['id'])
+				if (!$id)
 				{
 					$error = true;
 					$messages[] = iaLanguage::get('error_add_listing');
@@ -217,11 +222,10 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType())
 			}
 			else
 			{
-				$item['id'] = $listing['id'];
+				$id = $listing['id'];
+				$result = $iaListing->update($item, $id);
 
-				$affected = $iaListing->update($item, $listing);
-
-				if (!$affected)
+				if (!$result)
 				{
 					$error = true;
 					$messages[] = iaLanguage::get('error_update_listing');
@@ -242,7 +246,7 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType())
 			$item['category_alias'] = $category['title_alias'];
 			$url = (iaCore::STATUS_ACTIVE == $item['status'] ||
 				(iaUsers::hasIdentity() && iaCore::STATUS_APPROVAL == $item['status']))
-				? $iaListing->url('view', $iaListing->getById($item['id'])) : $iaCore->packagesData[$iaListing->getPackageName()]['url'];
+				? $iaListing->url('view', $iaListing->getById($id)) : $iaCore->packagesData[$iaListing->getPackageName()]['url'];
 
 			// if plan is chosen
 			if (isset($_POST['plan_id']) && !empty($_POST['plan_id']))
@@ -257,7 +261,7 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType())
 
 			$iaCore->startHook('phpAddItemAfterAll', array(
 				'type' => iaCore::ADMIN,
-				'listing' => $item['id'],
+				'listing' => $id,
 				'item' => $iaListing->getItemName(),
 				'data' => $item,
 				'old' => $listing
@@ -276,7 +280,7 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType())
 	}
 
 	$category = empty($category) ? array('id' => 0, 'parents' => '') : $category;
-	empty($listing['id']) || $category['crossed'] = $iaCateg->getCrossedByListingId($listing['id']);
+	empty($id) || $category['crossed'] = $iaCateg->getCrossedByListingId($id);
 
 	if (iaCore::ACTION_EDIT == $pageAction)
 	{
@@ -301,7 +305,7 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType())
 	$iaView->assign('item', $listing);
 	$iaView->assign('category', $category);
 
-	$iaView->title(iaLanguage::get('page_title_' . $pageAction . '_listing'));
+	//$iaView->title(iaLanguage::get('page_title_' . $pageAction . '_listing')); /*-- @batry commented out --*/
 
 	$iaView->display('manage');
 }

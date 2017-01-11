@@ -23,21 +23,21 @@ class iaCateg extends abstractDirectoryPackageFront
 		return self::$_tableCrossed;
 	}
 
-	public function url($action, $params)
+	public function url($action, array $data)
 	{
 		$data = array();
 
 		$data['base'] = $this->iaCore->packagesData[$this->getPackageName()]['url'];
 		$data['action'] = $action;
 
-		if (isset($params['prefix']) && !empty($params['prefix']))
+		if (isset($data['prefix']) && !empty($data['prefix']))
 		{
-			$data['title'] = $data[$params['prefix'] . 'title'];
-			$data['title_alias'] = $data[$params['prefix'] . 'alias'];
+			$data['title'] = $data[$data['prefix'] . 'title'];
+			$data['title_alias'] = $data[$data['prefix'] . 'alias'];
 		}
 
-		$data['title_alias'] = (!isset($params['title_alias']) ? '' : $params['title_alias']);
-		$data['title_alias'] = (!isset($params['category_alias']) ? $params['title_alias'] : $params['category_alias']);
+		$data['title_alias'] = (!isset($data['title_alias']) ? '' : $data['title_alias']);
+		$data['title_alias'] = (!isset($data['category_alias']) ? $data['title_alias'] : $data['category_alias']);
 
 		if (!isset($this->_urlPatterns[$action]))
 		{

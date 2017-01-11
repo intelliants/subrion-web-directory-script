@@ -4,7 +4,7 @@
 	<input type="hidden" id="js-listing-id" value="{if iaCore::ACTION_EDIT == $pageAction}{$id}{/if}">
 
 	{capture name='general' append='fieldset_before'}
-		{include 'tree.tpl' url="{$smarty.const.IA_ADMIN_URL}directory/categories/tree.json"}
+		{include 'tree.tpl' url="{$smarty.const.IA_ADMIN_URL}directory/categories/tree.json?noroot"}
 		{* <div id="category_fieldzone" class="row">
 			<label class="col col-lg-2 control-label">
 				{lang key='field_category_id'}<br>

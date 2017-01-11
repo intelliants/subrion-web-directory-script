@@ -185,7 +185,7 @@ class iaListing extends abstractDirectoryPackageAdmin
 
 		$this->iaDb->resetTable();
 	}
-
+/*
 	public function getById($listingId)
 	{
 		$sql = "SELECT l.*, ";
@@ -196,7 +196,7 @@ class iaListing extends abstractDirectoryPackageAdmin
 
 		return $this->iaDb->getRow($sql);
 	}
-
+*/
 	public function getSitemapEntries()
 	{
 		$result = array();
