@@ -158,6 +158,12 @@ Ext.onReady(function()
 		});
 
 		intelli.fillUrlBox();
+
+		$('input[name="reported_as_broken"]').change(function()
+		{
+			var $comments = $('#reported-as-broken-comments');
+			if ($comments.length > 0) $comments.toggle();
+		});
 	}
 });
 

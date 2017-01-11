@@ -65,7 +65,7 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType())
 				$condition = "c.`parent_id` = {$cat['id']} AND c.`status` = 'active'";
 				$hideIfEmpty && ($condition .= ' AND c.`num_all_listings` != 0');
 
-				$children[$key]['subcategories'] = $iaCateg->get($condition, $cat['id'], 0, $iaCore->get('directory_subcategories_number'), 'c.`title`, c.`title_alias`');
+				$children[$key]['subcategories'] = $iaCateg->get($condition, $cat['id'], 0, $iaCore->get('directory_subcategories_number'));
 			}
 		}
 
@@ -75,7 +75,8 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType())
 
 	if ($iaView->blockExists('filters') && $iaListing->getItemName() == $iaView->get('filtersItemName'))
 	{
-		$categories = $iaDb->all(array('id', 'title'), "`status` = 'active' AND `level` = 1 ORDER BY `title`", null, null, $iaCateg::getTable());
+		$categories = $iaCateg->getAll("`status` = 'active' AND `level` = 1 ORDER BY `title`",
+			array('id', 'title' => 'title_' . $iaCore->language['iso']));
 
 		$iaView->assign('directoryFiltersCategories', $categories ? $categories : array());
 	}

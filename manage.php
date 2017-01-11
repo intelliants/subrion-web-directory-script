@@ -8,10 +8,8 @@ if (iaView::REQUEST_JSON == $iaView->getRequestType() && isset($_GET['get']) && 
 	$categoryId = empty($_GET['id']) ? 0 : (int)$_GET['id'];
 
 	$output = array();
-	$entries = $iaDb->all(
-		array('id', 'title', 'title_alias', 'locked', 'child', 'value' => 'id'),
-		"`parent_id` = $categoryId && `status` = 'active' ORDER BY `title`",
-		null, null, iaCateg::getTable());
+	$entries = $iaCateg->getAll("`parent_id` = $categoryId && `status` = 'active' ORDER BY `title`",
+		array('id', 'title' => 'title_' . $iaCore->language['iso'], 'title_alias', 'locked', 'child', 'value' => 'id'));
 
 	foreach ($entries as $row)
 	{
@@ -63,7 +61,7 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType())
 					}
 				}
 
-				$category = $iaCateg->getCategory(iaDb::convertIds($listing['category_id']));
+				$category = $iaCateg->getOne(iaDb::convertIds($listing['category_id']));
 			}
 
 			if (iaCore::ACTION_DELETE == $pageAction)
@@ -128,6 +126,7 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType())
 
 		$item['ip'] = $iaUtil->getIp();
 		$item['member_id'] = 0;
+
 		if (iaUsers::hasIdentity())
 		{
 			$item['member_id'] = iaUsers::getIdentity()->id;
@@ -148,9 +147,10 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType())
 			$item['crossed_links'] = $_POST['crossed_links'] ? $_POST['crossed_links'] : false;
 		}
 
-		$item['title_alias'] = iaSanitize::alias($item['title']);
+		$item['title_alias'] = iaSanitize::alias($_POST['title'][$iaView->language]);
 
-		$category = $iaCateg->getCategory(iaDb::convertIds($item['category_id']));
+		$category = $iaCateg->getById($item['category_id']);
+
 		if (!$category)
 		{
 			$error = true;
@@ -204,6 +204,7 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType())
 			if (iaCore::ACTION_ADD == $pageAction)
 			{
 				$item['id'] = $iaListing->insert($item);
+
 				if (!$item['id'])
 				{
 					$error = true;
@@ -219,6 +220,7 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType())
 				$item['id'] = $listing['id'];
 
 				$affected = $iaListing->update($item, $listing);
+
 				if (!$affected)
 				{
 					$error = true;

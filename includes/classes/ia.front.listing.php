@@ -59,16 +59,17 @@ class iaListing extends abstractDirectoryPackageFront
 
 	public function get($where, $start = null, $limit = null, $order = null, $prioritizedSorting = false)
 	{
-		$sql = 'SELECT SQL_CALC_FOUND_ROWS l.*, ';
-		$sql.= 'c.`title` `category_title`, c.`title_alias` `category_alias`, c.`parents` `category_parents`, c.`breadcrumb` `category_breadcrumb`, ';
-		$sql.= 'm.`fullname` `member`, m.`username` `account_username` ';
-		$sql.= 'FROM `' . self::getTable(true) . '` l ';
-		$sql.= "LEFT JOIN `{$this->iaDb->prefix}categs` c ON (l.`category_id` = c.`id`) ";
-		$sql.= "LEFT JOIN `{$this->iaDb->prefix}members` m ON (l.`member_id` = m.`id`) ";
-		$sql.= 'WHERE ' . ($where ? $where . ' AND' : '') . " l.`status` != 'banned' ";
-		$sql.= 'ORDER BY ' . ($prioritizedSorting ? 'l.`sponsored` DESC, l.`featured` DESC, ' : '')
-			. ($order ? $order : 'l.`date_modified` DESC') . ' ';
-		$sql.= $start || $limit ? "LIMIT $start, $limit" : '';
+		$sql = 'SELECT SQL_CALC_FOUND_ROWS '
+				. 'l.*, '
+				. "c.`title_{$this->iaCore->language['iso']}` `category_title`, c.`title_alias` `category_alias`, c.`parents` `category_parents`, c.`breadcrumb` `category_breadcrumb`, "
+				. 'm.`fullname` `member`, m.`username` `account_username` '
+			. 'FROM `' . self::getTable(true) . '` l '
+			. "LEFT JOIN `{$this->iaDb->prefix}categs` c ON (l.`category_id` = c.`id`) "
+			. "LEFT JOIN `{$this->iaDb->prefix}members` m ON (l.`member_id` = m.`id`) "
+			. 'WHERE ' . ($where ? $where . ' AND' : '') . " l.`status` != 'banned' "
+			. 'ORDER BY ' . ($prioritizedSorting ? 'l.`sponsored` DESC, l.`featured` DESC, ' : '')
+			. ($order ? $order : 'l.`date_modified` DESC') . ' '
+			. ($start || $limit ? "LIMIT $start, $limit" : '');
 
 		$rows = $this->iaDb->getAll($sql);
 		$this->_foundRows = $this->iaDb->foundRows();
@@ -159,7 +160,7 @@ class iaListing extends abstractDirectoryPackageFront
 			'SELECT SQL_CALC_FOUND_ROWS li.*,'
 				. 'IF(li.`category_id` IN( ' . $cat_list . ' ), li.`category_id`, cr.`category_id`) `category`, '
 				//. 'IF(li.`category_id` = ' . $cat_id . ', 0, 1) `crossed`, '
-				. 'ca.`title` `category_title`, ca.`title_alias` `category_alias`, ca.`parents` `category_parents`, ca.`breadcrumb` `category_breadcrumb`, '
+				. 'ca.`title_' . $this->iaCore->language['iso'] . '` `category_title`, ca.`title_alias` `category_alias`, ca.`parents` `category_parents`, ca.`breadcrumb` `category_breadcrumb`, '
 				. 'ac.`fullname` `member`, ac.`username` `account_username` '
 			. 'FROM `' . $this->iaDb->prefix . 'categs` ca, ' . self::getTable(true) . ' li '
 				. 'LEFT JOIN `' . $this->iaDb->prefix . 'listings_categs` cr ON (cr.`listing_id` = li.`id` AND cr.`category_id` = ' . $cat_id . ') '

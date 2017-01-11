@@ -27,7 +27,8 @@ class iaBackendController extends iaAbstractControllerPackageBackend
 	{
 		if (!empty($params['text']))
 		{
-			$conditions[] = '(l.`title` LIKE :text OR l.`description` LIKE :text)';
+			$langCode = $this->_iaCore->language['iso'];
+			$conditions[] = "(l.`title_{$langCode}` LIKE :text OR l.`description_{$langCode}` LIKE :text)";
 			$values['text'] = '%' . iaSanitize::sql($params['text']) . '%';
 		}
 
@@ -108,7 +109,7 @@ class iaBackendController extends iaAbstractControllerPackageBackend
 		$entry['domain'] = $this->getHelper()->getDomain($entry['url']);
 
 		$entry['rank'] = min(5, max(0, (int)$data['rank']));
-		$entry['category_id'] = (int)$data['category_id'];
+		$entry['category_id'] = (int)$data['tree_id'];
 
 		$entry['title_alias'] = empty($data['title_alias']) ? $data['title'] : $data['title_alias'];
 		$entry['title_alias'] = $this->getHelper()->getTitleAlias($entry['title_alias']);
@@ -153,17 +154,19 @@ class iaBackendController extends iaAbstractControllerPackageBackend
 	{
 		parent::_assignValues($iaView, $entryData);
 
-		$category = $this->_iaDb->row(array('id', 'title', 'parent_id', 'parents'), iaDb::convertIds($entryData['category_id']),  iaCateg::getTable());
+		$category = $this->_iaCateg->getById($entryData['category_id']);
 		$crossed = $this->_fetchCrossedCategories();
 
-		$iaView->assign('category', $category);
+		$entryData['parents'] = $category['parents'];
+
+		$iaView->assign('parent', $category);
 		$iaView->assign('crossed', $crossed);
 		$iaView->assign('statuses', $this->getHelper()->getStatuses());
 	}
 
 	protected function _fetchCrossedCategories()
 	{
-		$sql = 'SELECT c.`id`, c.`title` '
+		$sql = 'SELECT c.`id`, c.`title_:lang` '
 			. 'FROM `:prefix:table_categories` c, `:prefix:table_crossed` cr '
 			. 'WHERE c.`id` = cr.`category_id` AND cr.`listing_id` = :id';
 
@@ -171,6 +174,7 @@ class iaBackendController extends iaAbstractControllerPackageBackend
 			'prefix' => $this->_iaDb->prefix,
 			'table_categories' => iaCateg::getTable(),
 			'table_crossed' => 'listings_categs',
+			'lang' => $this->_iaCore->language['iso'],
 			'id' => $this->getEntryId()
 		));
 

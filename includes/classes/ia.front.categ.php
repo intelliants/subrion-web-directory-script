@@ -17,6 +17,7 @@ class iaCateg extends abstractDirectoryPackageFront
 		'regularSearchStatements' => array("`title` LIKE '%:query%'"),
 	);
 
+
 	public static function getTableCrossed()
 	{
 		return self::$_tableCrossed;
@@ -46,44 +47,35 @@ class iaCateg extends abstractDirectoryPackageFront
 		return iaDb::printf($this->_urlPatterns[$action], $data);
 	}
 
-	public function getCategory($where, $aFields = '*')
-	{
-		return $this->iaDb->row($aFields, $where, self::getTable());
-	}
-
-	public function get($where = '', $catId = '0', $start = 0, $limit = null, $fields = 'c.*', $order = 'title')
+	public function get($where = '', $catId = '0', $start = 0, $limit = null, $fields = 'c.*', $order = null)
 	{
 		$where || $where = iaDb::EMPTY_CONDITION;
 		$fields.= ', c.`num_all_listings` `num`';
 
 		$sql = "(SELECT :fields, '0' `crossed` "
 			. 'FROM `:prefix:table_categories` c '
-			. 'WHERE :where) '
+			. 'WHERE :where '
+			. 'ORDER BY c.`level`, c.`title_:lang`) '
 			. 'UNION ALL '
 			. "(SELECT :fields, '1' `crossed` "
 			. 'FROM `:prefix:table_categories` c '
-			. 'LEFT JOIN `:prefix:table_crossed_categories` cr '
-			. 'ON c.`id` = cr.`crossed_id` '
-			. 'WHERE cr.`category_id` = :id ORDER BY c.`title`) ORDER BY `:order`';
+			. 'LEFT JOIN `:prefix:table_crossed_categories` cr ON (c.`id` = cr.`crossed_id`) '
+			. 'WHERE cr.`category_id` = :id ORDER BY c.`title_:lang`) '
+			. 'ORDER BY `:order`';
 		$sql = iaDb::printf($sql, array(
 			'fields' => $fields,
 			'prefix' => $this->iaDb->prefix,
 			'table_categories' => self::getTable(),
 			'table_crossed_categories' => self::getTableCrossed(),
 			'id' => $catId,
-			'where' => $where . ' ORDER BY c.`level`, c.`title`',
-			'order' => $order
+			'lang' => $this->iaCore->language['iso'],
+			'where' => $where,
+			'order' => $order ? $order : 'title_' . $this->iaCore->language['iso']
 		));
 
 		$result = $this->iaDb->getAll($sql, $start, $limit);
 
-		if ($result)
-		{
-			foreach ($result as &$entry)
-			{
-				empty($entry['icon']) || $entry['icon'] = unserialize($entry['icon']);
-			}
-		}
+		$this->_processValues($result);
 
 		return $result;
 	}
@@ -146,13 +138,14 @@ class iaCateg extends abstractDirectoryPackageFront
 	{
 		$this->iaCore->factoryPackage('listing', $this->getPackageName());
 
-		$sql = 'SELECT c.`id`, c.`title` '
+		$sql = 'SELECT c.`id`, c.`title_:lang` `title` '
 			. 'FROM `:prefix:table_categories` c, `:prefix:table_listings_categories` lc '
 			. 'WHERE c.`id` = lc.`category_id` AND lc.`listing_id` = :id';
 		$sql = iaDb::printf($sql, array(
 			'prefix' => $this->iaDb->prefix,
 			'table_categories' => self::getTable(),
 			'table_listings_categories' => iaListing::getTableCrossed(),
+			'lang' => $this->iaCore->language['iso'],
 			'id' => (int)$listingId
 		));
 

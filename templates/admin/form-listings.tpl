@@ -4,7 +4,8 @@
 	<input type="hidden" id="js-listing-id" value="{if iaCore::ACTION_EDIT == $pageAction}{$id}{/if}">
 
 	{capture name='general' append='fieldset_before'}
-		<div id="category_fieldzone" class="row">
+		{include 'tree.tpl' url="{$smarty.const.IA_ADMIN_URL}directory/categories/tree.json"}
+		{* <div id="category_fieldzone" class="row">
 			<label class="col col-lg-2 control-label">
 				{lang key='field_category_id'}<br>
 				<a href="#" class="categories-toggle" id="js-tree-toggler">{lang key='open_close'}</a>
@@ -26,15 +27,9 @@ $(function()
 		nodeOpened: [0,{$category.parents}],
 		nodeSelected: {$item.category_id}
 	});
-	$('input[name=reported_as_broken]').change(function() {
-		var comments = $('#reported-as-broken-comments');
-		if (comments.length > 0) {
-			comments.toggle();
-		}
-	});
 });
 		{/ia_add_js}
-		{ia_add_media files='tree'}
+		{ia_add_media files='tree' *}
 
 		{if $core.config.listing_crossed}
 			<div id="crossed_fieldzone" class="row">

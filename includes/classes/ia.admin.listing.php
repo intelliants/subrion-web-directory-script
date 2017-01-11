@@ -46,7 +46,7 @@ class iaListing extends abstractDirectoryPackageAdmin
 	public function get($columns, $where, $order = '', $start = null, $limit = null)
 	{
 		$sql = 'SELECT :columns, '
-				. 'c.`title` `category_title`, c.`title_alias` `category_alias`, '
+				. 'c.`title_:lang` `category_title`, c.`title_alias` `category_alias`, '
 				. 'm.`fullname` `member` '
 			. 'FROM `:prefix:table_listings` l '
 			. 'LEFT JOIN `:prefix:table_categories` c ON (l.`category_id` = c.`id`) '
@@ -55,6 +55,7 @@ class iaListing extends abstractDirectoryPackageAdmin
 			. ($start || $limit ? ' LIMIT :start, :limit' : '');
 
 		$sql = iaDb::printf($sql, array(
+			'lang' => $this->iaCore->language['iso'],
 			'prefix' => $this->iaDb->prefix,
 			'table_listings' => $this->getTable(),
 			'table_categories' => 'categs',

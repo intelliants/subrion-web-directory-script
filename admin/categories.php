@@ -164,6 +164,32 @@ class iaBackendController extends iaAbstractControllerPackageBackend
 		return $this->_iaDb->getKeyValue($sql);
 	}
 
+	protected function _getJsonTree(array $data)
+	{
+		$output = array();
+
+		$rowsCount = $this->_iaDb->one(iaDb::STMT_COUNT_ROWS);
+		$dynamicLoadMode = ($rowsCount > 500);
+
+		$where = $dynamicLoadMode ? sprintf('`parent_id` = %d', (int)$data['id']) : iaDb::EMPTY_CONDITION;
+		$where.= ' ORDER BY `title`';
+
+		$rows = $this->_iaDb->all(array('id', 'title' => 'title_' . $this->_iaCore->language['iso'], 'parent_id', 'child'), $where);
+
+		foreach ($rows as $row)
+		{
+			$entry = array('id' => $row['id'], 'text' => $row['title']);
+
+			$dynamicLoadMode
+				? $entry['children'] = $row['child'] && $row['child'] != $row['id']
+				: $entry['parent'] = (0 == $row['parent_id']) ? '#' : $row['parent_id'];
+
+			$output[] = $entry;
+		}
+
+		return $output;
+	}
+
 	protected function _getJsonConsistency(array $params)
 	{
 		$output = array();

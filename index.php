@@ -189,9 +189,7 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType())
 
 			$rssFeed = empty($iaCore->requestPath) ? false : implode(IA_URL_DELIMITER, $iaCore->requestPath);
 
-			$category = $iaDb->row_bind(array('id', 'level', 'child', 'num_all_listings', 'num_listings',
-				'parent_id', 'title', 'parents', 'description', 'meta_description', 'meta_keywords', 'title_alias'),
-				'`title_alias`= :alias', array('alias' => $categoryAlias), 'categs');
+			$category = $iaCateg->getOne(iaDb::convertIds($categoryAlias, 'title_alias'));
 
 			// requested category not found
 			if ($categoryAlias && (-1 == $category['parent_id']))
