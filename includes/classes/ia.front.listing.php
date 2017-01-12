@@ -14,7 +14,7 @@ class iaListing extends abstractDirectoryPackageFront
 	public $coreSearchOptions = array(
 		'tableAlias' => 'l',
 		'columnAlias' => array('date' => 'date_modified'),
-		'regularSearchStatements' => array("l.`title` LIKE '%:query%' || l.`domain` LIKE '%:query%' || l.`description` LIKE '%:query%'"),
+		'regularSearchFields' => array('title', 'domain', 'description'),
 		'customColumns' => array('keywords', 'c', 'sc')
 	);
 
@@ -469,7 +469,7 @@ class iaListing extends abstractDirectoryPackageFront
 
 		if ($rows)
 		{
-			$iaCateg = $this->iaCore->factoryPackage('categ', $this->getPackageName());
+			//$iaCateg = $this->iaCore->factoryPackage('categ', $this->getPackageName());
 
 			foreach ($rows as &$row)
 			{
@@ -477,7 +477,7 @@ class iaListing extends abstractDirectoryPackageFront
 				{
 					$row['breadcrumb'] = unserialize($row['category_breadcrumb']);
 				}
-				elseif (!empty($row['category_parents'])) // alternative way (will be removed later)
+				/*elseif (!empty($row['category_parents'])) // alternative way (will be removed later)
 				{
 					$condition = "`id` IN({$row['category_parents']}) AND `parent_id` != -1 AND `status` = 'active'";
 					$parents = $iaCateg->get($condition, 0, null, null, 'c.*', 'level');
@@ -485,7 +485,7 @@ class iaListing extends abstractDirectoryPackageFront
 					$row['breadcrumb'] = array();
 					foreach ($parents as $parent)
 						$row['breadcrumb'][$parent['title']] = str_replace(IA_URL, '', $iaCateg->url('view', $parent));
-				}
+				}*/
 				else
 				{
 					$row['breadcrumb'] = array();

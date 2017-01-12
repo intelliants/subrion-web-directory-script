@@ -139,14 +139,14 @@ intelli.fillUrlBox = function()
 
 	if ('' != title && intelli.titleCache != cache)
 	{
-		var params = {get: 'alias', title: title, category: category, item: 'category'};
-
+		var params = {title: title, category: category};
+/*
 		if ('' != alias)
 		{
 			params.alias = 1;
-		}
+		}*/
 
-		$.get(intelli.config.ia_url + 'directory/categories/read.json?get=tree', params, function(response)
+		$.get(intelli.config.admin_url + '/directory/categories/slug.json', params, function(response)
 		{
 			if ('' != response.data)
 			{
@@ -161,5 +161,5 @@ intelli.fillUrlBox = function()
 
 $(function()
 {
-	$('input[name="title"], input[name="title_alias"]').blur(intelli.fillUrlBox).blur();
+	$('#title_fieldzone input:first, #field_title_alias').blur(intelli.fillUrlBox).blur();
 });

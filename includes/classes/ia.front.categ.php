@@ -14,7 +14,7 @@ class iaCateg extends abstractDirectoryPackageFront
 
 	public $coreSearchEnabled = true;
 	public $coreSearchOptions = array(
-		'regularSearchStatements' => array("`title` LIKE '%:query%'"),
+		'regularSearchFields' => array('title')
 	);
 
 
@@ -25,26 +25,15 @@ class iaCateg extends abstractDirectoryPackageFront
 
 	public function url($action, array $data)
 	{
-		$data = array();
-
-		$data['base'] = $this->iaCore->packagesData[$this->getPackageName()]['url'];
-		$data['action'] = $action;
-
-		if (isset($data['prefix']) && !empty($data['prefix']))
+		// commented out by @Batry (what this block do? there is no any passed 'prefix' in this package)
+		/*if (!empty($data['prefix']))
 		{
 			$data['title'] = $data[$data['prefix'] . 'title'];
 			$data['title_alias'] = $data[$data['prefix'] . 'alias'];
-		}
+		}*/
 
-		$data['title_alias'] = (!isset($data['title_alias']) ? '' : $data['title_alias']);
-		$data['title_alias'] = (!isset($data['category_alias']) ? $data['title_alias'] : $data['category_alias']);
-
-		if (!isset($this->_urlPatterns[$action]))
-		{
-			$action = 'default';
-		}
-
-		return iaDb::printf($this->_urlPatterns[$action], $data);
+		return $this->iaCore->packagesData[$this->getPackageName()]['url']
+			. (isset($data['category_alias']) ? $data['category_alias'] : $data['title_alias']);
 	}
 
 	public function get($where = '', $catId = '0', $start = 0, $limit = null, $fields = 'c.*', $order = null)

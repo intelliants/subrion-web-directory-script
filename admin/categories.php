@@ -96,8 +96,8 @@ class iaBackendController extends iaAbstractControllerPackageBackend
 		$entry['status'] = $data['status'];
 		$entry['order'] = $this->_iaDb->getMaxOrder() + 1;
 
-		$entry['title_alias'] = empty($data['title_alias']) ? $data['title'] : $data['title_alias'];
-		$entry['title_alias'] = $this->getHelper()->getTitleAlias($entry);
+		$entry['title_alias'] = empty($data['title_alias']) ? $data['title'][$this->_iaCore->language['iso']] : $data['title_alias'];
+		$entry['title_alias'] = $this->_getTitleAlias($entry);
 
 		if ($this->getHelper()->exists($entry['title_alias'], $entry['parent_id'], $this->getEntryId()))
 		{
@@ -165,6 +165,43 @@ class iaBackendController extends iaAbstractControllerPackageBackend
 		return $this->_iaDb->getKeyValue($sql);
 	}
 
+	protected function _getTitleAlias($category, $parent = array())
+	{
+		if (-1 == $category['parent_id'])
+		{
+			return '';
+		}
+
+		$title = iaSanitize::alias($category['title_alias']);
+
+		if ('category' == $title)
+		{
+			$id = $this->_iaDb->getNextId($this->getTable());
+			$title .= '-' . $id;
+		}
+
+		if (empty($parent) || $category['parent_id'] != $parent['id'])
+		{
+			$parent = $this->_iaDb->row(array('id', 'title_alias'), iaDb::convertIds($category['parent_id']), $this->getTable());
+		}
+
+		$title = ltrim($parent['title_alias'] . $title . IA_URL_DELIMITER, IA_URL_DELIMITER);
+
+		if ($this->_iaCore->get('directory_lowercase_urls', true))
+		{
+			$title = strtolower($title);
+		}
+
+		return $title;
+	}
+
+	protected function _getJsonSlug(array $data)
+	{
+		$title = $this->_getTitleAlias(array('title_alias' => $data['title'], 'parent_id' => (int)$data['category']));
+
+		return array('data' => $this->getHelper()->url('default', array('title_alias' => $title)));
+	}
+
 	protected function _getJsonTree(array $data)
 	{
 		$output = array();
@@ -201,7 +238,7 @@ class iaBackendController extends iaAbstractControllerPackageBackend
 		return $output;
 	}
 
-	protected function _getJsonConsistency(array $params)
+	protected function _getJsonConsistency(array $data)
 	{
 		$output = array();
 

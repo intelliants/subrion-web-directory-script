@@ -8,36 +8,6 @@ if (iaView::REQUEST_JSON == $iaView->getRequestType())
 {
 	$data = array();
 
-	$categoryId = isset($_GET['id']) ? (int)$_GET['id'] : $iaDb->one('parent_id', '`id` = 0', 'categs');
-	$currentCategId = (isset($_GET['current_category']) ? (int)$_GET['current_category'] : 0);
-
-	$where = "`parent_id` = $categoryId && `status` = 'active'";
-
-	if ($currentCategId)
-	{
-		$where .= " && `id` != $currentCategId";
-	}
-
-	if ($iaCore->get('directory_hide_empty_categories'))
-	{
-		$where .= " AND `num_all_listings` != 0";
-	}
-
-	$where .= " ORDER BY `title`";
-
-	$data = array();
-	$rows = $iaDb->all(array('id', 'title', 'title_alias', 'locked', 'child'), $where, null, null, 'categs');
-
-	foreach ($rows as &$row)
-	{
-		$data[] = array(
-			'id' => $row['id'],
-			'text' => $row['title'],
-			'children' => $row['child'] && $row['child'] != $row['id'] || empty($row['child']),
-			'state' => $state
-		);
-	}
-
 	if (isset($_GET['title']) && isset($_GET['category']) && isset($_GET['get']) && isset($_GET['item']) && 'alias' == $_GET['get'])
 	{
 		switch ($_GET['item']) {
@@ -59,13 +29,6 @@ if (iaView::REQUEST_JSON == $iaView->getRequestType())
 				);
 
 				$data['data'] = $iaListing->url('view', $data);
-
-				break;
-
-			case 'category':
-				$title = $iaCateg->getTitleAlias(array('title_alias' => $_GET['title'], 'parent_id' => (int)$_GET['category']));
-
-				$data['data'] = $iaCateg->url('default', array('title_alias' => $title));
 
 				break;
 		}

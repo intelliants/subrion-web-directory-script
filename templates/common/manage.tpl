@@ -4,8 +4,8 @@
 	{include 'plans.tpl'}
 
 	{capture name='general' append='fieldset_before'}
-		{*include 'tree.tpl' url="{$core.config.packages.directory.url}add/read.json?get=tree"*}
-		<div class="fieldset">
+		{include 'tree.tpl' url="{$core.packages.directory.url}add/tree.json"}
+		{*<div class="fieldset">
 			<div class="fieldset__header">{lang key='field_category_id'}</div>
 			<div class="fieldset__content">
 				<input type="text" id="js-category-label" value="{if isset($category.title)}{$category.title|escape:'html'}{else}{lang key="field_tooltip_category_id"}{/if}" disabled class="form-control">
@@ -25,7 +25,7 @@ $(function()
 	});
 });
 		{/ia_add_js}
-		{ia_add_media files='tree'}
+		{ia_add_media files='tree' *}
 
 		{if $core.config.listing_crossed}
 			<div class="fieldset">

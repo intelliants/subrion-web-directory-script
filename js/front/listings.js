@@ -21,7 +21,7 @@ $(function()
 
 					return params;
 				},
-				url: intelli.config.packages.directory.url + 'add/read.json?get=tree'
+				url: intelli.config.packages.directory.url + 'add/tree.json'
 			},
 			multiple: true
 		},

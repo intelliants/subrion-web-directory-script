@@ -156,7 +156,8 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType())
 	}
 
 	// update favorites status
-	$listing = array_shift($iaItem->updateItemsFavorites(array($listing), $iaListing->getItemName()));
+	$listing = $iaItem->updateItemsFavorites(array($listing), $iaListing->getItemName());
+	$listing = array_shift($listing);
 
 	iaBreadcrumb::replaceEnd($listing['title'], IA_SELF);
 

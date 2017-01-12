@@ -220,35 +220,7 @@ class iaCateg extends abstractDirectoryPackageAdmin
 		return $this->iaDb->one(iaDb::STMT_COUNT_ROWS, null, self::getTable());
 	}
 
-	public function getTitleAlias($category, $parent = array())
-	{
-		if (-1 == $category['parent_id'])
-		{
-			return '';
-		}
 
-		$title = iaSanitize::alias($category['title_alias']);
-
-		if ('category' == $title)
-		{
-			$id = $this->iaDb->getNextId(self::getTable());
-			$title .= '-' . $id;
-		}
-
-		if (empty($parent) || $category['parent_id'] != $parent['id'])
-		{
-			$parent = $this->iaDb->row(array('id', 'title_alias'), iaDb::convertIds($category['parent_id']), self::getTable());
-		}
-
-		$title = ltrim($parent['title_alias'] . $title . IA_URL_DELIMITER, IA_URL_DELIMITER);
-
-		if ($this->iaCore->get('directory_lowercase_urls', true))
-		{
-			$title = strtolower($title);
-		}
-
-		return $title;
-	}
 
 	public function updateAliases($categoryId)
 	{

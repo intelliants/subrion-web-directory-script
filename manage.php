@@ -3,29 +3,31 @@
 
 $iaCateg = $iaCore->factoryPackage('categ', IA_CURRENT_PACKAGE);
 
-if (iaView::REQUEST_JSON == $iaView->getRequestType() && isset($_GET['get']) && 'tree' == $_GET['get'])
+if (iaView::REQUEST_JSON == $iaView->getRequestType())
 {
-	$categoryId = empty($_GET['id']) ? 0 : (int)$_GET['id'];
-
-	$output = array();
-
-	$where = "`parent_id` = $categoryId AND `status` = 'active'";
-	empty($_GET['current_category']) || $where.= ' AND `id` != ' .(int)$_GET['current_category'];
-	$where.= ' ORDER BY `title`';
-
-	$entries = $iaCateg->getAll($where, array('id', 'title' => 'title_' . $iaCore->language['iso'],
-		'title_alias', 'locked', 'child', 'value' => 'id'));
-
-	foreach ($entries as $row)
+	if (1 == count($iaCore->requestPath) && 'tree' == $iaCore->requestPath[0])
 	{
-		$entry = array('id' => $row['id'], 'text' => $row['title']);
-		empty($row['locked']) || $entry['state'] = array('disabled' => true);
-		$entry['children'] = $row['child'] && $row['child'] != $row['id'] || empty($row['child']);
+		$categoryId = empty($_GET['id']) ? 0 : (int)$_GET['id'];
 
-		$output[] = $entry;
+		$output = array();
+
+		$where = "`parent_id` = $categoryId AND `status` = 'active'";
+		$where.= ' ORDER BY `title`';
+
+		$entries = $iaCateg->getAll($where, array('id', 'title' => 'title_' . $iaCore->language['iso'],
+			'title_alias', 'locked', 'child', 'value' => 'id'));
+
+		foreach ($entries as $row)
+		{
+			$entry = array('id' => $row['id'], 'text' => $row['title']);
+			empty($row['locked']) || $entry['state'] = array('disabled' => true);
+			$entry['children'] = $row['child'] && $row['child'] != $row['id'] || empty($row['child']);
+
+			$output[] = $entry;
+		}
+
+		$iaView->assign($output);
 	}
-
-	$iaView->assign($output);
 }
 
 if (iaView::REQUEST_HTML == $iaView->getRequestType())
@@ -40,7 +42,9 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType())
 	switch ($pageAction)
 	{
 		case iaCore::ACTION_ADD:
-			$listing = array();
+			$listing = array(
+				'category_id' => 0
+			);
 
 			break;
 		case iaCore::ACTION_EDIT:
@@ -144,7 +148,7 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType())
 			$item['member_id'] = ($member) ? $member['id'] : 0;
 		}
 
-		$item['category_id'] = (int)$_POST['category_id'];
+		$item['category_id'] = (int)$_POST['tree_id'];
 		$item['status'] = $iaCore->get('listing_auto_approval') ? iaCore::STATUS_ACTIVE : iaCore::STATUS_APPROVAL;
 
 		if ($iaCore->get('listing_crossed'))
