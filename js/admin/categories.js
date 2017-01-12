@@ -84,7 +84,7 @@ Ext.onReady(function()
 
 							return params;
 						},
-						url: intelli.config.admin_url + '/directory/categories/tree.json'
+						url: intelli.config.admin_url + '/directory/categories/tree.json?cid=' + intelli.cid
 					},
 					multiple: true
 				},

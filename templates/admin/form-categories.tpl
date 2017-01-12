@@ -20,11 +20,11 @@
 			{ia_add_js}
 $(function()
 {
-	var current_category = $('input[name="id"]').val();
+	intelli.cid = $('input[name="id"]').val();
 
 	new IntelliTree(
 	{
-		url: intelli.config.admin_url + '/directory/categories/tree.json?current_category=' + current_category,
+		url: intelli.config.admin_url + '/directory/categories/tree.json?cid=' + intelli.cid,
 		onchange: intelli.fillUrlBox,
 		nodeOpened: [0,{if isset($item.parents)}{$item.parents}{/if}],
 		nodeSelected: {$parent.id}

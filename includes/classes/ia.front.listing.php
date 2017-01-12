@@ -178,7 +178,7 @@ class iaListing extends abstractDirectoryPackageFront
 
 		return $rows;
 	}
-
+/*
 	public function getTitleAlias($title, $convertLowercase = false)
 	{
 		$title = iaSanitize::alias($title);
@@ -189,7 +189,7 @@ class iaListing extends abstractDirectoryPackageFront
 		}
 
 		return $title;
-	}
+	}*/
 
 	/**
 	 * Returns domain name by a given URL

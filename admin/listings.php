@@ -112,7 +112,7 @@ class iaBackendController extends iaAbstractControllerPackageBackend
 		$entry['category_id'] = (int)$data['tree_id'];
 
 		$entry['title_alias'] = empty($data['title_alias']) ? $data['title'] : $data['title_alias'];
-		$entry['title_alias'] = $this->getHelper()->getTitleAlias($entry['title_alias']);
+		$entry['title_alias'] = $this->_getTitleAlias($entry['title_alias']);
 
 		if (iaValidate::isUrl($entry['url']))
 		{
@@ -120,9 +120,8 @@ class iaBackendController extends iaAbstractControllerPackageBackend
 			if ($this->_iaCore->get('directory_enable_alexarank'))
 			{
 				include IA_PACKAGES . 'directory' . IA_DS . 'includes' . IA_DS . 'alexarank.inc.php';
-				$iaAlexaRank = new iaAlexaRank();
 
-				if ($alexaData = $iaAlexaRank->getAlexa($entry['domain']))
+				if ($alexaData = (new iaAlexaRank())->getAlexa($entry['domain']))
 				{
 					$entry['alexa_rank'] = $alexaData['rank'];
 				}
@@ -179,5 +178,33 @@ class iaBackendController extends iaAbstractControllerPackageBackend
 		));
 
 		return $this->_iaDb->getKeyValue($sql);
+	}
+
+	protected function _getTitleAlias($title, $convertLowercase = false)
+	{
+		$title = iaSanitize::alias($title);
+
+		if ($this->_iaCore->get('directory_lowercase_urls', true) && !$convertLowercase)
+		{
+			$title = strtolower($title);
+		}
+
+		return $title;
+	}
+
+	protected function _getJsonSlug(array $data)
+	{
+		$title = $this->_getTitleAlias(isset($data['title']) ? $data['title'] : '', isset($data['alias']));
+		$categorySlug = empty($data['category'])
+			? ''
+			: $this->_iaDb->one('title_alias', iaDb::convertIds($data['category']), iaCateg::getTable());
+
+		$slug = $this->getHelper()->url('view', array(
+			'id' => empty($data['id']) ? $this->_iaDb->getNextId() : $data['id'],
+			'title_alias' => $title,
+			'category_alias' => $categorySlug
+		));
+
+		return array('data' => $slug);
 	}
 }

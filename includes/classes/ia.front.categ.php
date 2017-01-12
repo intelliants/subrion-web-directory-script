@@ -25,7 +25,7 @@ class iaCateg extends abstractDirectoryPackageFront
 
 	public function url($action, array $data)
 	{
-		// commented out by @Batry (what this block do? there is no any passed 'prefix' in this package)
+		// commented out by @Batry (what does this block do? there is no any passed 'prefix' in this package)
 		/*if (!empty($data['prefix']))
 		{
 			$data['title'] = $data[$data['prefix'] . 'title'];
@@ -140,7 +140,7 @@ class iaCateg extends abstractDirectoryPackageFront
 
 		return $this->iaDb->getKeyValue($sql);
 	}
-
+/*
 	public function getTitleAlias($category, $parent = array())
 	{
 		if (-1 == $category['parent_id'])
@@ -169,5 +169,5 @@ class iaCateg extends abstractDirectoryPackageFront
 		}
 
 		return $title;
-	}
+	}*/
 }

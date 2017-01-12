@@ -220,8 +220,6 @@ class iaCateg extends abstractDirectoryPackageAdmin
 		return $this->iaDb->one(iaDb::STMT_COUNT_ROWS, null, self::getTable());
 	}
 
-
-
 	public function updateAliases($categoryId)
 	{
 		if (!$child = $this->getById($categoryId))

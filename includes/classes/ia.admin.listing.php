@@ -215,18 +215,6 @@ class iaListing extends abstractDirectoryPackageAdmin
 		return $result;
 	}
 
-	public function getTitleAlias($title, $convertLowercase = false)
-	{
-		$title = iaSanitize::alias($title);
-
-		if ($this->iaCore->get('directory_lowercase_urls', true) && !$convertLowercase)
-		{
-			$title = strtolower($title);
-		}
-
-		return $title;
-	}
-
 	public function getDomain($aUrl = '')
 	{
 		if (preg_match('/^(?:http|https|ftp):\/\/((?:[A-Z0-9][A-Z0-9_-]*)(?:\.[A-Z0-9][A-Z0-9_-]*)+)(:(\d+))?/i', $aUrl, $m))

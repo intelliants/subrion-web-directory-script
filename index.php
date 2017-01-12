@@ -1,42 +1,6 @@
 <?php
 //##copyright##
 
-$iaListing = $iaCore->factoryPackage('listing', IA_CURRENT_PACKAGE);
-$iaCateg = $iaCore->factoryPackage('categ', IA_CURRENT_PACKAGE);
-
-if (iaView::REQUEST_JSON == $iaView->getRequestType())
-{
-	$data = array();
-
-	if (isset($_GET['title']) && isset($_GET['category']) && isset($_GET['get']) && isset($_GET['item']) && 'alias' == $_GET['get'])
-	{
-		switch ($_GET['item']) {
-			case 'listing':
-				$title = $iaListing->getTitleAlias(isset($_GET['title']) ? $_GET['title'] : '', isset($_GET['alias']));
-
-				$category = isset($_GET['category']) ? (int)$_GET['category'] : 0;
-				$category_alias = false;
-
-				if ($category > 0)
-				{
-					$category_alias = $iaDb->one('title_alias', '`id` = ' . $category, 'categs');
-				}
-
-				$data = array(
-					'id' => (isset($_GET['id']) && (int)$_GET['id'] > 0 ? (int)$_GET['id'] : $iaDb->getNextId(iaListing::getTable(true))),
-					'title_alias' => $title,
-					'category_alias' => $category_alias ? $category_alias : ''
-				);
-
-				$data['data'] = $iaListing->url('view', $data);
-
-				break;
-		}
-	}
-
-	$iaView->assign($data);
-}
-
 if (iaView::REQUEST_HTML == $iaView->getRequestType())
 {
 	$pageActions = [];
@@ -103,6 +67,9 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType())
 	}
 
 	$rssFeed = false;
+
+	$iaListing = $iaCore->factoryPackage('listing', IA_CURRENT_PACKAGE);
+	$iaCateg = $iaCore->factoryPackage('categ', IA_CURRENT_PACKAGE);
 
 	switch ($pageName)
 	{

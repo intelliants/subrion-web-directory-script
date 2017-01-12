@@ -152,12 +152,7 @@ Ext.onReady(function()
 			});
 		}
 
-		$('input[name="title"], input[name="title_alias"]').each(function()
-		{
-			$(this).blur(intelli.fillUrlBox);
-		});
-
-		intelli.fillUrlBox();
+		$('#title_fieldzone input:first, #field_title_alias').blur(intelli.fillUrlBox).trigger('blur');
 
 		$('input[name="reported_as_broken"]').change(function()
 		{
@@ -171,22 +166,18 @@ intelli.titleCache = '';
 intelli.fillUrlBox = function()
 {
 	var titleAlias = $('#field_title_alias').val();
-	var title = ('' == titleAlias ? $('#field_listings_title').val() : titleAlias);
-	var category = $('#input-category').val();
+	var title = ('' == titleAlias ? $('input:first', '#title_fieldzone').val() : titleAlias);
+	var category = $('#input-tree').val();
 	var id = $('#js-listing-id').val();
 
 	var cache = title + '%%' + category;
 
 	if ('' != title && intelli.titleCache != cache)
 	{
-		var params = {get: 'alias', title: title, category: category, id: id, item: 'listing'};
+		var params = {title: title, category: category};
+		if (titleAlias) params.alias = 1;
 
-		if (titleAlias)
-		{
-			params.alias = 1;
-		}
-
-		$.get(intelli.config.admin_url + 'directory/categories/tree.json', params, function(response)
+		$.get(intelli.config.admin_url + '/directory/listings/slug.json', params, function(response)
 		{
 			if (response.data)
 			{
@@ -198,8 +189,3 @@ intelli.fillUrlBox = function()
 
 	intelli.titleCache = cache;
 };
-
-$(function()
-{
-	$('input[name="title"], input[name="title_alias"]').blur(intelli.fillUrlBox).blur();
-});
