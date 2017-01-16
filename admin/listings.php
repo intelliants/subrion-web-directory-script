@@ -111,7 +111,7 @@ class iaBackendController extends iaAbstractControllerPackageBackend
 		$entry['rank'] = min(5, max(0, (int)$data['rank']));
 		$entry['category_id'] = (int)$data['tree_id'];
 
-		$entry['title_alias'] = empty($data['title_alias']) ? $data['title'] : $data['title_alias'];
+		$entry['title_alias'] = empty($data['title_alias']) ? $data['title'][$this->_iaCore->language['iso']] : $data['title_alias'];
 		$entry['title_alias'] = $this->_getTitleAlias($entry['title_alias']);
 
 		if (iaValidate::isUrl($entry['url']))

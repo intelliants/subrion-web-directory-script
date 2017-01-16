@@ -28,6 +28,17 @@ class iaListing extends abstractDirectoryPackageFront
 
 	protected $_foundRows = 0;
 
+	private $_baseUrl = '';
+
+
+	public function init()
+	{
+		parent::init();
+
+		$this->_baseUrl = $this->getPackageName() == $this->iaCore->get('default_package')
+			? IA_URL
+			: $this->iaCore->packagesData[$this->getPackageName()]['url'];
+	}
 
 	public static function getTableCrossed()
 	{
@@ -36,7 +47,7 @@ class iaListing extends abstractDirectoryPackageFront
 
 	public function url($action, array $data)
 	{
-		$data['base'] = $this->iaCore->packagesData[$this->getPackageName()]['url'];
+		$data['base'] = $this->_baseUrl . ('view' == $action ? 'listing/' : '');
 		$data['iaurl'] = IA_URL;
 		$data['action'] = $action;
 		$data['category_alias'] = (!isset($data['category_alias']) ? '' : $data['category_alias']);
@@ -44,10 +55,7 @@ class iaListing extends abstractDirectoryPackageFront
 
 		unset($data['title'], $data['category']);
 
-		if (!isset($this->_urlPatterns[$action]))
-		{
-			$action = 'default';
-		}
+		isset($this->_urlPatterns[$action]) || $action = 'default';
 
 		return iaDb::printf($this->_urlPatterns[$action], $data);
 	}

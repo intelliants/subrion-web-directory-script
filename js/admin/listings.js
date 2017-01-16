@@ -89,9 +89,9 @@ Ext.onReady(function()
 	}
 	else
 	{
-		$('#field_title').keyup(function () {
+		$('input:first', '#language-group-title').keyup(function () {
 			if ($(this).val()) {
-				$('#tr_title_alias').show();
+				$('#title_alias').show();
 			}
 		}).keyup();
 

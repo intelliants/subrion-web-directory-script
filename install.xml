@@ -399,14 +399,11 @@ $statistics['directory'] = array(
 CREATE TABLE IF NOT EXISTS `{prefix}categs`(
 	`id` int(8) unsigned NOT NULL auto_increment,
 	`parent_id` int(8) NOT NULL,
-	`title` varchar(150) NOT NULL,
 	`title_alias` varchar(150) NOT NULL default '',
 	`date_added` date,
 	`date_modified` date,
 	`description` text NOT NULL,
 	`status` enum('active', 'inactive') NOT NULL default 'inactive',
-	`meta_description` tinytext NOT NULL,
-	`meta_keywords` tinytext NOT NULL,
 	`order` mediumint(8) NOT NULL default 0,
 	`level` smallint(5) unsigned NOT NULL default 1,
 	`parents` tinytext NOT NULL,
@@ -425,8 +422,7 @@ CREATE TABLE IF NOT EXISTS `{prefix}categs`(
 	KEY `PARENT` (`parent_id`),
 	KEY `STATUS` (`status`),
 	KEY `ALIAS` (`title_alias`),
-	KEY `ORDER` (`order`),
-	FULLTEXT KEY `SEARCH` (`title`, `description`)
+	KEY `ORDER` (`order`)
 ) {mysql_version};
 			]]>
 		</sql>
@@ -466,13 +462,9 @@ CREATE TABLE IF NOT EXISTS `{prefix}listings`(
 	`id` int(8) unsigned NOT NULL auto_increment,
 	`member_id` mediumint(8) unsigned NOT NULL,
 	`category_id` int(8) unsigned NOT NULL,
-	`title` tinytext NOT NULL,
 	`title_alias` varchar(150) NOT NULL default '',
 	`url` tinytext NOT NULL,
 	`reciprocal` tinytext NOT NULL,
-	`description` text NULL,
-	`meta_description` mediumtext NOT NULL,
-	`meta_keywords` mediumtext NOT NULL,
 	`domain` varchar(150) NOT NULL,
 	`ip` bigint(12) NOT NULL,
 	`status` enum('approval', 'banned', 'suspended', 'active') NOT NULL default 'approval',
@@ -497,28 +489,25 @@ CREATE TABLE IF NOT EXISTS `{prefix}listings`(
 	KEY `STATUS` (`status`),
 	KEY `featured` (`featured`),
 	KEY `featured_start` (`featured_start`),
-	KEY `sponsored` (`sponsored`),
-	FULLTEXT KEY `SEARCH` (`description`,`title`,`url`)
+	KEY `sponsored` (`sponsored`)
 ) {mysql_version};
 			]]>
 		</sql>
-		<sql>
+		<sql stage="end">
 			<![CDATA[
 INSERT INTO `{prefix}categs`
-(`id`, `parent_id`, `title`, `date_added`, `date_modified`, `status`, `level`, `parents`)
-VALUES (0, -1, 'ROOT', NOW(), NOW(), 'active', 0, '1');
+(`id`, `parent_id`, `title_{lang}`, `date_added`, `date_modified`, `status`, `level`, `parents`) VALUES
+(0, -1, 'ROOT', NOW(), NOW(), 'active', 0, '1');
 			]]>
 		</sql>
-		<sql>
+		<sql stage="end">
 			<![CDATA[
 UPDATE `{prefix}categs` SET `id` = 0 WHERE `parent_id` = -1;
 			]]>
 		</sql>
 		<code>
 			<![CDATA[
-$iaCore = iaCore::instance();
-$iaCategs = $iaCore->factoryPackage('categ', 'directory', iaCore::ADMIN);
-$iaCategs->rebuildRelation();
+iaCore::instance()->factoryPackage('categ', 'directory', iaCore::ADMIN)->rebuildRelation();
 			]]>
 		</code>
 	</install>

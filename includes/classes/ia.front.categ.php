@@ -32,8 +32,14 @@ class iaCateg extends abstractDirectoryPackageFront
 			$data['title_alias'] = $data[$data['prefix'] . 'alias'];
 		}*/
 
-		return $this->iaCore->packagesData[$this->getPackageName()]['url']
-			. (isset($data['category_alias']) ? $data['category_alias'] : $data['title_alias']);
+		$baseUrl = ($this->getPackageName() == $this->iaCore->get('default_package'))
+			? IA_URL
+			: $this->iaCore->packagesData[$this->getPackageName()]['url'];
+		$slug = isset($data['category_alias'])
+			? $data['category_alias']
+			: $data['title_alias'];
+
+		return $baseUrl . $slug;
 	}
 
 	public function get($where = '', $catId = '0', $start = 0, $limit = null, $fields = 'c.*', $order = null)
@@ -56,7 +62,7 @@ class iaCateg extends abstractDirectoryPackageFront
 			'prefix' => $this->iaDb->prefix,
 			'table_categories' => self::getTable(),
 			'table_crossed_categories' => self::getTableCrossed(),
-			'id' => $catId,
+			'id' => (int)$catId,
 			'lang' => $this->iaCore->language['iso'],
 			'where' => $where,
 			'order' => $order ? $order : 'title_' . $this->iaCore->language['iso']

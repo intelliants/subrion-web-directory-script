@@ -79,16 +79,23 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType())
 		return iaView::errorPage(iaView::ERROR_NOT_FOUND);
 	}
 
+	// URL validation
 	$categoryPath = $iaView->url;
+
 	unset($categoryPath[count($categoryPath) - 1]);
+	$baseUrl = IA_CURRENT_PACKAGE == $iaCore->get('default_package')
+		? IA_URL
+		: $iaListing->getInfo('url') . 'listing/';
+
 	$categoryPath = $categoryPath ? implode(IA_URL_DELIMITER, $categoryPath) . IA_URL_DELIMITER : '';
-	$categoryPath = str_replace(str_replace(IA_URL, '', $iaListing->getInfo('url')), '', $categoryPath);
+	$categoryPath = str_replace(str_replace(IA_URL, '', $baseUrl), '', $categoryPath);
 
 	if ($categoryPath != $listing['category_alias'])
 	{
 		$validUrl = $iaListing->url('view', $listing);
 		iaUtil::go_to($validUrl);
 	}
+	//
 
 	$iaCateg = $iaCore->factoryPackage('categ', IA_CURRENT_PACKAGE);
 
