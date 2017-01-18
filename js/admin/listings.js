@@ -89,7 +89,7 @@ Ext.onReady(function()
 	}
 	else
 	{
-		$('input:first', '#language-group-title').keyup(function () {
+		$('#field_listings_title').keyup(function () {
 			if ($(this).val()) {
 				$('#title_alias').show();
 			}
@@ -152,7 +152,7 @@ Ext.onReady(function()
 			});
 		}
 
-		$('#title_fieldzone input:first, #field_title_alias').blur(intelli.fillUrlBox).trigger('blur');
+		$('#field_listings_title, #field_title_alias').blur(intelli.fillUrlBox).trigger('blur');
 
 		$('input[name="reported_as_broken"]').change(function()
 		{
@@ -166,7 +166,7 @@ intelli.titleCache = '';
 intelli.fillUrlBox = function()
 {
 	var titleAlias = $('#field_title_alias').val();
-	var title = ('' == titleAlias ? $('input:first', '#title_fieldzone').val() : titleAlias);
+	var title = ('' == titleAlias ? $('#field_listings_title').val() : titleAlias);
 	var category = $('#input-tree').val();
 	var id = $('#js-listing-id').val();
 
