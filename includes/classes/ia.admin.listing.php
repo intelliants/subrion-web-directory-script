@@ -8,7 +8,7 @@ class iaListing extends abstractDirectoryPackageAdmin
 
 	protected $_itemName = 'listings';
 
-	protected $_statuses = array(iaCore::STATUS_ACTIVE, iaCore::STATUS_APPROVAL, self::STATUS_BANNED, self::STATUS_SUSPENDED);
+	protected $_statuses = array(iaCore::STATUS_ACTIVE, iaCore::STATUS_INACTIVE, iaCore::STATUS_APPROVAL, self::STATUS_BANNED, self::STATUS_SUSPENDED);
 
 	private $_urlPatterns = array(
 		'default' => ':base:action/:id/',
@@ -45,14 +45,14 @@ class iaListing extends abstractDirectoryPackageAdmin
 
 	public function get($columns, $where, $order = '', $start = null, $limit = null)
 	{
-		$sql = 'SELECT :columns, '
-				. 'c.`title_:lang` `category_title`, c.`title_alias` `category_alias`, '
-				. 'm.`fullname` `member` '
-			. 'FROM `:prefix:table_listings` l '
-			. 'LEFT JOIN `:prefix:table_categories` c ON (l.`category_id` = c.`id`) '
-			. 'LEFT JOIN `:prefix:table_members` m ON (l.`member_id` = m.`id`) '
-			. 'WHERE :where :order'
-			. ($start || $limit ? ' LIMIT :start, :limit' : '');
+		$sql = <<<SQL
+SELECT :columns, c.`title_:lang` `category_title`, c.`title_alias` `category_alias`, m.`fullname` `member` 
+	FROM `:prefix:table_listings` l 
+LEFT JOIN `:prefix:table_categories` c ON (l.`category_id` = c.`id`) 
+LEFT JOIN `:prefix:table_members` m ON (l.`member_id` = m.`id`) 
+WHERE :where :order
+SQL;
+		$sql .= $start || $limit ? ' LIMIT :start, :limit' : '';
 
 		$sql = iaDb::printf($sql, array(
 			'lang' => $this->iaCore->language['iso'],
@@ -101,11 +101,12 @@ class iaListing extends abstractDirectoryPackageAdmin
 
 	protected function _changeNumListing($categoryId, $aInt = 1)
 	{
-		$sql  = "UPDATE `{$this->iaDb->prefix}categs` ";
-		// `num_listings` changed only for ONE category
-		$sql .= "SET `num_listings`=if (`id` = $categoryId, `num_listings` + {$aInt}, `num_listings`) ";
-		$sql .= ", `num_all_listings` = `num_all_listings` + {$aInt} ";
-		$sql .= "WHERE FIND_IN_SET({$categoryId}, `child`) ";
+		$sql = <<<SQL
+UPDATE `{$this->iaDb->prefix}categs` 
+	SET `num_listings`=if (`id` = $categoryId, `num_listings` + {$aInt}, `num_listings`),
+	`num_all_listings` = `num_all_listings` + {$aInt} 
+WHERE FIND_IN_SET({$categoryId}, `child`) 
+SQL;
 
 		return $this->iaDb->query($sql);
 	}
@@ -152,11 +153,13 @@ class iaListing extends abstractDirectoryPackageAdmin
 		}
 		unset($rows);
 
-		$sql  = "SELECT art.`category_id`, COUNT(art.`id`) ";
-		$sql .= "FROM `{$this->iaDb->prefix}listings` AS art ";
-		$sql .= "LEFT JOIN `{$this->iaDb->prefix}members` AS acc ON art.`member_id`=acc.`id` ";
-		$sql .= "WHERE art.`status`= 'active' AND (acc.`status` = 'active' OR acc.`status` IS NULL) ";
-		$sql .= "GROUP BY art.`category_id` ";
+		$sql = <<<SQL
+SELECT l.`category_id`, COUNT(l.`id`) 
+	FROM `{$this->iaDb->prefix}listings` `l` 
+LEFT JOIN `{$this->iaDb->prefix}members` `m` ON l.`member_id`= m.`id` 
+WHERE l.`status`= 'active' AND (m.`status` = 'active' OR m.`status` IS NULL) 
+GROUP BY l.`category_id`
+SQL;
 		$num_listings = $this->iaDb->getKeyValue($sql);
 
 		foreach ($categories AS $cat)
@@ -185,18 +188,7 @@ class iaListing extends abstractDirectoryPackageAdmin
 
 		$this->iaDb->resetTable();
 	}
-/*
-	public function getById($listingId)
-	{
-		$sql = "SELECT l.*, ";
-		$sql .= "IF(m.`fullname` <> '', m.`fullname`, m.`username`) `member` ";
-		$sql .= "FROM `" . self::getTable(true) . "` l ";
-		$sql .= "LEFT JOIN `{$this->iaDb->prefix}members` m ON (l.`member_id` = m.`id`) ";
-		$sql .= "WHERE l.`id` = '{$listingId}'";
 
-		return $this->iaDb->getRow($sql);
-	}
-*/
 	public function getSitemapEntries()
 	{
 		$result = array();

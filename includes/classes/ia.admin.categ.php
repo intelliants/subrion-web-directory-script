@@ -161,11 +161,12 @@ class iaCateg extends abstractDirectoryPackageAdmin
 
 	public function changeNumListing($categoryId, $aInt = 1)
 	{
-		$sql =
-			"UPDATE `{$this->iaDb->prefix}categs` " .
-			"SET `num_listings` = IF(`id` = $categoryId, `num_listings` + {$aInt}, `num_listings`) " .
-			", `num_all_listings`=`num_all_listings` + {$aInt} " .
-			"WHERE FIND_IN_SET({$categoryId}, `child`) ";
+		$sql = <<<SQL
+UPDATE `{$this->iaDb->prefix}categs` 
+SET `num_listings` = IF(`id` = $categoryId, `num_listings` + {$aInt}, `num_listings`),
+	`num_all_listings`=`num_all_listings` + {$aInt}
+WHERE FIND_IN_SET({$categoryId}, `child`)
+SQL;
 
 		return $this->iaDb->query($sql);
 	}
@@ -181,12 +182,13 @@ class iaCateg extends abstractDirectoryPackageAdmin
 			{
 				$_id = $cat['id'];
 
-				$sql  = 'SELECT COUNT(l.`id`) `num`';
-				$sql .= "FROM `{$this->iaDb->prefix}listings` l ";
-				$sql .= "LEFT JOIN `{$this->iaDb->prefix}members` acc ON (l.`member_id` = acc.`id`) ";
-				$sql .= "WHERE l.`status`= 'active' AND (acc.`status` = 'active' OR acc.`status` IS NULL) ";
-				$sql .= "AND l.`category_id` = {$_id}";
-
+				$sql = <<<SQL
+SELECT COUNT(l.`id`) `num`
+	FROM `{$this->iaDb->prefix}listings` l 
+LEFT JOIN `{$this->iaDb->prefix}members` acc ON (l.`member_id` = acc.`id`) 
+WHERE l.`status`= 'active' AND (acc.`status` = 'active' OR acc.`status` IS NULL) 
+AND l.`category_id` = {$_id}
+SQL;
 				$num_listings = $this->iaDb->getOne($sql);
 				$_num_listings = $num_listings ? $num_listings : 0;
 				$_num_all_listings = 0;

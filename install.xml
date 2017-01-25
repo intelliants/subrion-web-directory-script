@@ -26,17 +26,17 @@
 	</packageitems>
 
 	<actions>
-		<action name="listings_list" url="directory/listings/" icon="list-2" pages="directory_stats,manage_listings:add,manage_listings:edit">View Listings</action>
-		<action name="listings_add" url="directory/listings/add/" icon="plus-alt" pages="manage_listings,manage_listings:edit">Add Listings</action>
-		<action name="dashboard_listings_add" url="directory/listings/add/" icon="plus" type="dashboard">Add Listings</action>
+		<action name="listings" url="directory/listings/" icon="list-2" pages="directory_stats,manage_listings:add,manage_listings:edit"><![CDATA[]]></action>
+		<action name="add_listing" url="directory/listings/add/" icon="plus-alt" pages="manage_listings,manage_listings:edit"><![CDATA[]]></action>
+		<action name="add_listing" url="directory/listings/add/" icon="plus" type="dashboard"><![CDATA[]]></action>
 
-		<action name="categories_list" url="directory/categories/" icon="folder" pages="directory_stats,manage_categs:add,manage_categs:edit">View Categories</action>
-		<action name="categories_add" url="directory/categories/add/" icon="folder-plus" pages="manage_categs,manage_categs:edit">Add Category</action>
+		<action name="categories" url="directory/categories/" icon="folder" pages="directory_stats,manage_categs:add,manage_categs:edit"><![CDATA[]]></action>
+		<action name="add_category" url="directory/categories/add/" icon="folder-plus" pages="manage_categs,manage_categs:edit"><![CDATA[]]></action>
 
-		<action name="listings_field_view" url="fields/listings/" icon="list" pages="listings_fields">View Fields</action>
-		<action name="listings_field_add" url="fields/add/?item=listings" icon="plus-alt" pages="listings_fields">Add Field</action>
-		<action name="listings_group_view" url="fields/group/" icon="list-2" pages="listings_fields">Field Groups</action>
-		<action name="listings_group_add" url="fields/group/add/" icon="list-add" pages="listings_fields">Add Field Group</action>
+		<action name="fields" url="fields/listings/" icon="list" pages="listings_fields"><![CDATA[]]></action>
+		<action name="add_field" url="fields/add/?item=listings" icon="plus-alt" pages="listings_fields"><![CDATA[]]></action>
+		<action name="field_groups" url="fields/group/" icon="list-2" pages="listings_fields"><![CDATA[]]></action>
+		<action name="add_fieldgroup" url="fields/group/add/" icon="list-add" pages="listings_fields"><![CDATA[]]></action>
 	</actions>
 
 	<groups>
@@ -228,6 +228,7 @@
 		<phrase category="admin" key="category_added">Category added.</phrase>
 		<phrase category="admin" key="category_deleted">Category deleted.</phrase>
 		<phrase category="admin" key="categories_repaired">Your listings categories have been repaired.</phrase>
+		<phrase category="admin" key="dashboard_listings_add">Add Listing</phrase>
 		<phrase category="admin" key="directory_category_already_exists">Category with similar title alias exists in this category.</phrase>
 		<phrase category="admin" key="directory_package">&quot;Directory&quot; package</phrase>
 		<phrase category="admin" key="edit_category">Edit Category</phrase>
@@ -361,7 +362,7 @@ switch ($option)
 	case 'categs':
 		$iaDBControl->truncate('categs');
 		$iaDb->query("INSERT INTO `" . $iaCore->iaDb->prefix . "categs`
-(`id`, `parent_id`, `title`, `date_added`, `date_modified`, `status`, `level`, `parents`)
+(`id`, `parent_id`, `title_" . IA_LANGUAGE . "`, `date_added`, `date_modified`, `status`, `level`, `parents`)
 VALUES (1, -1, 'ROOT', NOW(), NOW(), 'active', 0, '1')");
 }
 			]]>
@@ -467,7 +468,7 @@ CREATE TABLE IF NOT EXISTS `{prefix}listings`(
 	`reciprocal` tinytext NOT NULL,
 	`domain` varchar(150) NOT NULL,
 	`ip` bigint(12) NOT NULL,
-	`status` enum('approval', 'banned', 'suspended', 'active') NOT NULL default 'approval',
+	`status` enum('approval', 'banned', 'suspended', 'inactive', 'active') NOT NULL default 'approval',
 	`alexa_rank` bigint(16) unsigned default NULL,
 	`rank` tinyint(3) NOT NULL,
 	`date_added` datetime NOT NULL,

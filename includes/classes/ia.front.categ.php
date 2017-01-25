@@ -47,16 +47,15 @@ class iaCateg extends abstractDirectoryPackageFront
 		$where || $where = iaDb::EMPTY_CONDITION;
 		$fields.= ', c.`num_all_listings` `num`';
 
-		$sql = "(SELECT :fields, '0' `crossed` "
-			. 'FROM `:prefix:table_categories` c '
-			. 'WHERE :where '
-			. 'ORDER BY c.`level`, c.`title_:lang`) '
-			. 'UNION ALL '
-			. "(SELECT :fields, '1' `crossed` "
-			. 'FROM `:prefix:table_categories` c '
-			. 'LEFT JOIN `:prefix:table_crossed_categories` cr ON (c.`id` = cr.`crossed_id`) '
-			. 'WHERE cr.`category_id` = :id ORDER BY c.`title_:lang`) '
-			. 'ORDER BY `:order`';
+		$sql = <<<SQL
+(SELECT :fields, '0' `crossed` FROM `:prefix:table_categories` c 
+	WHERE :where ORDER BY c.`level`, c.`title_:lang`) 
+UNION ALL 
+(SELECT :fields, '1' `crossed` FROM `:prefix:table_categories` c 
+LEFT JOIN `:prefix:table_crossed_categories` cr ON (c.`id` = cr.`crossed_id`) 
+WHERE cr.`category_id` = :id ORDER BY c.`title_:lang`) 
+ORDER BY `:order`
+SQL;
 		$sql = iaDb::printf($sql, array(
 			'fields' => $fields,
 			'prefix' => $this->iaDb->prefix,
@@ -133,9 +132,11 @@ class iaCateg extends abstractDirectoryPackageFront
 	{
 		$this->iaCore->factoryPackage('listing', $this->getPackageName());
 
-		$sql = 'SELECT c.`id`, c.`title_:lang` `title` '
-			. 'FROM `:prefix:table_categories` c, `:prefix:table_listings_categories` lc '
-			. 'WHERE c.`id` = lc.`category_id` AND lc.`listing_id` = :id';
+		$sql = <<<SQL
+SELECT c.`id`, c.`title_:lang` `title` 
+	FROM `:prefix:table_categories` c, `:prefix:table_listings_categories` lc
+WHERE c.`id` = lc.`category_id` AND lc.`listing_id` = :id
+SQL;
 		$sql = iaDb::printf($sql, array(
 			'prefix' => $this->iaDb->prefix,
 			'table_categories' => self::getTable(),

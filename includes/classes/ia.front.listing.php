@@ -8,7 +8,7 @@ class iaListing extends abstractDirectoryPackageFront
 
 	protected $_itemName = 'listings';
 
-	protected $_statuses = array(iaCore::STATUS_ACTIVE, iaCore::STATUS_APPROVAL, self::STATUS_BANNED, self::STATUS_SUSPENDED);
+	protected $_statuses = array(iaCore::STATUS_ACTIVE, iaCore::STATUS_INACTIVE, iaCore::STATUS_APPROVAL, self::STATUS_BANNED, self::STATUS_SUSPENDED);
 
 	public $coreSearchEnabled = true;
 	public $coreSearchOptions = array(
@@ -186,18 +186,6 @@ class iaListing extends abstractDirectoryPackageFront
 
 		return $rows;
 	}
-/*
-	public function getTitleAlias($title, $convertLowercase = false)
-	{
-		$title = iaSanitize::alias($title);
-
-		if ($this->iaCore->get('directory_lowercase_urls', true) && !$convertLowercase)
-		{
-			$title = strtolower($title);
-		}
-
-		return $title;
-	}*/
 
 	/**
 	 * Returns domain name by a given URL
@@ -462,11 +450,12 @@ class iaListing extends abstractDirectoryPackageFront
 	 */
 	protected function _changeNumListing($categoryId, $increment = 1)
 	{
-		$sql  = "UPDATE `{$this->iaDb->prefix}categs` ";
-		// `num_listings` changed only for ONE category
-		$sql .= "SET `num_listings`=IF(`id` = $categoryId, `num_listings` + {$increment}, `num_listings`) ";
-		$sql .= ", `num_all_listings`=`num_all_listings` + {$increment} ";
-		$sql .= "WHERE FIND_IN_SET({$categoryId}, `child`) ";
+		$sql = <<<SQL
+UPDATE `{$this->iaDb->prefix}categs`
+	SET `num_listings` = IF(`id` = $categoryId, `num_listings` + {$increment}, `num_listings`),
+	`num_all_listings` = `num_all_listings` + {$increment} 
+WHERE FIND_IN_SET({$categoryId}, `child`) 
+SQL;
 
 		return $this->iaDb->query($sql);
 	}
