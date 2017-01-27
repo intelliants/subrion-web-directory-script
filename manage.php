@@ -253,13 +253,21 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType())
 				? $iaListing->url('view', $iaListing->getById($id)) : $iaCore->packagesData[$iaListing->getPackageName()]['url'];
 
 			// if plan is chosen
-			if (isset($_POST['plan_id']) && !empty($_POST['plan_id']))
+			if (isset($_POST['plan_id']) && $_POST['plan_id'] && $_POST['plan_id'] != $listing['sponsored_plan_id'])
 			{
-				$plan = $iaPlan->getById($_POST['plan_id']);
+				$plan = $iaPlan->getById((int)$_POST['plan_id']);
 
 				if ($plan['cost'] > 0)
 				{
 					$url = $iaPlan->prePayment($iaListing->getItemName(), $item, $plan['id'], $url);
+				}
+
+				else
+				{
+					$iaTransaction = $iaCore->factory('transaction');
+					$transactionId = $iaTransaction->create(null, 0, $iaListing->getItemName(), $item, '', (int)$_POST['plan_id'], true);
+					$transaction = $iaTransaction->getBy('sec_key', $transactionId);
+					$iaPlan->setPaid($transaction);
 				}
 			}
 
