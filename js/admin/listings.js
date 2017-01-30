@@ -126,12 +126,14 @@ Ext.onReady(function()
 				var crossedJsTree = $ccTree.jstree(true);
 				var selectedNodes = crossedJsTree.get_selected();
 
-				if (selectedNodes.length > intelli.config.listing_crossed_limit)
+				if (selectedNodes.length)
 				{
-					crossedJsTree.deselect_node(e.target);
-				}
-				else
-				{
+					if (selectedNodes.length > intelli.config.listing_crossed_limit)
+					{
+						crossedJsTree.deselect_node(e.target);
+						return false;
+					}
+
 					$('#crossed-links').val(selectedNodes.join(','));
 
 					var titles = [];

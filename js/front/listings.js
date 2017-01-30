@@ -48,22 +48,24 @@ function crossedTreeClick(e)
 	var crossedJsTree = $('#tree-crossed').jstree(true);
 	var selectedNodes = crossedJsTree.get_selected();
 
-	if (selectedNodes.length > intelli.config.listing_crossed_limit)
+	if (selectedNodes.length)
 	{
-		crossedJsTree.deselect_node(e.target);
-		return false;
+		if (selectedNodes.length > intelli.config.listing_crossed_limit)
+		{
+			crossedJsTree.deselect_node(e.target);
+			return false;
+		}
+
+		$('#crossed_links').val(selectedNodes.join(','));
+
+		var titles = [];
+		for (var i in selectedNodes) {
+			var node = crossedJsTree.get_node(selectedNodes[i]);
+			titles.push('<span class="label label-info" data-node-id="' + node.id + '">' + node.text + ' <a href="javascript:;" onclick="changeNodeState(this);return false;"><i class="icon-remove-circle"></i></a></span>');
+		}
+
+		$('#crossed_title').html(titles.join(' '));
 	}
-
-	$('#crossed_links').val(selectedNodes.join(','));
-
-	var titles = [];
-	for (var i in selectedNodes)
-	{
-		var node = crossedJsTree.get_node(selectedNodes[i]);
-		titles.push('<span class="label label-info" data-node-id="' + node.id + '">' + node.text + ' <a href="javascript:;" onclick="changeNodeState(this);return false;"><i class="icon-remove-circle"></i></a></span>');
-	}
-
-	$('#crossed_title').html(titles.join(' '));
 }
 
 function changeNodeState(obj)
