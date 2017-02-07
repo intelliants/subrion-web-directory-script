@@ -215,8 +215,7 @@
 			page="directory_home,rss_listings">Description</field>
 		<field name="meta_description" item="categs" type="textarea" group="general" editor="0" required="0" adminonly="1" multilingual="1">Meta-Description</field>
 		<field name="meta_keywords" item="categs" type="text" group="general" length="70" required="0" adminonly="1" multilingual="1">Meta-Keywords</field>
-		<field name="icon" item="categs" type="image" group="general" width="16" height="16" editable="0" adminonly="1"
-			page="directory_home,rss_listings" folder_name="directory_categs_icons">Category Icon</field>
+		<field name="icon" item="categs" type="iconpicker" group="general" default="fa-folder" adminonly="1" page="directory_home">Icon</field>
 	</fields>
 
 	<phrases>
