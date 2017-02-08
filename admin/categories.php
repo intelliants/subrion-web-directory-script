@@ -91,7 +91,7 @@ class iaBackendController extends iaAbstractControllerPackageBackend
 	{
 		parent::_preSaveEntry($entry, $data, $action);
 
-		$entry['parent_id'] = empty($data['parent_id']) ? $this->_root['id'] : $data['parent_id'];
+		$entry['parent_id'] = empty($data['tree_id']) ? $this->_root['id'] : $data['tree_id'];
 		$entry['locked'] = (int)$data['locked'];
 		$entry['status'] = $data['status'];
 		$entry['order'] = $this->_iaDb->getMaxOrder() + 1;

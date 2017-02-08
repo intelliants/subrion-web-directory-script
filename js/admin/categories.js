@@ -135,7 +135,7 @@ intelli.fillUrlBox = function()
 {
 	var alias = $('#field_title_alias').val();
 	var title = ('' == alias ? $('input:first', '#title_fieldzone').val() : alias);
-	var category = $('#input-category').val();
+	var category = $('#input-tree').val();
 	var cache = title + '%%' + category;
 
 	if ('' != title && intelli.titleCache != cache)

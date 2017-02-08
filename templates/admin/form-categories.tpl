@@ -5,7 +5,8 @@
 
 	{if -1 != $item.parent_id}
 		{capture name='general' append='fieldset_before'}
-			<div id="parent_fieldzone" class="row">
+			{include 'tree.tpl' url="{$smarty.const.IA_ADMIN_URL}directory/categories/tree.json?cid={$id}"}
+			{*<div id="parent_fieldzone" class="row">
 				<label class="col col-lg-2 control-label">
 					{lang key='parent_category'}<br>
 					<a href="#" class="categories-toggle" id="js-tree-toggler">{lang key='open_close'}</a>
@@ -29,7 +30,7 @@ $(function()
 		nodeSelected: {$parent.id}
 	});
 });
-			{/ia_add_js}
+			{/ia_add_js*}
 			<div id="crossed_fieldzone" class="row">
 				<label class="col col-lg-2 control-label">
 					{lang key='crossed_categories'} <span class="label label-info" id="crossed-limit">{count($item.crossed)|default:0}</span><br>
