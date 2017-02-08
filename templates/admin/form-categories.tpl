@@ -1,9 +1,7 @@
 <form method="post" enctype="multipart/form-data" class="sap-form form-horizontal">
 	{preventCsrf}
 
-	{* commented out by @Batry, there is no any reference to this input/var *}
-	{*<input type="hidden" name="old_name" value="{if isset($item.username)}{$item.username|escape:'html'}{/if}">*}
-	<input type="hidden" name="id" value="{if 'edit' == $pageAction}{$id}{/if}">
+	<input type="hidden" name="id" value="{if iaCore::ACTION_EDIT == $pageAction}{$id}{/if}">
 
 	{if -1 != $item.parent_id}
 		{capture name='general' append='fieldset_before'}
@@ -33,7 +31,7 @@ $(function()
 });
 			{/ia_add_js}
 			<div id="crossed_fieldzone" class="row">
-				<label for="" class="col col-lg-2 control-label">
+				<label class="col col-lg-2 control-label">
 					{lang key='crossed_categories'} <span class="label label-info" id="crossed-limit">{count($item.crossed)|default:0}</span><br>
 					<a href="#" class="categories-toggle js-categories-toggle" data-toggle="#tree-crossed">{lang key='open_close'}</a>
 				</label>

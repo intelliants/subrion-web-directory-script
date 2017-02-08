@@ -70,7 +70,8 @@ Ext.onReady(function()
 	{
 		if ('#tree-crossed'.length)
 		{
-			var nodes = $('#crossed').val().split(',');
+			var nodes = $('#crossed').val();
+			nodes = nodes ? nodes.split(',') : [];
 
 			$('#tree-crossed').jstree(
 			{
