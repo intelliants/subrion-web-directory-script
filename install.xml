@@ -361,8 +361,8 @@ switch ($option)
 	case 'categs':
 		$iaDBControl->truncate('categs');
 		$iaDb->query("INSERT INTO `" . $iaCore->iaDb->prefix . "categs`
-(`id`, `parent_id`, `title_" . IA_LANGUAGE . "`, `date_added`, `date_modified`, `status`, `level`, `parents`)
-VALUES (1, -1, 'ROOT', NOW(), NOW(), 'active', 0, '1')");
+(`id`, `parent_id`, `title_" . IA_LANGUAGE . "`, `date_added`, `date_modified`, `status`, `level`, `parents`, `locked`)
+VALUES (1, -1, 'ROOT', NOW(), NOW(), 'active', 0, '1', 1)");
 }
 			]]>
 		</hook>
@@ -496,8 +496,8 @@ CREATE TABLE IF NOT EXISTS `{prefix}listings`(
 		<sql stage="end">
 			<![CDATA[
 INSERT INTO `{prefix}categs`
-(`id`, `parent_id`, `title_{lang}`, `date_added`, `date_modified`, `status`, `level`, `parents`) VALUES
-(0, -1, 'ROOT', NOW(), NOW(), 'active', 0, '1');
+	(`id`, `parent_id`, `title_{lang}`, `date_added`, `date_modified`, `status`, `level`, `parents`, `locked`) VALUES
+(0, -1, 'ROOT', NOW(), NOW(), 'active', 0, '1', 1);
 			]]>
 		</sql>
 		<sql stage="end">
