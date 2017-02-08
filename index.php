@@ -174,7 +174,7 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType())
 
 	$pagination['total'] = $iaListing->getFoundRows();
 
-	iaLanguage::set('no_web_listings', str_replace('{%URL%}', IA_PACKAGE_URL . 'add/' . (isset($category) && $category ? '?category=' . $category['id'] : ''), iaLanguage::get('no_web_listings')));
+	iaLanguage::set('no_web_listings', iaLanguage::getf('no_web_listings', array('url' => IA_PACKAGE_URL . 'add/' . (isset($category) && $category ? '?category=' . $category['id'] : ''))));
 
 	if ($listings)
 	{

@@ -90,8 +90,11 @@ class iaListing extends abstractDirectoryPackageFront
 	public function coreSearch($stmt, $start, $limit, $order)
 	{
 		$rows = $this->get($stmt, $start, $limit, $order, true);
+		$count = $this->getFoundRows();
 
-		return array($this->getFoundRows(), $rows);
+		$count || iaLanguage::set('no_web_listings2', iaLanguage::getf('no_web_listings2', array('url' => $this->getInfo('url') . 'add/')));
+
+		return array($count, $rows);
 	}
 
 	public function coreSearchTranslateColumn($column, $value)

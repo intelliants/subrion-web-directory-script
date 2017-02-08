@@ -260,9 +260,9 @@
 		<phrase category="common" key="listing_added">Listing added.</phrase>
 		<phrase category="common" key="listing_added_waiting">Thank you. Your listing has been submitted for administrator consideration. </phrase>
 		<phrase category="common" key="listings_num">Number of listings</phrase>
-		<phrase category="common" key="no_web_listings"><![CDATA[No listings have been submitted here. <a href="{%URL%}">Click here</a> to add a listing in this category.]]></phrase>
-		<phrase category="common" key="no_web_listings2"><![CDATA[No listings have been submitted. <a href="{%URL%}">Click here</a> to add a listing.]]></phrase>
-		<phrase category="common" key="no_my_listings"><![CDATA[You have not submitted any listings. Start <a href="{%URL%}">adding a new listing</a> now.]]></phrase>
+		<phrase category="common" key="no_web_listings"><![CDATA[No listings have been submitted here. <a href=":url">Click here</a> to add a listing in this category.]]></phrase>
+		<phrase category="common" key="no_web_listings2"><![CDATA[No listings have been submitted. <a href=":url">Click here</a> to add a listing.]]></phrase>
+		<phrase category="common" key="no_my_listings"><![CDATA[You have not submitted any listings. Start <a href=":url">adding a new listing</a> now.]]></phrase>
 		<phrase category="common" key="prev_crossed">Previous crossed categories</phrase>
 
 		<phrase category="frontend" key="author_activity">Author Activity</phrase>
