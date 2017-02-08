@@ -102,7 +102,9 @@ class iaListing extends abstractDirectoryPackageFront
 		switch ($column)
 		{
 			case 'keywords':
-				$fields = array('title', 'description', 'url');
+				$lang = $this->iaView->language;
+
+				$fields = array('title_' . $lang, 'description_' . $lang, 'url');
 				$value = "'%" . iaSanitize::sql($value) . "%'";
 
 				$result = array();

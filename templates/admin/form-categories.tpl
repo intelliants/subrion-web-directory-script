@@ -1,7 +1,8 @@
 <form method="post" enctype="multipart/form-data" class="sap-form form-horizontal">
 	{preventCsrf}
 
-	<input type="hidden" name="old_name" value="{if isset($item.username)}{$item.username|escape:'html'}{/if}">
+	{* commented out by @Batry, there is no any reference to this input/var *}
+	{*<input type="hidden" name="old_name" value="{if isset($item.username)}{$item.username|escape:'html'}{/if}">*}
 	<input type="hidden" name="id" value="{if 'edit' == $pageAction}{$id}{/if}">
 
 	{if -1 != $item.parent_id}
@@ -12,7 +13,7 @@
 					<a href="#" class="categories-toggle" id="js-tree-toggler">{lang key='open_close'}</a>
 				</label>
 				<div class="col col-lg-4">
-					<input type="text" id="js-category-label" value="{if $parent}{$parent.title}{else}{lang key='field_category_id'}{/if}" disabled>
+					<input type="text" id="js-category-label" value="{if $parent}{$parent.title|escape:'html'}{else}{lang key='field_category_id'}{/if}" disabled>
 					<div id="js-tree" class="tree categories-tree"{if iaCore::ACTION_EDIT == $pageAction} style="display:none"{/if}></div>
 					<input type="hidden" name="parent_id" id="input-category" value="{$item.parent_id}">
 				</div>

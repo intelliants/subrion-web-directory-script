@@ -176,7 +176,7 @@ intelli.fillUrlBox = function()
 
 	if ('' != title && intelli.titleCache != cache)
 	{
-		var params = {title: title, category: category};
+		var params = {title: title, category: category, id: id};
 		if (titleAlias) params.alias = 1;
 
 		$.get(intelli.config.admin_url + '/directory/listings/slug.json', params, function(response)

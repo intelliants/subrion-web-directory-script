@@ -28,17 +28,14 @@ class iaListing extends abstractDirectoryPackageAdmin
 
 	public function url($action, array $data)
 	{
-		$data['base'] = $this->getInfo('url');
+		$data['base'] = $this->getInfo('url') . ('view' == $action ? 'listing/' : '');
 		$data['action'] = $action;
 		$data['category_alias'] = (!isset($data['category_alias']) ? '' : $data['category_alias']);
 		$data['title_alias'] = (!isset($data['title_alias']) ? '' : '-' . $data['title_alias']);
 
 		unset($data['title'], $data['category']);
 
-		if (!isset($this->_urlPatterns[$action]))
-		{
-			$action = 'default';
-		}
+		isset($this->_urlPatterns[$action]) || $action = 'default';
 
 		return iaDb::printf($this->_urlPatterns[$action], $data);
 	}
