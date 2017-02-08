@@ -1,7 +1,7 @@
 {if isset($author)}
 	<div class="ia-item-author">
 		<a class="ia-item-author__image" href="{ia_url type='url' item='members' data=$author}">
-			{printImage imgfile=$author.avatar width=120 title=$author.fullname|default:$author.username gravatar=true email=$author.email}
+			{ia_image file=$author.avatar type='thumbnail' width=120 title=$author.fullname|default:$author.username gravatar=true email=$author.email}
 		</a>
 		<div class="ia-item-author__content">
 			<h4 class="ia-item__title"><a href="{ia_url type='url' item='members' data=$author}">{$author.fullname}</a></h4>

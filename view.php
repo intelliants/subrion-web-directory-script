@@ -174,7 +174,7 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType())
 		'desc' => substr(strip_tags($listing['description']), 0, 200),
 	));
 
-	$author = $iaDb->row_bind(iaDb::ALL_COLUMNS_SELECTION, '`status` = :status AND `id` = :id', array('status' => iaCore::STATUS_ACTIVE, 'id' => $listing['member_id']), iaUsers::getTable());
+	$author = $iaCore->factory('users')->getInfo($listing['member_id']);
 	$counter = $iaDb->one(iaDb::STMT_COUNT_ROWS, iaDb::convertIds($listing['member_id'], 'member_id'), iaListing::getTable());
 	$sections = $iaCore->factory('field')->getTabs($iaListing->getItemName(), $listing);
 
