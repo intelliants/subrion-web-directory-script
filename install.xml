@@ -337,7 +337,10 @@
 			<![CDATA[
 if ('repair_directorycats' == $type)
 {
-	$iaCore->factoryPackage('categ', 'directory', iaCore::ADMIN)->rebuildRelation();
+	$iaCateg = $iaCore->factoryPackage('categ', 'directory', iaCore::ADMIN);
+
+	$iaCateg->rebuildRelation();
+	$iaCateg->syncLinkingData();
 
 	$iaView->setMessages(iaLanguage::get('categories_repaired'), iaView::SUCCESS);
 }

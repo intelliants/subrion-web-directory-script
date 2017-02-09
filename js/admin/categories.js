@@ -140,14 +140,7 @@ intelli.fillUrlBox = function()
 
 	if ('' != title && intelli.titleCache != cache)
 	{
-		var params = {title: title, category: category};
-/*
-		if ('' != alias)
-		{
-			params.alias = 1;
-		}*/
-
-		$.get(intelli.config.admin_url + '/directory/categories/slug.json', params, function(response)
+		$.get(intelli.config.admin_url + '/directory/categories/slug.json', {title: title, category: category}, function(response)
 		{
 			if ('' != response.data)
 			{

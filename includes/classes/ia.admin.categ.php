@@ -12,8 +12,6 @@ class iaCateg extends abstractDirectoryPackageAdmin
 	protected $_itemName = 'categs';
 	protected $_statuses = array(iaCore::STATUS_ACTIVE, iaCore::STATUS_INACTIVE);
 
-	protected $_moduleUrl = 'directory/categories/';
-
 	private $_urlPatterns = array(
 		'default' => ':base:title_alias'
 	);
@@ -89,9 +87,7 @@ class iaCateg extends abstractDirectoryPackageAdmin
 
 	public function delete($itemId)
 	{
-		$result = parent::delete($itemId);
-
-		if ($result)
+		if ($result = parent::delete($itemId))
 		{
 			$stmt = iaDb::convertIds($itemId, 'category_id');
 			$this->iaDb->delete($stmt, 'listings_categs');
@@ -131,6 +127,9 @@ class iaCateg extends abstractDirectoryPackageAdmin
 		$count = 0;
 
 		$iaDb = &$this->iaDb;
+
+		$iaDb->query('SET SESSION group_concat_max_len = 65535');
+
 		$iaDb->truncate($tableFlat);
 		$iaDb->query($insert_first);
 		$iaDb->query($insert_second);
@@ -148,6 +147,7 @@ class iaCateg extends abstractDirectoryPackageAdmin
 				$sql .= 'LEFT JOIN ' . $table . ' h' . $i . ' ON (h' . $i . '.`parent_id` = h' . ($i - 1) . '.`id`) ';
 				$where .= ' AND h' . $i . '.`id` IS NOT NULL';
 			}
+
 			if ($iaDb->query($sql . $where))
 			{
 				$num = $iaDb->getAffected();
@@ -222,43 +222,87 @@ SQL;
 		return $this->iaDb->one(iaDb::STMT_COUNT_ROWS, null, self::getTable());
 	}
 
-	public function updateAliases($categoryId)
+	public function getSlug($title, $parentId = null, $parent = null)
 	{
-		if (!$child = $this->getById($categoryId))
+		if (-1 == $parentId)
 		{
-			return;
+			return '';
 		}
 
-		foreach(explode(',', $child['child']) as $id)
+		$slug = iaSanitize::alias($title);
+
+		if ('category' == $slug)
 		{
-			if (!trim($id)) continue;
-			$this->_updateAliasById($id);
+			$id = $this->iaDb->getNextId(self::getTable());
+			$slug.= '-' . $id;
+		}
+
+		$parent || $parent = $this->getById($parentId, false);
+
+		$slug = ltrim($parent['title_alias'] . $slug . IA_URL_DELIMITER, IA_URL_DELIMITER);
+		$this->iaCore->get('directory_lowercase_urls', true) && $slug = strtolower($slug);
+
+		return $slug;
+	}
+
+	public function syncLinkingData($categoryId = null)
+	{
+		if (is_null($categoryId))
+		{
+			$categoryId = $this->getRootId();
+		}
+		else
+		{
+			$category = $this->getById($categoryId, false);
+			$parent = $this->getById($category['parent_id'], false);
+
+			$this->_updateBreadcrumbs($category, $parent);
+
+			$this->iaDb->update($category, iaDb::convertIds($categoryId), null, self::getTable());
+		}
+
+		$children = $this->iaDb->all(iaDb::ALL_COLUMNS_SELECTION, iaDb::convertIds($categoryId, 'parent_id'), null, null, self::getTable());
+
+		foreach ($children as $child)
+		{
+			foreach (explode(',', $child['child']) as $id)
+			{
+				if (!trim($id) || (!$category = $this->getById($id, false))) continue;
+
+				$parent = $this->getById($category['parent_id'], false);
+
+				$this->_updateSlug($category, $parent);
+				$this->_updateBreadcrumbs($category, $parent);
+
+				$this->iaDb->update($category, iaDb::convertIds($id), null, self::getTable());
+			}
 		}
 	}
 
-	protected function _updateAliasById($categoryId)
+	protected function _updateSlug(array &$category, array $parent)
 	{
-		$category = $this->getById($categoryId);
-		$parent = $this->getById($category['parent_id']);
+		$category['title_alias'] = $this->getSlug($category['title_' . $this->iaView->language], $category['parent_id'], $parent);
+	}
 
+	protected function _updateBreadcrumbs(array &$category, array $parent)
+	{
 		$breadcrumbs = array();
+
+		$titleKey = 'title_' . $this->iaView->language;
 		$baseUrl = str_replace(IA_URL, '', $this->getInfo('url'));
 
 		if (!empty($parent['parents']))
 		{
-			$parents = $this->iaDb->all(array('title', 'title_alias'), "`id` IN({$parent['parents']}) AND `parent_id` != -1 AND `status` = 'active' ORDER BY `level`");
+			$parents = $this->iaDb->all(array($titleKey, 'title_alias'),
+				"`id` IN({$parent['parents']}) AND `parent_id` != -1 AND `status` = 'active' ORDER BY `level`",
+				null, null, self::getTable());
 
 			foreach ($parents as $p)
-				$breadcrumbs[$p['title']] = $baseUrl . $p['title_alias'];
+				$breadcrumbs[$p[$titleKey]] = $baseUrl . $p['title_alias'];
 		}
 
-		$breadcrumbs[$category['title']] = str_replace(IA_URL, '', $baseUrl . $category['title_alias']);
+		$breadcrumbs[$category[$titleKey]] = $baseUrl . $category['title_alias'];
 
-		$values = array(
-			//'title_alias' => $this->getTitleAlias($category, $parent),
-			'breadcrumb' => serialize($breadcrumbs)
-		);
-
-		$this->iaDb->update($values, iaDb::convertIds($categoryId), null, self::getTable());
+		$category['breadcrumb'] = serialize($breadcrumbs);
 	}
 }
