@@ -163,12 +163,14 @@ class iaBackendController extends iaAbstractControllerPackageBackend
 		$iaView->assign('statuses', $this->getHelper()->getStatuses());
 	}
 
+
 	protected function _fetchCrossedCategories()
 	{
-		$sql = 'SELECT c.`id`, c.`title_:lang` '
-			. 'FROM `:prefix:table_categories` c, `:prefix:table_crossed` cr '
-			. 'WHERE c.`id` = cr.`category_id` AND cr.`listing_id` = :id';
-
+		$sql = <<<SQL
+SELECT c.`id`, c.`title_:lang`
+	FROM `:prefix:table_categories` c, `:prefix:table_crossed` cr 
+WHERE c.`id` = cr.`category_id` && cr.`listing_id` = :id
+SQL;
 		$sql = iaDb::printf($sql, array(
 			'prefix' => $this->_iaDb->prefix,
 			'table_categories' => iaCateg::getTable(),

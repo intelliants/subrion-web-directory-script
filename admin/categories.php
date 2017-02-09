@@ -148,30 +148,6 @@ class iaBackendController extends iaAbstractControllerPackageBackend
 		$iaView->assign('parent', $parent);
 	}
 
-	protected function _fetchCrossed()
-	{
-		$sql = 'SELECT c.`id`, c.`title_:lang` '
-			. 'FROM `:prefix:table_categories` c, `:prefix:table_crossed` cr '
-			. 'WHERE c.`id` = cr.`crossed_id` AND cr.`category_id` = :id';
-
-		$sql = iaDb::printf($sql, array(
-			'lang' => $this->_iaCore->language['iso'],
-			'prefix' => $this->_iaDb->prefix,
-			'table_categories' => self::getTable(),
-			'table_crossed' => $this->getHelper()->getTableCrossed(),
-			'id' => $this->getEntryId()
-		));
-
-		return $this->_iaDb->getKeyValue($sql);
-	}
-
-	protected function _getJsonSlug(array $data)
-	{
-		$title = $this->getHelper()->getSlug($data['title'], (int)$data['category']);
-
-		return array('data' => $this->getHelper()->url('default', array('title_alias' => $title)));
-	}
-
 	protected function _getJsonTree(array $data)
 	{
 		$output = array();
@@ -216,6 +192,32 @@ class iaBackendController extends iaAbstractControllerPackageBackend
 		}
 
 		return $output;
+	}
+
+
+	protected function _fetchCrossed()
+	{
+		$sql = <<<SQL
+SELECT c.`id`, c.`title_:lang` 
+	FROM `:prefix:table_categories` c, `:prefix:table_crossed` cr 
+WHERE c.`id` = cr.`crossed_id` && cr.`category_id` = :id
+SQL;
+		$sql = iaDb::printf($sql, array(
+			'lang' => $this->_iaCore->language['iso'],
+			'prefix' => $this->_iaDb->prefix,
+			'table_categories' => self::getTable(),
+			'table_crossed' => $this->getHelper()->getTableCrossed(),
+			'id' => $this->getEntryId()
+		));
+
+		return $this->_iaDb->getKeyValue($sql);
+	}
+
+	protected function _getJsonSlug(array $data)
+	{
+		$title = $this->getHelper()->getSlug($data['title'], (int)$data['category']);
+
+		return array('data' => $this->getHelper()->url('default', array('title_alias' => $title)));
 	}
 
 	protected function _getJsonConsistency(array $data)
