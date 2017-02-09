@@ -3,7 +3,7 @@
 
 $iaListing = $iaCore->factoryPackage('listing', 'directory');
 
-if ($listings = $iaDb->all(array('id', 'domain', 'alexa_rank'), "`domain` != ''", 0, null, iaListing::getTable()))
+if ($listings = $iaDb->all(['id', 'domain', 'alexa_rank'], "`domain` != ''", 0, null, iaListing::getTable()))
 {
 	include_once IA_PACKAGES . 'directory' . IA_DS . 'includes' . IA_DS . 'alexarank.inc.php';
 
@@ -15,7 +15,7 @@ if ($listings = $iaDb->all(array('id', 'domain', 'alexa_rank'), "`domain` != ''"
 		{
 			if ($alexaData['rank'] != $row['alexa_rank'])
 			{
-				$iaCore->iaDb->update(array('alexa_rank' => $alexaData['rank'], 'id' => $row['id']), null, null, iaListing::getTable());
+				$iaCore->iaDb->update(['alexa_rank' => $alexaData['rank'], 'id' => $row['id']], null, null, iaListing::getTable());
 			}
 		}
 	}

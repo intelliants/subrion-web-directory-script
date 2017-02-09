@@ -8,17 +8,17 @@ class iaListing extends abstractDirectoryPackageAdmin
 
 	protected $_itemName = 'listings';
 
-	protected $_statuses = array(iaCore::STATUS_ACTIVE, iaCore::STATUS_INACTIVE, iaCore::STATUS_APPROVAL, self::STATUS_BANNED, self::STATUS_SUSPENDED);
+	protected $_statuses = [iaCore::STATUS_ACTIVE, iaCore::STATUS_INACTIVE, iaCore::STATUS_APPROVAL, self::STATUS_BANNED, self::STATUS_SUSPENDED];
 
-	private $_urlPatterns = array(
+	private $_urlPatterns = [
 		'default' => ':base:action/:id/',
 		'view' => ':base:category_alias:id:title_alias.html',
 		'edit' => ':baseedit/:id/',
 		'add' => ':baseadd/',
 		'my' => ':baseprofile/listings/'
-	);
+	];
 
-	public $dashboardStatistics = array('icon' => 'link');
+	public $dashboardStatistics = ['icon' => 'link'];
 
 
 	public static function getTableCrossed()
@@ -51,7 +51,7 @@ WHERE :where :order
 SQL;
 		$sql .= $start || $limit ? ' LIMIT :start, :limit' : '';
 
-		$sql = iaDb::printf($sql, array(
+		$sql = iaDb::printf($sql, [
 			'lang' => $this->iaCore->language['iso'],
 			'prefix' => $this->iaDb->prefix,
 			'table_listings' => $this->getTable(),
@@ -62,7 +62,7 @@ SQL;
 			'order' => $order,
 			'start' => $start,
 			'limit' => $limit
-		));
+		]);
 
 		return $this->iaDb->getAll($sql);
 	}
@@ -124,10 +124,10 @@ SQL;
 				$iaMailer = $this->iaCore->factory('mailer');
 
 				$iaMailer->loadTemplate('listing_' . $listingData['status']);
-				$iaMailer->setReplacements(array(
+				$iaMailer->setReplacements([
 					'title' => $listingData['title'],
 					'url' => $this->url('view', $listingData)
-				));
+				]);
 				$iaMailer->addAddress($email);
 
 				return $iaMailer->send();
@@ -140,9 +140,9 @@ SQL;
 	public function recountListingsNum()
 	{
 		$this->iaDb->setTable('categs');
-		$rows = $this->iaDb->all(array('id', 'parent_id', 'child'));
+		$rows = $this->iaDb->all(['id', 'parent_id', 'child']);
 
-		$categories = array();
+		$categories = [];
 		foreach ($rows as $c)
 		{
 			$c['child'] = explode(',', $c['child']);
@@ -173,7 +173,7 @@ SQL;
 				}
 			}
 
-			$this->iaDb->update(array("num_listings" => $_num_listings, "num_all_listings" => $_num_all_listings), "`id` = '{$_id}' LIMIT 1");
+			$this->iaDb->update(["num_listings" => $_num_listings, "num_all_listings" => $_num_all_listings], "`id` = '{$_id}' LIMIT 1");
 		}
 
 		$crossed = $this->iaDb->all('`category_id`, COUNT(`category_id`) `num`', '1 GROUP BY `category_id`', 0, null, 'listings_categs');
@@ -188,10 +188,10 @@ SQL;
 
 	public function getSitemapEntries()
 	{
-		$result = array();
+		$result = [];
 
 		$stmt = 'l.`status` = :status';
-		$this->iaDb->bind($stmt, array('status' => iaCore::STATUS_ACTIVE));
+		$this->iaDb->bind($stmt, ['status' => iaCore::STATUS_ACTIVE]);
 
 		if ($entries = $this->get('l.`title_alias`', $stmt, 'l.`date_modified` DESC'))
 		{

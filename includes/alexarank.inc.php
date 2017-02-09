@@ -28,7 +28,7 @@ class iaAlexaRank extends simplexml
 
 	private function _findValue($data)
 	{
-		$values = array(
+		$values = [
 			'rank' => (isset($data['SD'][1]['POPULARITY']['@attributes']['TEXT']) ? ($data['SD'][1]['POPULARITY']['@attributes']['TEXT']) : null),
 			'created' => (isset($data['SD'][0]['CREATED']['@attributes']['DATE']) ? ($data['SD'][0]['CREATED']['@attributes']['DATE']) : null),
 			'email' => (isset($data['SD'][0]['EMAIL']['@attributes']['ADDR']) ? ($data['SD'][0]['EMAIL']['@attributes']['ADDR']) : null),
@@ -37,7 +37,7 @@ class iaAlexaRank extends simplexml
 			'baseuri' => (isset($data['DMOZ']['SITE']['@attributes']['BASE']) ? ($data['DMOZ']['SITE']['@attributes']['BASE']) : null),
 			'title' => (isset($data['DMOZ']['SITE']['@attributes']['TITLE']) ? ($data['DMOZ']['SITE']['@attributes']['TITLE']) : null),
 			'description' => (isset($data['DMOZ']['SITE']['@attributes']['DESC']) ? ($data['DMOZ']['SITE']['@attributes']['DESC']) : null),
-		);
+		];
 
 		return $values;
 	}

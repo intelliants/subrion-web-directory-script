@@ -7,16 +7,16 @@ class iaCateg extends abstractDirectoryPackageAdmin
 	protected $_tableFlat = 'categs_flat';
 	protected static $_tableCrossed = 'categs_crossed';
 
-	protected $_activityLog = array('item' => 'category');
+	protected $_activityLog = ['item' => 'category'];
 
 	protected $_itemName = 'categs';
-	protected $_statuses = array(iaCore::STATUS_ACTIVE, iaCore::STATUS_INACTIVE);
+	protected $_statuses = [iaCore::STATUS_ACTIVE, iaCore::STATUS_INACTIVE];
 
-	private $_urlPatterns = array(
+	private $_urlPatterns = [
 		'default' => ':base:title_alias'
-	);
+	];
 
-	public $dashboardStatistics = array('icon' => 'folder', 'url' => 'directory/categories/');
+	public $dashboardStatistics = ['icon' => 'folder', 'url' => 'directory/categories/'];
 
 
 	public static function getTableCrossed()
@@ -26,7 +26,7 @@ class iaCateg extends abstractDirectoryPackageAdmin
 
 	public function url($action, $params)
 	{
-		$data = array();
+		$data = [];
 
 		$data['base'] = IA_URL_DELIMITER != $this->getInfo('url') ? $this->getInfo('url') : '';
 		$data['action'] = $action;
@@ -51,8 +51,8 @@ class iaCateg extends abstractDirectoryPackageAdmin
 	public function exists($alias, $parentId, $id = null)
 	{
 		return is_null($id)
-			? (bool)$this->iaDb->exists('`title_alias` = :alias AND `parent_id` = :parent', array('alias' => $alias, 'parent' => $parentId), self::getTable())
-			: (bool)$this->iaDb->exists('`title_alias` = :alias AND `parent_id` = :parent AND `id` != :id', array('alias' => $alias, 'parent' => $parentId, 'id' => $id), self::getTable());
+			? (bool)$this->iaDb->exists('`title_alias` = :alias AND `parent_id` = :parent', ['alias' => $alias, 'parent' => $parentId], self::getTable())
+			: (bool)$this->iaDb->exists('`title_alias` = :alias AND `parent_id` = :parent AND `id` != :id', ['alias' => $alias, 'parent' => $parentId, 'id' => $id], self::getTable());
 	}
 
 	public function getRoot()
@@ -67,12 +67,12 @@ class iaCateg extends abstractDirectoryPackageAdmin
 
 	public function getSitemapEntries()
 	{
-		$result = array();
+		$result = [];
 
 		$where = '`status` = :status AND `parent_id` != -1 ORDER BY `level`, `title`';
-		$this->iaDb->bind($where, array('status' => iaCore::STATUS_ACTIVE));
+		$this->iaDb->bind($where, ['status' => iaCore::STATUS_ACTIVE]);
 
-		if ($entries = $this->iaDb->all(array('title_alias'), $where, null, null, self::getTable()))
+		if ($entries = $this->iaDb->all(['title_alias'], $where, null, null, self::getTable()))
 		{
 			$baseUrl = $this->getInfo('url');
 
@@ -175,7 +175,7 @@ SQL;
 	{
 		$this->iaDb->setTable(self::getTable());
 
-		$categories = $this->iaDb->all(array('id', 'parent_id', 'child'), '1 ORDER BY `level` DESC', $start, $limit);
+		$categories = $this->iaDb->all(['id', 'parent_id', 'child'], '1 ORDER BY `level` DESC', $start, $limit);
 		foreach ($categories as $cat)
 		{
 			if (-1 != $cat['parent_id'])
@@ -208,7 +208,7 @@ SQL;
 					$_num_all_listings += $crossed;
 				}
 
-				$this->iaDb->update(array('num_listings' => $_num_listings, 'num_all_listings' => $_num_all_listings), iaDb::convertIds($_id));
+				$this->iaDb->update(['num_listings' => $_num_listings, 'num_all_listings' => $_num_all_listings], iaDb::convertIds($_id));
 			}
 		}
 
@@ -286,14 +286,14 @@ SQL;
 
 	protected function _updateBreadcrumbs(array &$category, array $parent)
 	{
-		$breadcrumbs = array();
+		$breadcrumbs = [];
 
 		$titleKey = 'title_' . $this->iaView->language;
 		$baseUrl = str_replace(IA_URL, '', $this->getInfo('url'));
 
 		if (!empty($parent['parents']))
 		{
-			$parents = $this->iaDb->all(array($titleKey, 'title_alias'),
+			$parents = $this->iaDb->all([$titleKey, 'title_alias'],
 				"`id` IN({$parent['parents']}) AND `parent_id` != -1 AND `status` = 'active' ORDER BY `level`",
 				null, null, self::getTable());
 

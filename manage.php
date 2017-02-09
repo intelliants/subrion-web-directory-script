@@ -9,18 +9,18 @@ if (iaView::REQUEST_JSON == $iaView->getRequestType())
 	{
 		$categoryId = empty($_GET['id']) ? 0 : (int)$_GET['id'];
 
-		$output = array();
+		$output = [];
 
 		$where = "`parent_id` = $categoryId AND `status` = 'active'";
 		$where.= ' ORDER BY `title`';
 
-		$entries = $iaCateg->getAll($where, array('id', 'title' => 'title_' . $iaCore->language['iso'],
-			'title_alias', 'locked', 'child', 'value' => 'id'));
+		$entries = $iaCateg->getAll($where, ['id', 'title' => 'title_' . $iaCore->language['iso'],
+			'title_alias', 'locked', 'child', 'value' => 'id']);
 
 		foreach ($entries as $row)
 		{
-			$entry = array('id' => $row['id'], 'text' => $row['title']);
-			empty($row['locked']) || $entry['state'] = array('disabled' => true);
+			$entry = ['id' => $row['id'], 'text' => $row['title']];
+			empty($row['locked']) || $entry['state'] = ['disabled' => true];
 			$entry['children'] = $row['child'] && $row['child'] != $row['id'] || empty($row['child']);
 
 			$output[] = $entry;
@@ -42,9 +42,9 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType())
 	switch ($pageAction)
 	{
 		case iaCore::ACTION_ADD:
-			$listing = array(
+			$listing = [
 				'category_id' => 0
-			);
+			];
 
 			break;
 		case iaCore::ACTION_EDIT:
@@ -99,7 +99,7 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType())
 		$item = false;
 		$error = false;
 		$plan = false;
-		$messages = array();
+		$messages = [];
 
 		list($item, $error, $messages) = $iaField->parsePost($iaListing->getItemName(), $listing);
 
@@ -130,7 +130,7 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType())
 		elseif (!iaUsers::hasIdentity() && (!isset($item['email']) || empty($item['email'])))
 		{
 			$error = true;
-			$messages[] = iaLanguage::getf('field_is_empty', array('field' => iaLanguage::get('email')));
+			$messages[] = iaLanguage::getf('field_is_empty', ['field' => iaLanguage::get('email')]);
 		}
 
 		$item['ip'] = $iaUtil->getIp();
@@ -201,14 +201,14 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType())
 				if ($field = $iaListing->checkDuplicateListings($item))
 				{
 					$error = true;
-					$messages[] = iaLanguage::getf('error_duplicate_field', array('field' => $field));
+					$messages[] = iaLanguage::getf('error_duplicate_field', ['field' => $field]);
 				}
 			}
 		}
 
 		if (!$error)
 		{
-			$iaCore->startHook('phpDirectoryBeforeListingSubmit', array('item' => &$item));
+			$iaCore->startHook('phpDirectoryBeforeListingSubmit', ['item' => &$item]);
 
 			if (iaCore::ACTION_ADD == $pageAction)
 			{
@@ -271,13 +271,13 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType())
 				}
 			}
 
-			$iaCore->startHook('phpAddItemAfterAll', array(
+			$iaCore->startHook('phpAddItemAfterAll', [
 				'type' => iaCore::ADMIN,
 				'listing' => $id,
 				'item' => $iaListing->getItemName(),
 				'data' => $item,
 				'old' => $listing
-			));
+			]);
 
 			if (iaCore::ACTION_EDIT != $pageAction || $plan)
 			{
@@ -291,18 +291,18 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType())
 		$listing = array_merge((array)$listing, $item);
 	}
 
-	$category = empty($category) ? array('id' => 0, 'parents' => '') : $category;
+	$category = empty($category) ? ['id' => 0, 'parents' => ''] : $category;
 	empty($id) || $category['crossed'] = $iaCateg->getCrossedByListingId($id);
 
 	if (iaCore::ACTION_EDIT == $pageAction)
 	{
-		$iaCore->factory('item')->setItemTools(array(
+		$iaCore->factory('item')->setItemTools([
 			'id' => 'action-visit',
 			'title' => iaLanguage::get('view'),
-			'attributes' => array(
+			'attributes' => [
 				'href' => $iaListing->url('view', $listing),
-			)
-		));
+			]
+		]);
 	}
 	elseif (isset($_GET['category']) && is_numeric($_GET['category']))
 	{
