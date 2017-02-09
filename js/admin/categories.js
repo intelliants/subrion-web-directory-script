@@ -18,8 +18,8 @@ Ext.onReady(function()
 					displayField: 'title',
 					valueField: 'value'
 				})},
-				{name: 'date_added', title: _t('date_added'), width: 100},
-				{name: 'date_modified', title: _t('date_modified'), width: 100},
+				{name: 'date_added', title: _t('date_added'), width: 100, hidden: true},
+				{name: 'date_modified', title: _t('date_modified'), width: 100, hidden: true},
 				'status',
 				'update',
 				'delete'

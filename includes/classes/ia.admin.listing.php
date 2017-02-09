@@ -21,6 +21,54 @@ class iaListing extends abstractDirectoryPackageAdmin
 	public $dashboardStatistics = ['icon' => 'link'];
 
 
+	public function delete($listingId)
+	{
+		$listingData = $this->getById($listingId);
+		$result = parent::delete($listingId);
+
+		if ($result)
+		{
+			if ($this->iaCore->get('listing_crossed'))
+			{
+				$stmt = iaDb::convertIds($listingId, 'listing_id');
+				$crossed = $this->iaDb->onefield('category_id', $stmt, 0, null, self::getTableCrossed());
+
+				foreach ($crossed as $ccid)
+				{
+					$this->_changeNumListing($ccid, -1);
+				}
+
+				$this->iaDb->delete($stmt, self::getTableCrossed());
+			}
+
+			$this->_changeNumListing($listingData['category_id'], -1);
+
+			$listingData['status'] = 'removed';
+			$this->sendUserNotification($listingData);
+		}
+
+		return $result;
+	}
+
+	public function getSitemapEntries()
+	{
+		$result = [];
+
+		$stmt = 'l.`status` = :status';
+		$this->iaDb->bind($stmt, ['status' => iaCore::STATUS_ACTIVE]);
+
+		if ($entries = $this->get('l.`title_alias`', $stmt, 'l.`date_modified` DESC'))
+		{
+			foreach ($entries as $entry)
+			{
+				$result[] = $this->url('view', $entry);
+			}
+		}
+
+		return $result;
+	}
+
+
 	public static function getTableCrossed()
 	{
 		return self::$_tableCrossed;
@@ -65,35 +113,6 @@ SQL;
 		]);
 
 		return $this->iaDb->getAll($sql);
-	}
-
-	public function delete($listingId)
-	{
-		$listingData = $this->getById($listingId);
-		$result = parent::delete($listingId);
-
-		if ($result)
-		{
-			if ($this->iaCore->get('listing_crossed'))
-			{
-				$stmt = iaDb::convertIds($listingId, 'listing_id');
-				$crossed = $this->iaDb->onefield('category_id', $stmt, 0, null, self::getTableCrossed());
-
-				foreach ($crossed as $ccid)
-				{
-					$this->_changeNumListing($ccid, -1);
-				}
-
-				$this->iaDb->delete($stmt, self::getTableCrossed());
-			}
-
-			$this->_changeNumListing($listingData['category_id'], -1);
-
-			$listingData['status'] = 'removed';
-			$this->sendUserNotification($listingData);
-		}
-
-		return $result;
 	}
 
 	protected function _changeNumListing($categoryId, $aInt = 1)
@@ -184,24 +203,6 @@ SQL;
 		}
 
 		$this->iaDb->resetTable();
-	}
-
-	public function getSitemapEntries()
-	{
-		$result = [];
-
-		$stmt = 'l.`status` = :status';
-		$this->iaDb->bind($stmt, ['status' => iaCore::STATUS_ACTIVE]);
-
-		if ($entries = $this->get('l.`title_alias`', $stmt, 'l.`date_modified` DESC'))
-		{
-			foreach ($entries as $entry)
-			{
-				$result[] = $this->url('view', $entry);
-			}
-		}
-
-		return $result;
 	}
 
 	public function getDomain($aUrl = '')
