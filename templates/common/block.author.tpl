@@ -10,7 +10,7 @@
 				<p><a href="#send-email-box" data-toggle="modal"><span class="fa fa-envelope"></span> {lang key='send_email'}</a></p>
 
 				{if $author.phone}
-					<p><span class="fa fa-phone"></span> {lang key='field_phone'}: {$author.phone}</p>
+					<p><span class="fa fa-phone"></span> {lang key='field_members_phone'}: {$author.phone}</p>
 				{/if}
 			</div>
 			{if $author.facebook || $author.twitter || $author.gplus || $author.linkedin}

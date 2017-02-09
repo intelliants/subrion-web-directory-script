@@ -5,7 +5,7 @@
 	<author>Intelliants LLC</author>
 	<contributor>Intelliants LLC</contributor>
 	<version>4.1.0</version>
-	<date>2017-01-12</date>
+	<date>2017-02-14</date>
 	<compatibility>4.1</compatibility>
 	<url>listings</url>
 
@@ -522,20 +522,4 @@ DROP TABLE IF EXISTS `{prefix}categs`, `{prefix}categs_crossed`, `{prefix}categs
 			]]>
 		</sql>
 	</uninstall>
-
-	<upgrade>
-		<sql version="4.0.1" external="1">includes{DS}dumps{DS}upgrades{DS}4.0.1.sql</sql>
-		<sql version="4.0.2">
-			<![CDATA[
-DELETE FROM `{prefix}config` WHERE `config_group` = 'directory' AND `extras` = 'directory' AND `name` IN('duplicate_checking', 'duplicate_type');
-			]]>
-		</sql>
-		<sql version="4.0.2">
-			<![CDATA[
-ALTER TABLE `{prefix}categs`
-  DROP `member_id`,
-  ADD `breadcrumb` text NOT NULL after `views_num`;
-			]]>
-		</sql>
-	</upgrade>
 </package>
