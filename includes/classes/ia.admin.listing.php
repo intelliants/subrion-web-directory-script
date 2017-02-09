@@ -96,9 +96,8 @@ SELECT :columns, c.`title_:lang` `category_title`, c.`title_alias` `category_ali
 LEFT JOIN `:prefix:table_categories` c ON (l.`category_id` = c.`id`) 
 LEFT JOIN `:prefix:table_members` m ON (l.`member_id` = m.`id`) 
 WHERE :where :order
+LIMIT :start, :limit
 SQL;
-		$sql .= $start || $limit ? ' LIMIT :start, :limit' : '';
-
 		$sql = iaDb::printf($sql, [
 			'lang' => $this->iaCore->language['iso'],
 			'prefix' => $this->iaDb->prefix,

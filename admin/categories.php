@@ -7,8 +7,9 @@ class iaBackendController extends iaAbstractControllerPackageBackend
 
 	protected $_helperName = 'categ';
 
-	protected $_gridColumns = ['title', 'title_alias', 'num_all_listings', 'locked', 'date_added', 'date_modified', 'status'];
+	protected $_gridColumns = ['parent_id', 'title', 'title_alias', 'num_all_listings', 'locked', 'level', 'date_added', 'date_modified', 'status'];
 	protected $_gridFilters = ['title' => self::LIKE, 'status' => self::EQUAL];
+	protected $_gridQueryMainTableAlias = 'c';
 
 	protected $_activityLog = ['item' => 'category'];
 
@@ -21,6 +22,11 @@ class iaBackendController extends iaAbstractControllerPackageBackend
 	public function init()
 	{
 		$this->_root = $this->getHelper()->getRoot();
+	}
+
+	public function _gridQuery($columns, $where, $order, $start, $limit)
+	{
+		return $this->getHelper()->get($columns, $where, $order, $start, $limit);
 	}
 
 	protected function _setPageTitle(&$iaView, array $entryData, $action)

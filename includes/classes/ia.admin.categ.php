@@ -19,52 +19,6 @@ class iaCateg extends abstractDirectoryPackageAdmin
 	public $dashboardStatistics = ['icon' => 'folder', 'url' => 'directory/categories/'];
 
 
-	public static function getTableCrossed()
-	{
-		return self::$_tableCrossed;
-	}
-
-	public function url($action, $params)
-	{
-		$data = [];
-
-		$data['base'] = IA_URL_DELIMITER != $this->getInfo('url') ? $this->getInfo('url') : '';
-		$data['action'] = $action;
-
-		if (isset($params['prefix']) && !empty($params['prefix']))
-		{
-			$data['title'] = $data[$params['prefix'] . 'title'];
-			$data['title_alias'] = $data[$params['prefix'] . 'alias'];
-		}
-
-		$data['title_alias'] = (!isset($params['title_alias']) ? '' : $params['title_alias']);
-		$data['title_alias'] = (!isset($params['category_alias']) ? $params['title_alias'] : $params['category_alias']);
-
-		if (!isset($this->_urlPatterns[$action]))
-		{
-			$action = 'default';
-		}
-
-		return iaDb::printf($this->_urlPatterns[$action], $data);
-	}
-
-	public function exists($alias, $parentId, $id = null)
-	{
-		return is_null($id)
-			? (bool)$this->iaDb->exists('`title_alias` = :alias AND `parent_id` = :parent', ['alias' => $alias, 'parent' => $parentId], self::getTable())
-			: (bool)$this->iaDb->exists('`title_alias` = :alias AND `parent_id` = :parent AND `id` != :id', ['alias' => $alias, 'parent' => $parentId, 'id' => $id], self::getTable());
-	}
-
-	public function getRoot()
-	{
-		return $this->iaDb->row(iaDb::ALL_COLUMNS_SELECTION, '`parent_id` = -1', self::getTable());
-	}
-
-	public function getRootId()
-	{
-		return $this->iaDb->one(iaDb::ID_COLUMN_SELECTION, '`parent_id` = -1', self::getTable());
-	}
-
 	public function getSitemapEntries()
 	{
 		$result = [];
@@ -106,6 +60,70 @@ class iaCateg extends abstractDirectoryPackageAdmin
 		}
 
 		return $result;
+	}
+
+
+	public function get($columns, $where, $order = '', $start = null, $limit = null)
+	{
+		$sql = <<<SQL
+SELECT :columns, p.`title_:lang` `parent_title`
+	FROM `:table_categories` c 
+LEFT JOIN `:table_categories` p ON (c.`parent_id` = p.`id`) 
+WHERE :where :order 
+LIMIT :start, :limit
+SQL;
+		$sql = iaDb::printf($sql, [
+			'lang' => $this->iaCore->language['iso'],
+			'table_categories' => iaCateg::getTable(true),
+			'columns' => $columns,
+			'where' => $where,
+			'order' => $order,
+			'start' => $start,
+			'limit' => $limit
+		]);
+
+		return $this->iaDb->getAll($sql);
+	}
+
+	public static function getTableCrossed()
+	{
+		return self::$_tableCrossed;
+	}
+
+	public function url($action, $params)
+	{
+		$data = [];
+
+		$data['base'] = IA_URL_DELIMITER != $this->getInfo('url') ? $this->getInfo('url') : '';
+		$data['action'] = $action;
+
+		if (isset($params['prefix']) && !empty($params['prefix']))
+		{
+			$data['title'] = $data[$params['prefix'] . 'title'];
+			$data['title_alias'] = $data[$params['prefix'] . 'alias'];
+		}
+
+		$data['title_alias'] = (!isset($params['title_alias']) ? '' : $params['title_alias']);
+		$data['title_alias'] = (!isset($params['category_alias']) ? $params['title_alias'] : $params['category_alias']);
+
+		if (!isset($this->_urlPatterns[$action]))
+		{
+			$action = 'default';
+		}
+
+		return iaDb::printf($this->_urlPatterns[$action], $data);
+	}
+
+	public function exists($alias, $parentId, $id = null)
+	{
+		return is_null($id)
+			? (bool)$this->iaDb->exists('`title_alias` = :alias AND `parent_id` = :parent', ['alias' => $alias, 'parent' => $parentId], self::getTable())
+			: (bool)$this->iaDb->exists('`title_alias` = :alias AND `parent_id` = :parent AND `id` != :id', ['alias' => $alias, 'parent' => $parentId, 'id' => $id], self::getTable());
+	}
+
+	public function getRoot()
+	{
+		return $this->iaDb->row(iaDb::ALL_COLUMNS_SELECTION, '`parent_id` = -1', self::getTable());
 	}
 
 	/**
@@ -249,7 +267,8 @@ SQL;
 	{
 		if (is_null($categoryId))
 		{
-			$categoryId = $this->getRootId();
+			$root = $this->getRoot();
+			$categoryId = $root['id'];
 		}
 		else
 		{
@@ -294,7 +313,7 @@ SQL;
 		if (!empty($parent['parents']))
 		{
 			$parents = $this->iaDb->all([$titleKey, 'title_alias'],
-				"`id` IN({$parent['parents']}) AND `parent_id` != -1 AND `status` = 'active' ORDER BY `level`",
+				"`id` IN({$parent['parents']}) && `parent_id` != -1 && `status` = 'active' ORDER BY `level`",
 				null, null, self::getTable());
 
 			foreach ($parents as $p)
