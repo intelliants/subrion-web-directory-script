@@ -16,7 +16,7 @@ class iaCateg extends abstractDirectoryPackageAdmin
 		'default' => ':base:title_alias'
 	);
 
-	public $dashboardStatistics = array('icon' => 'folder');
+	public $dashboardStatistics = array('icon' => 'folder', 'url' => 'directory/categories/');
 
 
 	public static function getTableCrossed()
