@@ -123,7 +123,7 @@ SQL;
 	 */
 	public function getCrossedByListingId($listingId)
 	{
-		$this->iaCore->factoryPackage('listing', $this->getPackageName());
+		$this->iaCore->factoryModule('listing', $this->getPackageName());
 
 		$sql = <<<SQL
 SELECT c.`id`, c.`title_:lang` `title` 

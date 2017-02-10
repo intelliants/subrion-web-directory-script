@@ -18,5 +18,5 @@
 			<option value="">{lang key='any'}</option>
 		</select>
 	</div>
-	{ia_print_js files='_IA_URL_packages/directory/js/front/filters'}
+	{ia_print_js files='_IA_URL_modules/directory/js/front/filters'}
 {/if}

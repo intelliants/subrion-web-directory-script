@@ -117,7 +117,7 @@ class iaListing extends abstractDirectoryPackageFront
 
 			case 'c':
 			case 'sc':
-				$iaCateg = $this->iaCore->factoryPackage('categ', $this->getPackageName());
+				$iaCateg = $this->iaCore->factoryModule('categ', $this->getPackageName());
 
 				$child = $this->iaDb->one('child', iaDb::convertIds((int)$value), $iaCateg::getTable());
 

@@ -3,8 +3,8 @@
 
 if (iaView::REQUEST_HTML == $iaView->getRequestType())
 {
-	$iaListing = $iaCore->factoryPackage('listing', 'directory');
-	$iaCateg = $iaCore->factoryPackage('categ', $iaListing->getPackageName());
+	$iaListing = $iaCore->factoryModule('listing', 'directory');
+	$iaCateg = $iaCore->factoryModule('categ', $iaListing->getPackageName());
 
 	// set default values for blocks to avoid isset validation
 	$blocksData = ['recent' => [], 'featured' => [], 'sponsored' => []];

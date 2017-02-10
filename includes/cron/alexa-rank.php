@@ -1,11 +1,11 @@
 <?php
 //##copyright##
 
-$iaListing = $iaCore->factoryPackage('listing', 'directory');
+$iaListing = $iaCore->factoryModule('listing', 'directory');
 
 if ($listings = $iaDb->all(['id', 'domain', 'alexa_rank'], "`domain` != ''", 0, null, iaListing::getTable()))
 {
-	include_once IA_PACKAGES . 'directory' . IA_DS . 'includes' . IA_DS . 'alexarank.inc.php';
+	include_once IA_MODULES . 'directory' . IA_DS . 'includes' . IA_DS . 'alexarank.inc.php';
 
 	$iaAlexaRank = new iaAlexaRank();
 

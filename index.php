@@ -68,8 +68,8 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType())
 
 	$rssFeed = false;
 
-	$iaListing = $iaCore->factoryPackage('listing', IA_CURRENT_PACKAGE);
-	$iaCateg = $iaCore->factoryPackage('categ', IA_CURRENT_PACKAGE);
+	$iaListing = $iaCore->factoryModule('listing', IA_CURRENT_MODULE);
+	$iaCateg = $iaCore->factoryModule('categ', IA_CURRENT_MODULE);
 
 	switch ($pageName)
 	{
@@ -131,7 +131,7 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType())
 			// start breadcrumb
 			if ($category && trim($category['parents']))
 			{
-				if (IA_CURRENT_PACKAGE == $iaCore->get('default_package'))
+				if (IA_CURRENT_MODULE == $iaCore->get('default_package'))
 				{
 					iaBreadcrumb::remove(iaBreadcrumb::POSITION_LAST);
 				}
@@ -174,7 +174,7 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType())
 
 	$pagination['total'] = $iaListing->getFoundRows();
 
-	iaLanguage::set('no_web_listings', iaLanguage::getf('no_web_listings', ['url' => IA_PACKAGE_URL . 'add/' . (isset($category) && $category ? '?category=' . $category['id'] : '')]));
+	iaLanguage::set('no_web_listings', iaLanguage::getf('no_web_listings', ['url' => IA_MODULE_URL . 'add/' . (isset($category) && $category ? '?category=' . $category['id'] : '')]));
 
 	if ($listings)
 	{
@@ -188,7 +188,7 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType())
 		$pageActions[] = [
 			'icon' => 'plus-square',
 			'title' => iaLanguage::get('add_listing'),
-			'url' => IA_PACKAGE_URL . 'add/' . (empty($category['id']) ? '' : '?category=' . $category['id'])
+			'url' => IA_MODULE_URL . 'add/' . (empty($category['id']) ? '' : '?category=' . $category['id'])
 		];
 	}
 
@@ -199,7 +199,7 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType())
 		$pageActions[] = [
 			'icon' => 'rss ',
 			'title' => null,
-			'url' => IA_PACKAGE_URL . 'rss/' . $rssFeed,
+			'url' => IA_MODULE_URL . 'rss/' . $rssFeed,
 			'classes' => 'btn-warning'
 		];
 	}

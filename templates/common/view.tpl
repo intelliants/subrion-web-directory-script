@@ -48,7 +48,7 @@
 	{ia_hooker name='smartyViewListingBeforeFooter'}
 </div>
 
-{ia_add_media files='js:_IA_URL_packages/directory/js/front/view'}
+{ia_add_media files='js:_IA_URL_modules/directory/js/front/view'}
 
 {ia_add_js}
 $(function() {

@@ -75,4 +75,4 @@
 </form>
 
 {ia_hooker name='smartyAdminSubmitItemBeforeFooter'}
-{ia_add_media files='js:_IA_URL_packages/directory/js/admin/listings'}
+{ia_add_media files='js:_IA_URL_modules/directory/js/admin/listings'}

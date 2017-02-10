@@ -48,4 +48,4 @@
 
 	{include 'field-type-content-fieldset.tpl' isSystem=true exceptions=$exceptions}
 </form>
-{ia_add_media files='tree, js:_IA_URL_packages/directory/js/admin/categories'}
+{ia_add_media files='tree, js:_IA_URL_modules/directory/js/admin/categories'}

@@ -42,5 +42,5 @@
 
 	{include 'item-view-tabs.tpl'}
 </form>
-{ia_add_media files='js:_IA_URL_packages/directory/js/front/listings'}
+{ia_add_media files='js:_IA_URL_modules/directory/js/front/listings'}
 {ia_hooker name='smartyDirectoryListingSubmitAfterJs'}

@@ -10,4 +10,4 @@
 		<button class="btn btn-success btn-small" id="js-cmd-recount-listings">{lang key='start'}</button>
 	</div>
 </div>
-{ia_print_js files='_IA_URL_packages/directory/js/admin/consistency'}
+{ia_print_js files='_IA_URL_modules/directory/js/admin/consistency'}

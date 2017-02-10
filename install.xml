@@ -293,7 +293,7 @@
 		<phrase category="frontend" key="do_you_really_want_to_delete_listing">Do you really want to remove the listing?</phrase>
 	</phrases>
 
-	<cron name="Alexa Rank">0 3 * * * packages/directory/includes/cron/alexa-rank.php</cron>
+	<cron name="Alexa Rank">0 3 * * * modules/directory/includes/cron/alexa-rank.php</cron>
 
 	<tooltips>
 		<tooltip key="directory_categories_columns">Number of columns for categories display on directory index page.</tooltip>
@@ -337,7 +337,7 @@
 			<![CDATA[
 if ('repair_directorycats' == $type)
 {
-	$iaCateg = $iaCore->factoryPackage('categ', 'directory', iaCore::ADMIN);
+	$iaCateg = $iaCore->factoryModule('categ', 'directory', iaCore::ADMIN);
 
 	$iaCateg->rebuildRelation();
 	$iaCateg->syncLinkingData();
@@ -510,7 +510,7 @@ UPDATE `{prefix}categs` SET `id` = 0 WHERE `parent_id` = -1;
 		</sql>
 		<code>
 			<![CDATA[
-iaCore::instance()->factoryPackage('categ', 'directory', iaCore::ADMIN)->rebuildRelation();
+iaCore::instance()->factoryModule('categ', 'directory', iaCore::ADMIN)->rebuildRelation();
 			]]>
 		</code>
 	</install>

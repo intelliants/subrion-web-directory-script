@@ -1,7 +1,7 @@
 <?php
 //##copyright##
 
-$iaCateg = $iaCore->factoryPackage('categ', IA_CURRENT_PACKAGE);
+$iaCateg = $iaCore->factoryModule('categ', IA_CURRENT_MODULE);
 
 if (iaView::REQUEST_JSON == $iaView->getRequestType())
 {
@@ -35,9 +35,9 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType())
 	$iaField = $iaCore->factory('field');
 	$iaUtil = $iaCore->factory('util');
 
-	$iaListing = $iaCore->factoryPackage('listing', IA_CURRENT_PACKAGE);
+	$iaListing = $iaCore->factoryModule('listing', IA_CURRENT_MODULE);
 
-	iaBreadcrumb::replace(iaLanguage::get(IA_CURRENT_PACKAGE), $iaCore->factory('page', iaCore::FRONT)->getUrlByName('directory_home'), 2);
+	iaBreadcrumb::replace(iaLanguage::get(IA_CURRENT_MODULE), $iaCore->factory('page', iaCore::FRONT)->getUrlByName('directory_home'), 2);
 
 	switch ($pageAction)
 	{
@@ -187,7 +187,7 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType())
 				// check alexa
 				if ($iaCore->get('directory_enable_alexarank'))
 				{
-					include IA_PACKAGES . $iaCore->packagesData['directory']['name'] . IA_DS . 'includes' . IA_DS . 'alexarank.inc.php';
+					include IA_MODULES . $iaCore->packagesData['directory']['name'] . IA_DS . 'includes' . IA_DS . 'alexarank.inc.php';
 					$iaAlexaRank = new iaAlexaRank();
 
 					$alexaData = $iaAlexaRank->getAlexa($item['domain']);

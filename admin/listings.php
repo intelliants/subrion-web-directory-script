@@ -20,7 +20,7 @@ class iaBackendController extends iaAbstractControllerPackageBackend
 
 	public function init()
 	{
-		$this->_iaCateg = $this->_iaCore->factoryPackage('categ', $this->getPackageName(), iaCore::ADMIN);
+		$this->_iaCateg = $this->_iaCore->factoryModule('categ', $this->getPackageName(), iaCore::ADMIN);
 	}
 
 	protected function _modifyGridParams(&$conditions, &$values, array $params)
@@ -119,7 +119,7 @@ class iaBackendController extends iaAbstractControllerPackageBackend
 			// check alexa
 			if ($this->_iaCore->get('directory_enable_alexarank'))
 			{
-				include IA_PACKAGES . 'directory' . IA_DS . 'includes' . IA_DS . 'alexarank.inc.php';
+				include IA_MODULES . 'directory' . IA_DS . 'includes' . IA_DS . 'alexarank.inc.php';
 
 				if ($alexaData = (new iaAlexaRank())->getAlexa($entry['domain']))
 				{

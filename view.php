@@ -1,7 +1,7 @@
 <?php
 //##copyright##
 
-$iaListing = $iaCore->factoryPackage('listing', IA_CURRENT_PACKAGE);
+$iaListing = $iaCore->factoryModule('listing', IA_CURRENT_MODULE);
 
 if (iaView::REQUEST_JSON == $iaView->getRequestType())
 {
@@ -83,7 +83,7 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType())
 //	$categoryPath = $iaView->url;
 //
 //	unset($categoryPath[count($categoryPath) - 1]);
-//	$baseUrl = IA_CURRENT_PACKAGE == $iaCore->get('default_package') ? IA_URL : $iaListing->getInfo('url') . 'listing/';
+//	$baseUrl = IA_CURRENT_MODULE == $iaCore->get('default_package') ? IA_URL : $iaListing->getInfo('url') . 'listing/';
 //
 //	$categoryPath = $categoryPath ? implode(IA_URL_DELIMITER, $categoryPath) . IA_URL_DELIMITER : '';
 //	$categoryPath = str_replace(str_replace(IA_URL, '', $baseUrl), '', $categoryPath);
@@ -94,7 +94,7 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType())
 //		iaUtil::go_to($validUrl);
 //	}
 
-	$iaCateg = $iaCore->factoryPackage('categ', IA_CURRENT_PACKAGE);
+	$iaCateg = $iaCore->factoryModule('categ', IA_CURRENT_MODULE);
 
 	$category = $iaCateg->getById($listing['category_id']);
 
