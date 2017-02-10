@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<package name="directory">
+<module type="package" name="directory">
 	<title>Web Directory</title>
 	<summary>This package is intended to create web directory on your Subrion powered website.</summary>
 	<author>Intelliants LLC</author>
@@ -522,4 +522,4 @@ DROP TABLE IF EXISTS `{prefix}categs`, `{prefix}categs_crossed`, `{prefix}categs
 			]]>
 		</sql>
 	</uninstall>
-</package>
+</module>

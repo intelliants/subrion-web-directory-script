@@ -4,7 +4,7 @@
 $package = 'directory';
 $accessGranted = false;
 $isDefaultPackage = ($package == $iaCore->get('default_package'));
-$extras = $iaCore->getExtras($package);
+$extras = $iaCore->getModules($package);
 $package_home = 'directory_home';
 
 if ($iaCore->checkDomain() && $isDefaultPackage)
