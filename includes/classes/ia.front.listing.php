@@ -232,7 +232,7 @@ class iaListing extends abstractDirectoryPackageFront
 			unset($entryData['crossed_links']);
 		}
 
-		!$this->iaCore->get('directory_lowercase_urls') || $entryData['title_alias'] = strtolower($entryData['title_alias']);
+		$this->iaCore->get('directory_lowercase_urls') && $entryData['title_alias'] = strtolower($entryData['title_alias']);
 
 		$entryData['id'] = $this->iaDb->insert($entryData, $rawValues, self::getTable());
 
@@ -240,7 +240,7 @@ class iaListing extends abstractDirectoryPackageFront
 		{
 			if ($this->iaCore->get('listing_crossed'))
 			{
-				if (isset($crossed) && $crossed)
+				if ($crossed)
 				{
 					$this->iaDb->setTable(self::getTableCrossed());
 
@@ -257,10 +257,7 @@ class iaListing extends abstractDirectoryPackageFront
 						}
 					}
 
-					if (count($crossedInput) > 0)
-					{
-						$this->iaDb->insert($crossedInput);
-					}
+					$crossedInput && $this->iaDb->insert($crossedInput);
 
 					$this->iaDb->resetTable();
 				}
@@ -269,15 +266,15 @@ class iaListing extends abstractDirectoryPackageFront
 			// update category counter
 			if (iaCore::STATUS_ACTIVE == $entryData['status'])
 			{
-				if ($crossed)
+				if (!empty($crossedInput))
 				{
 					foreach ($crossedInput as $entry)
 					{
-						$this->_changeNumListing($entry['category_id'], 1);
+						$this->_changeNumListing($entry['category_id']);
 					}
 				}
 
-				$this->_changeNumListing($entryData['category_id'], 1);
+				$this->_changeNumListing($entryData['category_id']);
 			}
 
 			$this->_sendAdminNotification($entryData['id']);
@@ -347,14 +344,14 @@ class iaListing extends abstractDirectoryPackageFront
 			}
 			elseif (iaCore::STATUS_ACTIVE != $oldData['status'] && iaCore::STATUS_ACTIVE == $status)
 			{
-				$this->_changeNumListing($categ, 1);
+				$this->_changeNumListing($categ);
 			}
 		}
 		else // If category changed
 		{
 			if (iaCore::STATUS_ACTIVE == $status)
 			{
-				$this->_changeNumListing($categ, 1);
+				$this->_changeNumListing($categ);
 			}
 			if (iaCore::STATUS_ACTIVE == $oldData['status'])
 			{
@@ -456,11 +453,17 @@ class iaListing extends abstractDirectoryPackageFront
 	protected function _changeNumListing($categoryId, $increment = 1)
 	{
 		$sql = <<<SQL
-UPDATE `{$this->iaDb->prefix}categs`
-	SET `num_listings` = IF(`id` = $categoryId, `num_listings` + {$increment}, `num_listings`),
-	`num_all_listings` = `num_all_listings` + {$increment} 
-WHERE FIND_IN_SET({$categoryId}, `child`) 
+UPDATE `:table_categs` 
+SET `num_listings` = IF(`id` = :category, `num_listings` + :increment, `num_listings`),
+	`num_all_listings` = `num_all_listings` + :increment
+WHERE FIND_IN_SET(:category, `child`)
 SQL;
+
+		$sql = iaDb::printf($sql, [
+			'table_categs' => $this->iaDb->prefix . 'categs',
+			'category' => (int)$categoryId,
+			'increment' => (int)$increment
+		]);
 
 		return $this->iaDb->query($sql);
 	}

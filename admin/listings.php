@@ -149,6 +149,40 @@ class iaBackendController extends iaAbstractControllerPackageBackend
 		$this->_iaDb->resetTable();
 	}
 
+	public function updateCounters($entryId, array $entryData, $action, $previousData = null)
+	{
+		switch ($action)
+		{
+			case iaCore::ACTION_EDIT:
+				if ($entryData['category_id'] == $previousData['category_id'])
+				{
+					if (iaCore::STATUS_ACTIVE == $previousData['status'] && iaCore::STATUS_ACTIVE != $entryData['status'])
+					{
+						$this->_iaCateg->changeNumListing($entryData['category_id'], -1);
+					}
+					elseif (iaCore::STATUS_ACTIVE != $previousData['status'] && iaCore::STATUS_ACTIVE == $entryData['status'])
+					{
+						$this->_iaCateg->changeNumListing($entryData['category_id']);
+					}
+				}
+				else // category changed
+				{
+					iaCore::STATUS_ACTIVE == $entryData['status']
+						&& $this->_iaCateg->changeNumListing($entryData['category_id']);
+					iaCore::STATUS_ACTIVE == $previousData['status']
+						&& $this->_iaCateg->changeNumListing($previousData['category_id'], -1);
+				}
+				break;
+			case iaCore::ACTION_ADD:
+				$entryData['status'] == iaCore::STATUS_ACTIVE
+					&& $this->_iaCateg->changeNumListing($entryData['category_id']);
+				break;
+			case iaCore::ACTION_DELETE:
+				$entryData['status'] == iaCore::STATUS_ACTIVE
+					&& $this->_iaCateg->changeNumListing($entryData['category_id'], -1);
+		}
+	}
+
 	protected function _assignValues(&$iaView, array &$entryData)
 	{
 		parent::_assignValues($iaView, $entryData);
