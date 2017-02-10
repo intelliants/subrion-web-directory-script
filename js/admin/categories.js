@@ -7,6 +7,12 @@ Ext.onReady(function()
 			columns:[
 				'selection',
 				{name: 'title', title: _t('title'), width: 1, editor: 'text'},
+				{name: 'parent_title', title: _t('parent_category'), renderer: function(value, metadata, record)
+				{
+					return (record.data.level <= 1)
+						? value
+						: '<a href="' + window.location.href + 'edit/' + record.data.parent_id + '/">' + value + '</a>'
+				}, width: 1},
 				{name: 'title_alias', title: _t('path'), width: 1},
 				{name: 'num_all_listings', title: _t('listings_num'), width: 140},
 				{name: 'locked', title: _t('locked'), width: 60, align: intelli.gridHelper.constants.ALIGN_CENTER, renderer: intelli.gridHelper.renderer.check, editor: Ext.create('Ext.form.ComboBox',
@@ -18,12 +24,13 @@ Ext.onReady(function()
 					displayField: 'title',
 					valueField: 'value'
 				})},
-				{name: 'date_added', title: _t('date_added'), width: 100},
-				{name: 'date_modified', title: _t('date_modified'), width: 100},
+				{name: 'date_added', title: _t('date_added'), width: 100, hidden: true},
+				{name: 'date_modified', title: _t('date_modified'), width: 100, hidden: true},
 				'status',
 				'update',
 				'delete'
 			],
+			fields: ['parent_id', 'level'],
 			texts: {
 				delete_multiple: _t('are_you_sure_to_delete_selected_categs'),
 				delete_single: _t('are_you_sure_to_delete_selected_categ')

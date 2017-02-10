@@ -8,14 +8,14 @@ class iaCateg extends abstractDirectoryPackageFront
 
 	protected $_itemName = 'categs';
 
-	protected $_urlPatterns = array(
+	protected $_urlPatterns = [
 		'default' => ':base:title_alias'
-	);
+	];
 
 	public $coreSearchEnabled = true;
-	public $coreSearchOptions = array(
-		'regularSearchFields' => array('title')
-	);
+	public $coreSearchOptions = [
+		'regularSearchFields' => ['title']
+	];
 
 
 	public static function getTableCrossed()
@@ -56,7 +56,7 @@ LEFT JOIN `:prefix:table_crossed_categories` cr ON (c.`id` = cr.`crossed_id`)
 WHERE cr.`category_id` = :id ORDER BY c.`title_:lang`) 
 ORDER BY `:order`
 SQL;
-		$sql = iaDb::printf($sql, array(
+		$sql = iaDb::printf($sql, [
 			'fields' => $fields,
 			'prefix' => $this->iaDb->prefix,
 			'table_categories' => self::getTable(),
@@ -65,7 +65,7 @@ SQL;
 			'lang' => $this->iaCore->language['iso'],
 			'where' => $where,
 			'order' => $order ? $order : 'title_' . $this->iaCore->language['iso']
-		));
+		]);
 
 		$result = $this->iaDb->getAll($sql, $start, $limit);
 
@@ -137,13 +137,13 @@ SELECT c.`id`, c.`title_:lang` `title`
 	FROM `:prefix:table_categories` c, `:prefix:table_listings_categories` lc
 WHERE c.`id` = lc.`category_id` AND lc.`listing_id` = :id
 SQL;
-		$sql = iaDb::printf($sql, array(
+		$sql = iaDb::printf($sql, [
 			'prefix' => $this->iaDb->prefix,
 			'table_categories' => self::getTable(),
 			'table_listings_categories' => iaListing::getTableCrossed(),
 			'lang' => $this->iaCore->language['iso'],
 			'id' => (int)$listingId
-		));
+		]);
 
 		return $this->iaDb->getKeyValue($sql);
 	}

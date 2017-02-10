@@ -29,7 +29,7 @@ $iaPage = $iaCore->factory('page', iaCore::FRONT);
 
 if ($listingId = (int)$url)
 {
-	if ($listingData = $iaDb->row_bind(array('title_alias'), '`id` = :id', array('id' => $listingId), 'listings'))
+	if ($listingData = $iaDb->row_bind(['title_alias'], '`id` = :id', ['id' => $listingId], 'listings'))
 	{
 		if ($listingData['title_alias'])
 		{
@@ -50,9 +50,9 @@ elseif ($iaCore->checkDomain() && $isDefaultPackage)
 {
 	$alias = implode(IA_URL_DELIMITER, $iaView->url) . IA_URL_DELIMITER;
 
-	if ($iaDb->exists('`status` = :status AND `title_alias` = :alias', array('status' => iaCore::STATUS_ACTIVE, 'alias' => $alias), 'categs'))
+	if ($iaDb->exists('`status` = :status AND `title_alias` = :alias', ['status' => iaCore::STATUS_ACTIVE, 'alias' => $alias], 'categs'))
 	{
-		if ($pageUrl = $iaDb->one_bind('alias', '`name` = :page AND `status` = :status', array('page' => $package_home, 'status' => iaCore::STATUS_ACTIVE), 'pages'))
+		if ($pageUrl = $iaDb->one_bind('alias', '`name` = :page AND `status` = :status', ['page' => $package_home, 'status' => iaCore::STATUS_ACTIVE], 'pages'))
 		{
 			$pageUrl = explode(IA_URL_DELIMITER, trim($pageUrl, IA_URL_DELIMITER));
 			$pageUrl = array_shift($pageUrl);

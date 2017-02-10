@@ -7,7 +7,7 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType())
 	$iaCateg = $iaCore->factoryPackage('categ', $iaListing->getPackageName());
 
 	// set default values for blocks to avoid isset validation
-	$blocksData = array('recent' => [], 'featured' => [], 'sponsored' => []);
+	$blocksData = ['recent' => [], 'featured' => [], 'sponsored' => []];
 
 	if ($iaView->blockExists('directory_listings_tabs'))
 	{
@@ -76,9 +76,9 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType())
 	if ($iaView->blockExists('filters') && $iaListing->getItemName() == $iaView->get('filtersItemName'))
 	{
 		$categories = $iaCateg->getAll("`status` = 'active' AND `level` = 1 ORDER BY `title`",
-			array('id', 'title' => 'title_' . $iaCore->language['iso']));
+			['id', 'title' => 'title_' . $iaCore->language['iso']]);
 
-		$iaView->assign('directoryFiltersCategories', $categories ? $categories : array());
+		$iaView->assign('directoryFiltersCategories', $categories ? $categories : []);
 	}
 
 	$iaView->assign('listingsBlocksData', $blocksData);

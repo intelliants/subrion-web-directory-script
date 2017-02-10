@@ -5,7 +5,7 @@
 	<author>Intelliants LLC</author>
 	<contributor>Intelliants LLC</contributor>
 	<version>4.1.0</version>
-	<date>2017-01-12</date>
+	<date>2017-02-14</date>
 	<compatibility>4.1</compatibility>
 	<url>listings</url>
 
@@ -212,7 +212,7 @@
 		<field name="title" item="categs" type="text" group="general" length="70" required="1" searchable="1" multilingual="1"
 			page="directory_home,rss_listings">Title</field>
 		<field name="description" item="categs" type="textarea" group="general" editor="1" required="0" searchable="1"
-			page="directory_home,rss_listings">Description</field>
+			page="directory_home,rss_listings" multilingual="1">Description</field>
 		<field name="meta_description" item="categs" type="textarea" group="general" editor="0" required="0" adminonly="1" multilingual="1">Meta-Description</field>
 		<field name="meta_keywords" item="categs" type="text" group="general" length="70" required="0" adminonly="1" multilingual="1">Meta-Keywords</field>
 		<field name="icon" item="categs" type="iconpicker" group="general" default="fa-folder" adminonly="1" page="directory_home">Icon</field>
@@ -522,20 +522,4 @@ DROP TABLE IF EXISTS `{prefix}categs`, `{prefix}categs_crossed`, `{prefix}categs
 			]]>
 		</sql>
 	</uninstall>
-
-	<upgrade>
-		<sql version="4.0.1" external="1">includes{DS}dumps{DS}upgrades{DS}4.0.1.sql</sql>
-		<sql version="4.0.2">
-			<![CDATA[
-DELETE FROM `{prefix}config` WHERE `config_group` = 'directory' AND `extras` = 'directory' AND `name` IN('duplicate_checking', 'duplicate_type');
-			]]>
-		</sql>
-		<sql version="4.0.2">
-			<![CDATA[
-ALTER TABLE `{prefix}categs`
-  DROP `member_id`,
-  ADD `breadcrumb` text NOT NULL after `views_num`;
-			]]>
-		</sql>
-	</upgrade>
 </package>

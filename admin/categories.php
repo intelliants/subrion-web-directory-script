@@ -7,10 +7,11 @@ class iaBackendController extends iaAbstractControllerPackageBackend
 
 	protected $_helperName = 'categ';
 
-	protected $_gridColumns = array('title', 'title_alias', 'num_all_listings', 'locked', 'date_added', 'date_modified', 'status');
-	protected $_gridFilters = array('title' => self::LIKE, 'status' => self::EQUAL);
+	protected $_gridColumns = ['parent_id', 'title', 'title_alias', 'num_all_listings', 'locked', 'level', 'date_added', 'date_modified', 'status'];
+	protected $_gridFilters = ['title' => self::LIKE, 'status' => self::EQUAL];
+	protected $_gridQueryMainTableAlias = 'c';
 
-	protected $_activityLog = array('item' => 'category');
+	protected $_activityLog = ['item' => 'category'];
 
 	protected $_phraseAddSuccess = 'category_added';
 	protected $_phraseGridEntryDeleted = 'category_deleted';
@@ -21,6 +22,11 @@ class iaBackendController extends iaAbstractControllerPackageBackend
 	public function init()
 	{
 		$this->_root = $this->getHelper()->getRoot();
+	}
+
+	public function _gridQuery($columns, $where, $order, $start, $limit)
+	{
+		return $this->getHelper()->get($columns, $where, $order, $start, $limit);
 	}
 
 	protected function _setPageTitle(&$iaView, array $entryData, $action)
@@ -59,12 +65,12 @@ class iaBackendController extends iaAbstractControllerPackageBackend
 			$this->_writeLog(iaCore::ACTION_EDIT, $entryData, $entryId);
 			$this->updateCounters($entryId, $entryData, iaCore::ACTION_EDIT, $currentData);
 
-			$this->_iaCore->startHook('phpListingUpdated', array(
+			$this->_iaCore->startHook('phpListingUpdated', [
 				'itemId' => $entryId,
 				'itemName' => $this->getItemName(),
 				'itemData' => $entryData,
 				'previousData' => $currentData
-			));
+			]);
 		}
 
 		return $result;
@@ -77,14 +83,14 @@ class iaBackendController extends iaAbstractControllerPackageBackend
 
 	protected function _setDefaultValues(array &$entry)
 	{
-		$entry = array(
+		$entry = [
 			'parent_id' => $this->_root['id'],
 			'parents' => 0,
 			'locked' => false,
 			'featured' => false,
 			'status' => iaCore::STATUS_ACTIVE,
 			'title_alias' => ''
-		);
+		];
 	}
 
 	protected function _preSaveEntry(array &$entry, array $data, $action)
@@ -121,7 +127,7 @@ class iaBackendController extends iaAbstractControllerPackageBackend
 			foreach (explode(',', $data['crossed']) as $id)
 			{
 				if (!$id) continue;
-				$this->_iaDb->insert(array('category_id' => $this->getEntryId(), 'crossed_id' => $id));
+				$this->_iaDb->insert(['category_id' => $this->getEntryId(), 'crossed_id' => $id]);
 			}
 		}
 
@@ -148,33 +154,9 @@ class iaBackendController extends iaAbstractControllerPackageBackend
 		$iaView->assign('parent', $parent);
 	}
 
-	protected function _fetchCrossed()
-	{
-		$sql = 'SELECT c.`id`, c.`title_:lang` '
-			. 'FROM `:prefix:table_categories` c, `:prefix:table_crossed` cr '
-			. 'WHERE c.`id` = cr.`crossed_id` AND cr.`category_id` = :id';
-
-		$sql = iaDb::printf($sql, array(
-			'lang' => $this->_iaCore->language['iso'],
-			'prefix' => $this->_iaDb->prefix,
-			'table_categories' => self::getTable(),
-			'table_crossed' => $this->getHelper()->getTableCrossed(),
-			'id' => $this->getEntryId()
-		));
-
-		return $this->_iaDb->getKeyValue($sql);
-	}
-
-	protected function _getJsonSlug(array $data)
-	{
-		$title = $this->getHelper()->getSlug($data['title'], (int)$data['category']);
-
-		return array('data' => $this->getHelper()->url('default', array('title_alias' => $title)));
-	}
-
 	protected function _getJsonTree(array $data)
 	{
-		$output = array();
+		$output = [];
 
 		$dynamicLoadMode = ((int)$this->_iaDb->one(iaDb::STMT_COUNT_ROWS) > 150);
 		$noRootMode = isset($data['noroot']) && '' == $data['noroot'];
@@ -194,11 +176,11 @@ class iaBackendController extends iaAbstractControllerPackageBackend
 
 		$where.= ' ORDER BY `title`';
 
-		$rows = $this->_iaDb->all(array('id', 'title' => 'title_' . $this->_iaCore->language['iso'], 'parent_id', 'child'), $where);
+		$rows = $this->_iaDb->all(['id', 'title' => 'title_' . $this->_iaCore->language['iso'], 'parent_id', 'child'], $where);
 
 		foreach ($rows as $row)
 		{
-			$entry = array('id' => $row['id'], 'text' => $row['title']);
+			$entry = ['id' => $row['id'], 'text' => $row['title']];
 
 			if ($dynamicLoadMode)
 			{
@@ -206,7 +188,7 @@ class iaBackendController extends iaAbstractControllerPackageBackend
 			}
 			else
 			{
-				$entry['state'] = array();
+				$entry['state'] = [];
 				$entry['parent'] = $noRootMode
 					? (0 == $row['parent_id'] ? '#' : $row['parent_id'])
 					: (0 == $row['id'] ? '#' : $row['parent_id']);
@@ -218,9 +200,35 @@ class iaBackendController extends iaAbstractControllerPackageBackend
 		return $output;
 	}
 
+
+	protected function _fetchCrossed()
+	{
+		$sql = <<<SQL
+SELECT c.`id`, c.`title_:lang` 
+	FROM `:prefix:table_categories` c, `:prefix:table_crossed` cr 
+WHERE c.`id` = cr.`crossed_id` && cr.`category_id` = :id
+SQL;
+		$sql = iaDb::printf($sql, [
+			'lang' => $this->_iaCore->language['iso'],
+			'prefix' => $this->_iaDb->prefix,
+			'table_categories' => self::getTable(),
+			'table_crossed' => $this->getHelper()->getTableCrossed(),
+			'id' => $this->getEntryId()
+		]);
+
+		return $this->_iaDb->getKeyValue($sql);
+	}
+
+	protected function _getJsonSlug(array $data)
+	{
+		$title = $this->getHelper()->getSlug($data['title'], (int)$data['category']);
+
+		return ['data' => $this->getHelper()->url('default', ['title_alias' => $title])];
+	}
+
 	protected function _getJsonConsistency(array $data)
 	{
-		$output = array();
+		$output = [];
 
 		if (isset($_POST['action']))
 		{

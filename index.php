@@ -8,27 +8,27 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType())
 
 	if (isset($iaCore->requestPath[0]))
 	{
-		if ($value = $iaDb->one_bind('name', '`alias` = :alias', array('alias' => iaSanitize::sql($iaCore->requestPath[0]) . "/'"), 'pages'))
+		if ($value = $iaDb->one_bind('name', '`alias` = :alias', ['alias' => iaSanitize::sql($iaCore->requestPath[0]) . "/'"], 'pages'))
 		{
 			array_shift($iaCore->requestPath);
 			$pageName = $value;
 		}
 	}
 
-	$pagination = array(
+	$pagination = [
 		'total' => 0,
 		'limit' => $iaCore->get('directory_listings_perpage', 10),
 		'start' => 0,
 		'url' => IA_SELF . '?page={page}'
-	);
+	];
 
 	$page = isset($_GET['page']) && is_numeric($_GET['page']) ? max((int)$_GET['page'], 1) : 1;
 	$pagination['start'] = ($page - 1) * $pagination['limit'];
 
 	$order = '';
 
-	$listings = array();
-	$orders = array('date_added-asc', 'date_added-desc', 'rank-desc', 'rank-asc', 'title-desc', 'title-asc');
+	$listings = [];
+	$orders = ['date_added-asc', 'date_added-desc', 'rank-desc', 'rank-asc', 'title-desc', 'title-asc'];
 
 	if (!isset($_SESSION['d_order']))
 	{
@@ -139,7 +139,7 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType())
 				$condition = "`id` IN({$category['parents']}) AND `parent_id` != -1 AND `status` = 'active'";
 				$parents = $iaCateg->get($condition, 0, null, null, 'c.*', 'level');
 
-				$filters = array(); // pre-fill filters
+				$filters = []; // pre-fill filters
 
 				foreach ($parents as $key => $parent)
 				{
@@ -174,7 +174,7 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType())
 
 	$pagination['total'] = $iaListing->getFoundRows();
 
-	iaLanguage::set('no_web_listings', iaLanguage::getf('no_web_listings', array('url' => IA_PACKAGE_URL . 'add/' . (isset($category) && $category ? '?category=' . $category['id'] : ''))));
+	iaLanguage::set('no_web_listings', iaLanguage::getf('no_web_listings', ['url' => IA_PACKAGE_URL . 'add/' . (isset($category) && $category ? '?category=' . $category['id'] : '')]));
 
 	if ($listings)
 	{
@@ -185,23 +185,23 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType())
 
 	if ($iaAcl->isAccessible('add_listing', iaCore::ACTION_ADD))
 	{
-		$pageActions[] = array(
+		$pageActions[] = [
 			'icon' => 'plus-square',
 			'title' => iaLanguage::get('add_listing'),
 			'url' => IA_PACKAGE_URL . 'add/' . (empty($category['id']) ? '' : '?category=' . $category['id'])
-		);
+		];
 	}
 
 	$rssFeed = $rssFeed ? $rssFeed . '.' . iaCore::EXTENSION_XML : 'latest.' . iaCore::EXTENSION_XML;
 
 	if ('my_listings' != $pageName && 'random_listings' != $pageName)
 	{
-		$pageActions[] = array(
+		$pageActions[] = [
 			'icon' => 'rss ',
 			'title' => null,
 			'url' => IA_PACKAGE_URL . 'rss/' . $rssFeed,
 			'classes' => 'btn-warning'
-		);
+		];
 	}
 
 	$iaView->set('actions', $pageActions);
@@ -234,23 +234,23 @@ if (iaView::REQUEST_XML == $iaView->getRequestType())
 		$listings = $iaListing->get($stmt, 0, $limit);
 	}
 
-	$output = array(
+	$output = [
 		'title' => $iaCore->get('site'),
 		'description' => '',
 		'url' => IA_URL,
-		'item' => array()
-	);
+		'item' => []
+	];
 
 	foreach ($listings as $listing)
 	{
-		$output['item'][] = array(
+		$output['item'][] = [
 			'title' => $listing['title'],
 			'guid' => $iaListing->url('view', $listing),
 			'link' => $iaListing->url('view', $listing),
 			'pubDate' => date('D, d M Y H:i:s T', strtotime($listing['date_added'])),
 			'description' => iaSanitize::tags($listing['summary']),
 			'category' => isset($category) ? $category : $listing['category_title']
-		);
+		];
 	}
 
 	$iaView->assign('channel', $output);

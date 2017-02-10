@@ -29,7 +29,7 @@ $(function()
 		var timer = setInterval(function()
 		{
 			$.post(url, {start: start, limit: limit, action: action}, function(response)
-			{ console.log(response)
+			{
 				start += limit;
 				progress = Math.round(start / total * 100);
 

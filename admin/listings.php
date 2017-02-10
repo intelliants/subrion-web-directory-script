@@ -7,13 +7,13 @@ class iaBackendController extends iaAbstractControllerPackageBackend
 
 	protected $_helperName = 'listing';
 
-	protected $_gridColumns = array('title', 'title_alias', 'date_added', 'date_modified', 'reported_as_broken', 'reported_as_broken_comments', 'status');
-	protected $_gridFilters = array('title' => self::LIKE, 'status' => self::EQUAL);
+	protected $_gridColumns = ['title', 'title_alias', 'date_added', 'date_modified', 'reported_as_broken', 'reported_as_broken_comments', 'status'];
+	protected $_gridFilters = ['title' => self::LIKE, 'status' => self::EQUAL];
 	protected $_gridQueryMainTableAlias = 'l';
 
 	protected $_phraseAddSuccess = 'listing_added';
 
-	protected $_activityLog = array('item' => 'listing');
+	protected $_activityLog = ['item' => 'listing'];
 
 	private $_iaCateg;
 
@@ -74,14 +74,14 @@ class iaBackendController extends iaAbstractControllerPackageBackend
 
 	protected function _setDefaultValues(array &$entry)
 	{
-		$entry = array(
+		$entry = [
 			'member_id' => iaUsers::getIdentity()->id,
 			'category_id' => 0,
 			'crossed' => false,
 			'sponsored' => false,
 			'featured' => false,
 			'status' => iaCore::STATUS_ACTIVE
-		);
+		];
 	}
 
 	protected function _preSaveEntry(array &$entry, array $data, $action)
@@ -141,7 +141,7 @@ class iaBackendController extends iaAbstractControllerPackageBackend
 		{
 			foreach (explode(',', $data['crossed_links']) as $categoryId)
 			{
-				$this->_iaDb->insert(array('listing_id' => $this->getEntryId(), 'category_id' => $categoryId));
+				$this->_iaDb->insert(['listing_id' => $this->getEntryId(), 'category_id' => $categoryId]);
 				$this->_iaCateg->changeNumListing($categoryId);
 			}
 		}
@@ -197,19 +197,21 @@ class iaBackendController extends iaAbstractControllerPackageBackend
 		$iaView->assign('statuses', $this->getHelper()->getStatuses());
 	}
 
+
 	protected function _fetchCrossedCategories()
 	{
-		$sql = 'SELECT c.`id`, c.`title_:lang` '
-			. 'FROM `:prefix:table_categories` c, `:prefix:table_crossed` cr '
-			. 'WHERE c.`id` = cr.`category_id` AND cr.`listing_id` = :id';
-
-		$sql = iaDb::printf($sql, array(
+		$sql = <<<SQL
+SELECT c.`id`, c.`title_:lang`
+	FROM `:prefix:table_categories` c, `:prefix:table_crossed` cr 
+WHERE c.`id` = cr.`category_id` && cr.`listing_id` = :id
+SQL;
+		$sql = iaDb::printf($sql, [
 			'prefix' => $this->_iaDb->prefix,
 			'table_categories' => iaCateg::getTable(),
 			'table_crossed' => 'listings_categs',
 			'lang' => $this->_iaCore->language['iso'],
 			'id' => $this->getEntryId()
-		));
+		]);
 
 		return $this->_iaDb->getKeyValue($sql);
 	}
@@ -233,12 +235,12 @@ class iaBackendController extends iaAbstractControllerPackageBackend
 			? ''
 			: $this->_iaDb->one('title_alias', iaDb::convertIds($data['category']), iaCateg::getTable());
 
-		$slug = $this->getHelper()->url('view', array(
+		$slug = $this->getHelper()->url('view', [
 			'id' => empty($data['id']) ? $this->_iaDb->getNextId() : $data['id'],
 			'title_alias' => $title,
 			'category_alias' => $categorySlug
-		));
+		]);
 
-		return array('data' => $slug);
+		return ['data' => $slug];
 	}
 }
