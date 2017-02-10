@@ -308,10 +308,7 @@ class iaListing extends abstractDirectoryPackageFront
 
 				$crossedLimit = $this->iaCore->get('listing_crossed_limit', 5);
 
-				if (!is_array($crossed))
-				{
-					$crossed = explode(',', $crossed);
-				}
+				is_array($crossed) || $crossed = explode(',', $crossed);
 
 				$count = count($crossed) > $crossedLimit ? $crossedLimit : count($crossed);
 				$crossedInput = [];
@@ -324,10 +321,7 @@ class iaListing extends abstractDirectoryPackageFront
 					}
 				}
 
-				if (count($crossedInput) > 0)
-				{
-					$this->iaDb->insert($crossedInput);
-				}
+				$crossedInput && $this->iaDb->insert($crossedInput);
 
 				$this->iaDb->resetTable();
 			}
@@ -391,7 +385,7 @@ class iaListing extends abstractDirectoryPackageFront
 	/**
 	 * Delete listing record
 	 *
-	 * @param $listingData listing details
+	 * @param array $listingData listing details
 	 *
 	 * @return bool
 	 */
@@ -406,11 +400,9 @@ class iaListing extends abstractDirectoryPackageFront
 				$crossed = $this->iaDb->onefield('category_id', "`listing_id` = '{$listingData['id']}'", 0, null, self::getTableCrossed());
 
 				foreach ($crossed as $ccid)
-				{
 					$this->_changeNumListing($ccid, -1);
-				}
 
-				$this->iaDb->delete("`listing_id` = '{$listingData['id']}'", self::getTableCrossed());
+				$this->iaDb->delete(iaDb::convertIds($listingData['id'], 'listing_id'), self::getTableCrossed());
 			}
 
 			$this->_changeNumListing($listingData['category_id'], -1);
@@ -474,28 +466,8 @@ SQL;
 
 		if ($rows)
 		{
-			//$iaCateg = $this->iaCore->factoryPackage('categ', $this->getPackageName());
-
 			foreach ($rows as &$row)
-			{
-				if (!empty($row['category_breadcrumb'])) // primary case
-				{
-					$row['breadcrumb'] = unserialize($row['category_breadcrumb']);
-				}
-				/*elseif (!empty($row['category_parents'])) // alternative way (will be removed later)
-				{
-					$condition = "`id` IN({$row['category_parents']}) AND `parent_id` != -1 AND `status` = 'active'";
-					$parents = $iaCateg->get($condition, 0, null, null, 'c.*', 'level');
-
-					$row['breadcrumb'] = [];
-					foreach ($parents as $parent)
-						$row['breadcrumb'][$parent['title']] = str_replace(IA_URL, '', $iaCateg->url('view', $parent));
-				}*/
-				else
-				{
-					$row['breadcrumb'] = [];
-				}
-			}
+				$row['breadcrumb'] = empty($row['category_breadcrumb']) ? [] : unserialize($row['category_breadcrumb']);
 		}
 
 		return $rows;

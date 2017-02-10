@@ -31,9 +31,7 @@ class iaCateg extends abstractDirectoryPackageAdmin
 			$baseUrl = $this->getInfo('url');
 
 			foreach ($entries as $entry)
-			{
 				$result[] = $baseUrl . $entry['title_alias'];
-			}
 		}
 
 		return $result;
@@ -61,7 +59,6 @@ class iaCateg extends abstractDirectoryPackageAdmin
 
 		return $result;
 	}
-
 
 	public function get($columns, $where, $order = '', $start = null, $limit = null)
 	{
@@ -97,19 +94,10 @@ SQL;
 		$data['base'] = IA_URL_DELIMITER != $this->getInfo('url') ? $this->getInfo('url') : '';
 		$data['action'] = $action;
 
-		if (isset($params['prefix']) && !empty($params['prefix']))
-		{
-			$data['title'] = $data[$params['prefix'] . 'title'];
-			$data['title_alias'] = $data[$params['prefix'] . 'alias'];
-		}
+		$data['title_alias'] = isset($params['title_alias']) ? $params['title_alias'] : '';
+		$data['title_alias'] = isset($params['category_alias']) ? $params['category_alias'] : $params['title_alias'];
 
-		$data['title_alias'] = (!isset($params['title_alias']) ? '' : $params['title_alias']);
-		$data['title_alias'] = (!isset($params['category_alias']) ? $params['title_alias'] : $params['category_alias']);
-
-		if (!isset($this->_urlPatterns[$action]))
-		{
-			$action = 'default';
-		}
+		isset($this->_urlPatterns[$action]) || $action = 'default';
 
 		return iaDb::printf($this->_urlPatterns[$action], $data);
 	}
@@ -146,6 +134,9 @@ SQL;
 
 		$iaDb = &$this->iaDb;
 
+		// this is by default limited to 1024 sym length
+		// it makes impossible to correctly store data for categories with large number of children
+		// so we need to extend it
 		$iaDb->query('SET SESSION group_concat_max_len = 65535');
 
 		$iaDb->truncate($tableFlat);
@@ -231,14 +222,14 @@ SQL;
 					$_num_all_listings = $this->iaDb->one('SUM(`num_listings`)', "`id` IN ({$cat['child']})", iaCateg::getTable());
 				}
 
-				$_num_all_listings += $_num_listings;
+				$_num_all_listings+= $_num_listings;
 
 				$crossed = $this->iaDb->one('COUNT(`category_id`) `num`', iaDb::convertIds($_id, 'category_id'), 'listings_categs');
 
 				if ($crossed)
 				{
-					$_num_listings += $crossed;
-					$_num_all_listings += $crossed;
+					$_num_listings+= $crossed;
+					$_num_all_listings+= $crossed;
 				}
 
 				$this->iaDb->update(['num_listings' => $_num_listings, 'num_all_listings' => $_num_all_listings], iaDb::convertIds($_id));

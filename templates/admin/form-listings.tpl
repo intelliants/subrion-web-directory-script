@@ -5,31 +5,6 @@
 
 	{capture name='general' append='fieldset_before'}
 		{include 'tree.tpl' url="{$smarty.const.IA_ADMIN_URL}directory/categories/tree.json?noroot"}
-		{* <div id="category_fieldzone" class="row">
-			<label class="col col-lg-2 control-label">
-				{lang key='field_category_id'}<br>
-				<a href="#" class="categories-toggle" id="js-tree-toggler">{lang key='open_close'}</a>
-			</label>
-			<div class="col col-lg-4">
-				<input type="text" id="js-category-label" value="{if $category}{$category.title|escape:'html'}{else}{lang key='field_category_id'}{/if}" disabled>
-				<div id="js-tree" class="tree categories-tree"></div>
-				<input type="hidden" name="category_id" id="input-category" value="{if !isset($item.category_id)}1{else}{$item.category_id}{/if}">
-			</div>
-		</div>
-
-		{ia_add_js}
-$(function()
-{
-	new IntelliTree(
-	{
-		url: intelli.config.ia_url + 'directory/categories/read.json?get=tree',
-		onchange: intelli.fillUrlBox,
-		nodeOpened: [0,{$category.parents}],
-		nodeSelected: {$item.category_id}
-	});
-});
-		{/ia_add_js}
-		{ia_add_media files='tree' *}
 
 		{if $core.config.listing_crossed}
 			<div id="crossed_fieldzone" class="row">

@@ -25,13 +25,6 @@ class iaCateg extends abstractDirectoryPackageFront
 
 	public function url($action, array $data)
 	{
-		// commented out by @Batry (what does this block do? there is no any passed 'prefix' in this package)
-		/*if (!empty($data['prefix']))
-		{
-			$data['title'] = $data[$data['prefix'] . 'title'];
-			$data['title_alias'] = $data[$data['prefix'] . 'alias'];
-		}*/
-
 		$baseUrl = ($this->getPackageName() == $this->iaCore->get('default_package'))
 			? IA_URL
 			: $this->iaCore->packagesData[$this->getPackageName()]['url'];
@@ -107,8 +100,8 @@ SQL;
 
 			for($i = 1; $i <= $count; $i++)
 			{
-				$sql .= 'LEFT JOIN ' . $table . ' h' . $i . ' ON (h' . $i . '.`parent_id` = h' . ($i - 1) . '.`id`) ';
-				$where .= ' AND h' . $i . '.`id` IS NOT NULL';
+				$sql.= 'LEFT JOIN ' . $table . ' h' . $i . ' ON (h' . $i . '.`parent_id` = h' . ($i - 1) . '.`id`) ';
+				$where.= ' AND h' . $i . '.`id` IS NOT NULL';
 			}
 			if ($iaDb->query($sql . $where))
 			{
@@ -147,34 +140,4 @@ SQL;
 
 		return $this->iaDb->getKeyValue($sql);
 	}
-/*
-	public function getTitleAlias($category, $parent = array())
-	{
-		if (-1 == $category['parent_id'])
-		{
-			return '';
-		}
-
-		$title = iaSanitize::alias($category['title_alias']);
-
-		if ('category' == $title)
-		{
-			$id = $this->iaDb->getNextId(self::getTable());
-			$title .= '-' . $id;
-		}
-
-		if (empty($parent) || $category['parent_id'] != $parent['id'])
-		{
-			$parent = $this->iaDb->row(array('id', 'title_alias'), iaDb::convertIds($category['parent_id']), self::getTable());
-		}
-
-		$title = ltrim($parent['title_alias'] . $title . IA_URL_DELIMITER, IA_URL_DELIMITER);
-
-		if ($this->iaCore->get('directory_lowercase_urls', true))
-		{
-			$title = strtolower($title);
-		}
-
-		return $title;
-	}*/
 }

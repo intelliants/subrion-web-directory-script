@@ -34,9 +34,7 @@ class iaListing extends abstractDirectoryPackageAdmin
 				$crossed = $this->iaDb->onefield('category_id', $stmt, 0, null, self::getTableCrossed());
 
 				foreach ($crossed as $ccid)
-				{
 					$this->_changeNumListing($ccid, -1);
-				}
 
 				$this->iaDb->delete($stmt, self::getTableCrossed());
 			}
@@ -60,9 +58,7 @@ class iaListing extends abstractDirectoryPackageAdmin
 		if ($entries = $this->get('l.`title_alias`', $stmt, 'l.`date_modified` DESC'))
 		{
 			foreach ($entries as $entry)
-			{
 				$result[] = $this->url('view', $entry);
-			}
 		}
 
 		return $result;
@@ -139,6 +135,7 @@ SQL;
 					$listing = $this->get('l.`id`, l.`title`, l.`title_alias`, l.`status` ', 'l.`id` = ' . $listingId);
 					$listingData = is_array($listing) && $listing ? array_shift($listing) : $listingData;
 				}
+
 				$iaMailer = $this->iaCore->factory('mailer');
 
 				$iaMailer->loadTemplate('listing_' . $listingData['status']);

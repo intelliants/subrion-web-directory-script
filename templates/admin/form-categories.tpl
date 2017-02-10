@@ -6,31 +6,7 @@
 	{if -1 != $item.parent_id}
 		{capture name='general' append='fieldset_before'}
 			{include 'tree.tpl' url="{$smarty.const.IA_ADMIN_URL}directory/categories/tree.json?cid={$id}"}
-			{*<div id="parent_fieldzone" class="row">
-				<label class="col col-lg-2 control-label">
-					{lang key='parent_category'}<br>
-					<a href="#" class="categories-toggle" id="js-tree-toggler">{lang key='open_close'}</a>
-				</label>
-				<div class="col col-lg-4">
-					<input type="text" id="js-category-label" value="{if $parent}{$parent.title|escape:'html'}{else}{lang key='field_category_id'}{/if}" disabled>
-					<div id="js-tree" class="tree categories-tree"{if iaCore::ACTION_EDIT == $pageAction} style="display:none"{/if}></div>
-					<input type="hidden" name="parent_id" id="input-category" value="{$item.parent_id}">
-				</div>
-			</div>
-			{ia_add_js}
-$(function()
-{
-	intelli.cid = $('input[name="id"]').val();
 
-	new IntelliTree(
-	{
-		url: intelli.config.admin_url + '/directory/categories/tree.json?cid=' + intelli.cid,
-		onchange: intelli.fillUrlBox,
-		nodeOpened: [0,{if isset($item.parents)}{$item.parents}{/if}],
-		nodeSelected: {$parent.id}
-	});
-});
-			{/ia_add_js*}
 			<div id="crossed_fieldzone" class="row">
 				<label class="col col-lg-2 control-label">
 					{lang key='crossed_categories'} <span class="label label-info" id="crossed-limit">{count($item.crossed)|default:0}</span><br>

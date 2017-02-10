@@ -317,7 +317,5 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType())
 	$iaView->assign('item', $listing);
 	$iaView->assign('category', $category);
 
-	//$iaView->title(iaLanguage::get('page_title_' . $pageAction . '_listing')); /*-- @batry commented out --*/
-
 	$iaView->display('manage');
 }
