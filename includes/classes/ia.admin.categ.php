@@ -180,12 +180,10 @@ SQL;
 	public function changeNumListing($categoryId, $increment = 1)
 	{
 		$sql = <<<SQL
-UPDATE `:table_categs` 
-SET `num_listings` = IF(`id` = :category, `num_listings` + :increment, `num_listings`),
+UPDATE `:table_categs` SET `num_listings` = IF(`id` = :category, `num_listings` + :increment, `num_listings`),
 	`num_all_listings` = `num_all_listings` + :increment
 WHERE FIND_IN_SET(:category, `child`)
 SQL;
-
 		$sql = iaDb::printf($sql, [
 			'table_categs' => self::getTable(true),
 			'category' => (int)$categoryId,

@@ -18,11 +18,6 @@ class iaCateg extends abstractDirectoryPackageFront
 	];
 
 
-	public static function getTableCrossed()
-	{
-		return self::$_tableCrossed;
-	}
-
 	public function url($action, array $data)
 	{
 		$baseUrl = ($this->getPackageName() == $this->iaCore->get('default_package'))
@@ -33,6 +28,11 @@ class iaCateg extends abstractDirectoryPackageFront
 			: $data['title_alias'];
 
 		return $baseUrl . $slug;
+	}
+
+	public static function getTableCrossed()
+	{
+		return self::$_tableCrossed;
 	}
 
 	public function get($where = '', $catId = '0', $start = 0, $limit = null, $fields = 'c.*', $order = null)
