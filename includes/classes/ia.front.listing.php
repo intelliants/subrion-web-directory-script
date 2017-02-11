@@ -35,9 +35,9 @@ class iaListing extends abstractDirectoryPackageFront
 	{
 		parent::init();
 
-		$this->_baseUrl = $this->getPackageName() == $this->iaCore->get('default_package')
+		$this->_baseUrl = $this->getModuleName() == $this->iaCore->get('default_package')
 			? IA_URL
-			: $this->iaCore->packagesData[$this->getPackageName()]['url'];
+			: $this->iaCore->packagesData[$this->getModuleName()]['url'];
 	}
 
 	public static function getTableCrossed()
@@ -117,7 +117,7 @@ class iaListing extends abstractDirectoryPackageFront
 
 			case 'c':
 			case 'sc':
-				$iaCateg = $this->iaCore->factoryModule('categ', $this->getPackageName());
+				$iaCateg = $this->iaCore->factoryModule('categ', $this->getModuleName());
 
 				$child = $this->iaDb->one('child', iaDb::convertIds((int)$value), $iaCateg::getTable());
 

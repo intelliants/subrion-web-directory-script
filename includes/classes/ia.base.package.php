@@ -9,12 +9,12 @@ interface iaDirectoryPackage
 	const STATUS_SUSPENDED = 'suspended';
 }
 
-abstract class abstractDirectoryPackageAdmin extends abstractPackageAdmin implements iaDirectoryPackage
+abstract class abstractDirectoryPackageAdmin extends abstractModuleAdmin implements iaDirectoryPackage
 {
-	protected $_packageName = 'directory';
+	protected $_moduleName = 'directory';
 }
 
-abstract class abstractDirectoryPackageFront extends abstractPackageFront implements iaDirectoryPackage
+abstract class abstractDirectoryPackageFront extends abstractModuleFront implements iaDirectoryPackage
 {
-	protected $_packageName = 'directory';
+	protected $_moduleName = 'directory';
 }

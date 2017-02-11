@@ -1,9 +1,10 @@
 <?php
 //##copyright##
 
-class iaBackendController extends iaAbstractControllerPackageBackend
+class iaBackendController extends iaAbstractControllerModuleBackend
 {
 	protected $_name = 'categories';
+	protected $_itemName = 'categs';
 
 	protected $_helperName = 'categ';
 

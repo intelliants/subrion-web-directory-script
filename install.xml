@@ -20,10 +20,10 @@
 		<screenshot name="4.jpg">Admin Panel: Submit Listing page</screenshot>
 	</screenshots>
 
-	<packageitems>
+	<items>
 		<item pages="favorites,view_member" main="view_listing,add_listing,edit_listing">listings</item>
 		<item payable="0">categs</item>
-	</packageitems>
+	</items>
 
 	<actions>
 		<action name="listings" url="directory/listings/" icon="list-2" pages="directory_stats,manage_listings:add,manage_listings:edit"><![CDATA[]]></action>

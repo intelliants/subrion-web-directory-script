@@ -250,7 +250,7 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType())
 			$item['category_alias'] = $category['title_alias'];
 			$url = (iaCore::STATUS_ACTIVE == $item['status'] ||
 				(iaUsers::hasIdentity() && iaCore::STATUS_APPROVAL == $item['status']))
-				? $iaListing->url('view', $iaListing->getById($id)) : $iaCore->packagesData[$iaListing->getPackageName()]['url'];
+				? $iaListing->url('view', $iaListing->getById($id)) : $iaCore->packagesData[$iaListing->getModuleName()]['url'];
 
 			// if plan is chosen
 			if (isset($_POST['plan_id']) && $_POST['plan_id'] && $_POST['plan_id'] != $listing['sponsored_plan_id'])

@@ -20,9 +20,9 @@ class iaCateg extends abstractDirectoryPackageFront
 
 	public function url($action, array $data)
 	{
-		$baseUrl = ($this->getPackageName() == $this->iaCore->get('default_package'))
+		$baseUrl = ($this->getModuleName() == $this->iaCore->get('default_package'))
 			? IA_URL
-			: $this->iaCore->packagesData[$this->getPackageName()]['url'];
+			: $this->iaCore->packagesData[$this->getModuleName()]['url'];
 		$slug = isset($data['category_alias'])
 			? $data['category_alias']
 			: $data['title_alias'];
@@ -123,7 +123,7 @@ SQL;
 	 */
 	public function getCrossedByListingId($listingId)
 	{
-		$this->iaCore->factoryModule('listing', $this->getPackageName());
+		$this->iaCore->factoryModule('listing', $this->getModuleName());
 
 		$sql = <<<SQL
 SELECT c.`id`, c.`title_:lang` `title` 
