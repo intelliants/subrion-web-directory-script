@@ -285,13 +285,16 @@ class iaListing extends abstractDirectoryPackageFront
 
 	public function update(array $listing, $id)
 	{
+		// prevent accidental update
+		if (!$id) return false;
+
 		$oldData = $this->getById($id);
 		$status = isset($listing['status']) ? $listing['status'] : false;
 		$categ = isset($listing['category_id']) ? $listing['category_id'] : $oldData['category_id'];
 
 		if ($this->iaCore->get('listing_crossed'))
 		{
-			$crossed = $this->iaDb->onefield('category_id', "`listing_id` = '{$listing['id']}'", 0, null, self::getTableCrossed());
+			$crossed = $this->iaDb->onefield('category_id', iaDb::convertIds($id, 'listing_id'), 0, null, self::getTableCrossed());
 
 			if (isset($listing['crossed_links']))
 			{
@@ -304,7 +307,7 @@ class iaListing extends abstractDirectoryPackageFront
 			{
 				$this->iaDb->setTable(self::getTableCrossed());
 
-				$this->iaDb->delete(iaDb::convertIds($listing['id'], 'listing_id'));
+				$this->iaDb->delete(iaDb::convertIds($id, 'listing_id'));
 
 				$crossedLimit = $this->iaCore->get('listing_crossed_limit', 5);
 
@@ -317,7 +320,7 @@ class iaListing extends abstractDirectoryPackageFront
 				{
 					if ($crossed[$i] != $listing['category_id'])
 					{
-						$crossedInput[] = ['listing_id' => $listing['id'], 'category_id' => (int)$crossed[$i]];
+						$crossedInput[] = ['listing_id' => $id, 'category_id' => (int)$crossed[$i]];
 					}
 				}
 
@@ -327,7 +330,7 @@ class iaListing extends abstractDirectoryPackageFront
 			}
 		}
 
-		$return = $this->iaDb->update($listing, iaDb::convertIds($listing['id']), ['date_modified' => iaDb::FUNCTION_NOW], self::getTable());
+		$return = $this->iaDb->update($listing, iaDb::convertIds($id), ['date_modified' => iaDb::FUNCTION_NOW], self::getTable());
 
 		// If status changed
 		if ($categ == $oldData['category_id'])
