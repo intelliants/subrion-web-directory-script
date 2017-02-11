@@ -7,7 +7,7 @@ class iaBackendController extends iaAbstractControllerPackageBackend
 
 	protected $_helperName = 'listing';
 
-	protected $_gridColumns = ['title', 'title_alias', 'date_added', 'date_modified', 'reported_as_broken', 'reported_as_broken_comments', 'status'];
+	protected $_gridColumns = ['title', 'title_alias', 'url', 'date_added', 'date_modified', 'reported_as_broken', 'reported_as_broken_comments', 'status'];
 	protected $_gridFilters = ['title' => self::LIKE, 'status' => self::EQUAL];
 	protected $_gridQueryMainTableAlias = 'l';
 

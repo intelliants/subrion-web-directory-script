@@ -8,6 +8,7 @@ Ext.onReady(function()
 				'selection',
 				{name: 'title', title: _t('title'), width: 1, editor: 'text'},
 				{name: 'title_alias', title: _t('title_alias'), width: 1},
+				{name: 'url', title: _t('url'), width: 200, hidden: true},
 				{name: 'category_title', title: _t('category'), width: 140},
 				{name: 'member', title: _t('owner'), width: 140},
 				{name: 'date_added', title: _t('date_added'), width: 100},
@@ -22,7 +23,7 @@ Ext.onReady(function()
 				'update',
 				'delete'
 			],
-			fields: ['reported_as_broken_comments'],
+			fields: ['reported_as_broken_comments', 'url'],
 			sorters: [{property: 'date_modified', direction: 'DESC'}],
 			statuses: ['active', 'approval', 'banned', 'suspended'],
 			texts: {
