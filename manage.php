@@ -187,7 +187,7 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType())
 				// check alexa
 				if ($iaCore->get('directory_enable_alexarank'))
 				{
-					include IA_MODULES . $iaCore->packagesData['directory']['name'] . IA_DS . 'includes' . IA_DS . 'alexarank.inc.php';
+					include IA_MODULES . $iaCore->modulesData['directory']['name'] . IA_DS . 'includes' . IA_DS . 'alexarank.inc.php';
 					$iaAlexaRank = new iaAlexaRank();
 
 					$alexaData = $iaAlexaRank->getAlexa($item['domain']);
@@ -250,7 +250,7 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType())
 			$item['category_alias'] = $category['title_alias'];
 			$url = (iaCore::STATUS_ACTIVE == $item['status'] ||
 				(iaUsers::hasIdentity() && iaCore::STATUS_APPROVAL == $item['status']))
-				? $iaListing->url('view', $iaListing->getById($id)) : $iaCore->packagesData[$iaListing->getModuleName()]['url'];
+				? $iaListing->url('view', $iaListing->getById($id)) : $iaCore->modulesData[$iaListing->getModuleName()]['url'];
 
 			// if plan is chosen
 			if (isset($_POST['plan_id']) && $_POST['plan_id'] && $_POST['plan_id'] != $listing['sponsored_plan_id'])

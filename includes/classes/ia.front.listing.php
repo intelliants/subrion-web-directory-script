@@ -37,7 +37,7 @@ class iaListing extends abstractDirectoryPackageFront
 
 		$this->_baseUrl = $this->getModuleName() == $this->iaCore->get('default_package')
 			? IA_URL
-			: $this->iaCore->packagesData[$this->getModuleName()]['url'];
+			: $this->iaCore->modulesData[$this->getModuleName()]['url'];
 	}
 
 	public static function getTableCrossed()

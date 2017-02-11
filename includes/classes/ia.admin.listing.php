@@ -1,7 +1,7 @@
 <?php
 //##copyright##
 
-class iaListing extends abstractDirectoryPackageAdmin
+class iaListing extends abstractDirectoryModuleAdmin
 {
 	protected static $_table = 'listings';
 	protected static $_tableCrossed = 'listings_categs';

@@ -22,7 +22,7 @@ class iaCateg extends abstractDirectoryPackageFront
 	{
 		$baseUrl = ($this->getModuleName() == $this->iaCore->get('default_package'))
 			? IA_URL
-			: $this->iaCore->packagesData[$this->getModuleName()]['url'];
+			: $this->iaCore->modulesData[$this->getModuleName()]['url'];
 		$slug = isset($data['category_alias'])
 			? $data['category_alias']
 			: $data['title_alias'];

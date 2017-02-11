@@ -1,7 +1,7 @@
 <?php
 //##copyright##
 
-class iaCateg extends abstractDirectoryPackageAdmin
+class iaCateg extends abstractDirectoryModuleAdmin
 {
 	protected static $_table = 'categs';
 	protected $_tableFlat = 'categs_flat';
