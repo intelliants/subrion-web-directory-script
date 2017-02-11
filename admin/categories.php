@@ -11,6 +11,8 @@ class iaBackendController extends iaAbstractControllerPackageBackend
 	protected $_gridFilters = ['title' => self::LIKE, 'status' => self::EQUAL];
 	protected $_gridQueryMainTableAlias = 'c';
 
+	protected $_tooltipsEnabled = true;
+
 	protected $_activityLog = ['item' => 'category'];
 
 	protected $_phraseAddSuccess = 'category_added';
