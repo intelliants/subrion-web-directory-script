@@ -259,6 +259,7 @@
 		<phrase category="common" key="listings">Listings</phrase>
 		<phrase category="common" key="listing_added">Listing added.</phrase>
 		<phrase category="common" key="listing_added_waiting">Thank you. Your listing has been submitted for administrator consideration. </phrase>
+		<phrase category="common" key="listings_found">Listings found</phrase>
 		<phrase category="common" key="listings_num">Number of listings</phrase>
 		<phrase category="common" key="no_web_listings"><![CDATA[No listings have been submitted here. <a href=":url">Click here</a> to add a listing in this category.]]></phrase>
 		<phrase category="common" key="no_web_listings2"><![CDATA[No listings have been submitted. <a href=":url">Click here</a> to add a listing.]]></phrase>
