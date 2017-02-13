@@ -1,7 +1,7 @@
 <?php
 //##copyright##
 
-class iaCateg extends abstractDirectoryPackageFront
+class iaCateg extends abstractDirectoryDirectoryFront
 {
 	protected static $_table = 'categs';
 	protected static $_tableCrossed = 'categs_crossed';

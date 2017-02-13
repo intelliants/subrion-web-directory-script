@@ -14,7 +14,7 @@ abstract class abstractDirectoryModuleAdmin extends abstractModuleAdmin implemen
 	protected $_moduleName = 'directory';
 }
 
-abstract class abstractDirectoryPackageFront extends abstractModuleFront implements iaDirectoryModule
+abstract class abstractDirectoryDirectoryFront extends abstractModuleFront implements iaDirectoryModule
 {
 	protected $_moduleName = 'directory';
 }

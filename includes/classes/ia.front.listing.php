@@ -1,7 +1,7 @@
 <?php
 //##copyright##
 
-class iaListing extends abstractDirectoryPackageFront
+class iaListing extends abstractDirectoryDirectoryFront
 {
 	protected static $_table = 'listings';
 	protected static $_tableCrossed = 'listings_categs';
