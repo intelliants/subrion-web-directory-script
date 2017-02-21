@@ -1,5 +1,21 @@
 <?php
-//##copyright##
+/******************************************************************************
+ *
+ * Subrion Web Directory Script
+ * Copyright (C) 2017 Intelliants, LLC <https://intelliants.com>
+ *
+ * This file is part of Subrion Web Directory Script.
+ *
+ * This program is a commercial software and any kind of using it must agree
+ * to the license, see <https://subrion.pro/license.html>.
+ *
+ * This copyright notice may not be removed from the software source without
+ * the permission of Subrion respective owners.
+ *
+ *
+ * @link https://subrion.pro/product/directory.html
+ *
+ ******************************************************************************/
 
 $iaListing = $iaCore->factoryModule('listing', IA_CURRENT_MODULE);
 
