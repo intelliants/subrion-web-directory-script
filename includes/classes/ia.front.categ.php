@@ -83,60 +83,6 @@ SQL;
 		return $result;
 	}
 
-	protected function _processValues(&$rows, $singleRow = false, $fieldNames = [])
-	{
-		if (!$rows)
-		{
-			return;
-		}
-
-		$singleRow && $rows = [$rows];
-
-		// process favorites
-		$rows = $this->iaCore->factory('item')->updateItemsFavorites($rows, $this->getItemName());
-
-		// get serialized field names
-		$iaField = $this->iaCore->factory('field');
-
-		$serializedFields = array_merge($fieldNames, $iaField->getSerializedFields($this->getItemName()));
-		$multilingualFields = $iaField->getMultilingualFields($this->getItemName());
-
-		if ($serializedFields || $multilingualFields)
-		{
-			foreach ($rows as &$row)
-			{
-				if (!is_array($row))
-				{
-					break;
-				}
-
-				// filter fields
-				$iaField->filter($this->getItemName(), $row);
-
-				foreach ($serializedFields as $fieldName)
-				{
-					if (isset($row[$fieldName]))
-					{
-						$row[$fieldName] = $row[$fieldName] ? unserialize($row[$fieldName]) : [];
-					}
-				}
-
-				$currentLangCode = $this->iaCore->language['iso'];
-				foreach ($multilingualFields as $fieldName)
-				{
-					if (isset($row[$fieldName . '_' . $currentLangCode]) && !isset($row[$fieldName]))
-					{
-						$row[$fieldName] = $row[$fieldName . '_' . $currentLangCode];
-					}
-				}
-
-				$this->url('view', $row);
-			}
-		}
-
-		$singleRow && $rows = array_shift($rows);
-	}
-
 	/**
 	 * Rebuild categories relations
 	 * Fields will be updated: parents, child, level, title_alias
