@@ -1,4 +1,4 @@
-{if isset($category) && $category.description}
+{if !empty($category.description)}
 	<div class="page-content">{$category.description}</div>
 {/if}
 

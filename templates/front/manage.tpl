@@ -14,7 +14,7 @@
 				<div class="fieldset__content">
 					<a href="#" id="change_crossed" class="categories-toggle js-categories-toggle" data-toggle="#tree-crossed">{lang key='open_close'}</a>
 					<div id="tree-crossed" class="tree categories-tree" style="display:none"></div>
-					<input type="hidden" id="crossed_links" name="crossed_links" value="{if isset($smarty.post.crossed_links)}{$smarty.post.crossed_links|escape:'html'}{/if}">
+					<input type="hidden" id="crossed_links" name="crossed_links" value="{if isset($smarty.post.crossed_links)}{$smarty.post.crossed_links|escape}{/if}">
 
 					<p class="m-t">
 						{if $category && isset($category.crossed) && $category.crossed}

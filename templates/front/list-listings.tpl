@@ -25,11 +25,11 @@
 		</div>
 
 		<div class="ia-item__title">
-			{* if isset($listing.crossed) && $listing.crossed}@ {/if*}
+			{* if !empty($listing.crossed)}@ {/if*}
 			{if !$core.config.directory_redirect_to_site}
 				{ia_url type='link' item='listings' data=$listing text=$listing.title}
 			{else}
-				<a href="{$listing.url}" target="_blank">{$listing.title|escape:'html'}</a>
+				<a href="{$listing.url}" target="_blank">{$listing.title|escape}</a>
 			{/if}
 		</div>
 
@@ -41,7 +41,7 @@
 					<span class="fa fa-folder-o"></span>
 					{foreach $listing.breadcrumb as $title => $url}
 						{if !$url@first} <span class="fa fa-angle-right"></span> {/if}
-						<a href="{$smarty.const.IA_URL}{$url}">{$title|escape:'html'}</a>
+						<a href="{$smarty.const.IA_URL}{$url}">{$title|escape}</a>
 					{/foreach}
 				</p>
 				<div class="clearfix"></div>

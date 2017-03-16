@@ -136,6 +136,7 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType())
 			'title' => iaLanguage::get('visit_site'),
 			'attributes' => [
 				'href' => $listing['url'],
+				'target' => '_blank',
 			]
 		]);
 	}

@@ -71,7 +71,7 @@
 					{/if}
 
 					<input type="hidden" id="author-id" name="author_id" value="{$author.id}">
-					<input type="hidden" id="regarding-page" name="regarding" value="{$core.page.title|escape:'html'}">
+					<input type="hidden" id="regarding-page" name="regarding" value="{$core.page.title|escape}">
 				</div>
 				<div class="modal-footer">
 					<a href="{$smarty.const.IA_SELF}#" class="btn" data-dismiss="modal">{lang key='cancel'}</a>
