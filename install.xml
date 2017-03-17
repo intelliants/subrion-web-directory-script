@@ -139,7 +139,7 @@
 	<config group="email_templates" name="listing_active_subject" type="text">Your listing has gone live</config>
 	<config group="email_templates" name="listing_active_body" type="textarea">
 		<![CDATA[
-<p>Greetings,</p>
+<p>Greetings, {%USERNAME%}</p>
 <p>Your listing "{%TITLE%}" at <a href="{%SITE_URL%}">{%SITE_URL%}</a> went live.</p>
 <p>In order to view your listing please refer to the URL: <a href="{%URL%}">{%URL%}</a></p>
 		]]>
@@ -150,7 +150,7 @@
 	<config group="email_templates" name="listing_suspended_subject" type="text">Your listing has been suspended</config>
 	<config group="email_templates" name="listing_suspended_body" type="textarea">
 		<![CDATA[
-<p>Greetings,</p>
+<p>Greetings, {%USERNAME%}</p>
 <p>Your listing "{%TITLE%}" at <a href="{%SITE_URL%}">{%SITE_URL%}</a> has been suspended.</p>
 <p>If you do not know the reason of the suspension or if you want to reactivate your listing, please contact an administrator of the site.</p>
 		]]>
@@ -161,7 +161,7 @@
 	<config group="email_templates" name="listing_banned_subject" type="text">Your listing has been banned</config>
 	<config group="email_templates" name="listing_banned_body" type="textarea">
 		<![CDATA[
-<p>Greetings,</p>
+<p>Greetings, {%USERNAME%}</p>
 <p>Your listing "{%TITLE%}" at <a href="{%SITE_URL%}">{%SITE_URL%}</a> has been banned.</p>
 <p>If you do not know the reason of the banning or if you want to reactivate your listing, please contact an administrator of the site.</p>
 		]]>
@@ -172,7 +172,7 @@
 	<config group="email_templates" name="listing_removed_subject" type="text">Your listing has been removed</config>
 	<config group="email_templates" name="listing_removed_body" type="textarea">
 		<![CDATA[
-<p>Greetings,</p>
+<p>Greetings, {%USERNAME%}</p>
 <p>Your listing "{%TITLE%}" at <a href="{%SITE_URL%}">{%SITE_URL%}</a> has been removed.</p>
 <p>If you do not know the reason of the deletion or if you want to recover your listing, please contact an administrator of the site.</p>
 		]]>

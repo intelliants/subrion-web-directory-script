@@ -108,7 +108,7 @@ SELECT :columns, c.`title_:lang` `category_title`, c.`title_alias` `category_ali
 LEFT JOIN `:prefix:table_categories` c ON (l.`category_id` = c.`id`) 
 LEFT JOIN `:prefix:table_members` m ON (l.`member_id` = m.`id`) 
 WHERE :where :order
-LIMIT :start, :limit
+:LIMIT
 SQL;
 		$sql = iaDb::printf($sql, [
 			'lang' => $this->iaCore->language['iso'],
@@ -120,9 +120,9 @@ SQL;
 			'where' => $where,
 			'order' => $order,
 			'start' => $start,
-			'limit' => $limit
+			'limit' => $limit,
+			'LIMIT' => $start || $limit ? "LIMIT $start, $limit" : ''
 		]);
-
 		return $this->iaDb->getAll($sql);
 	}
 
@@ -142,22 +142,23 @@ SQL;
 	{
 		if ($this->iaCore->get('listing_' . $listingData['status']))
 		{
-			$email = ($listingData['email']) ? $listingData['email'] : $this->iaDb->one('email', iaDb::convertIds($listingData['member_id']), iaUsers::getTable());
-
+			$memberId = $this->iaDb->one('member_id', iaDb::convertIds($listingId), self::getTable());
+			$email = ($listingData['email']) ? $listingData['email'] : $this->iaDb->one('email', iaDb::convertIds($memberId), iaUsers::getTable());
 			if ($email)
 			{
 				if ($listingId)
 				{
-					$listing = $this->get('l.`id`, l.`title`, l.`title_alias`, l.`status` ', 'l.`id` = ' . $listingId);
+					$listing = $this->get("l.`id`, l.`title_{$this->iaCore->language['iso']}` `title`, l.`title_alias`, l.`status` ", 'l.`id` = ' . $listingId);
+
 					$listingData = is_array($listing) && $listing ? array_shift($listing) : $listingData;
 				}
-
 				$iaMailer = $this->iaCore->factory('mailer');
 
 				$iaMailer->loadTemplate('listing_' . $listingData['status']);
 				$iaMailer->setReplacements([
 					'title' => $listingData['title'],
-					'url' => $this->url('view', $listingData)
+					'url' => $this->url('view', $listingData),
+					'username' => $listingData['member'] ? $listingData['member'] : ''
 				]);
 				$iaMailer->addAddress($email);
 
