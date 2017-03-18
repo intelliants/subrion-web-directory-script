@@ -35,8 +35,8 @@
 
 		<action name="fields" url="fields/listings/" icon="list" pages="listings_fields"><![CDATA[]]></action>
 		<action name="add_field" url="fields/add/?item=listings" icon="plus-alt" pages="listings_fields"><![CDATA[]]></action>
-		<action name="field_groups" url="fields/group/" icon="list-2" pages="listings_fields"><![CDATA[]]></action>
-		<action name="add_fieldgroup" url="fields/group/add/" icon="list-add" pages="listings_fields"><![CDATA[]]></action>
+		<action name="field_groups" url="fieldgroups/" icon="list-2" pages="listings_fields"><![CDATA[]]></action>
+		<action name="add_fieldgroup" url="fieldgroups/add/?item=listings" icon="list-add" pages="listings_fields"><![CDATA[]]></action>
 	</actions>
 
 	<groups>
