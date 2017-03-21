@@ -79,12 +79,15 @@ class iaBackendController extends iaAbstractControllerModuleBackend
 
 	protected function _entryUpdate(array $entryData, $entryId)
 	{
-		$entryData['date_modified'] = date(iaDb::DATETIME_FORMAT);
-		$result = parent::_entryUpdate($entryData, $entryId);
-		!$result || $this->getHelper()->sendUserNotification($entryData, $entryId);
+        $currentData = $this->getById($entryId);
 
-		return $result;
-	}
+	    $entryData['date_modified'] = date(iaDb::DATETIME_FORMAT);
+		$result = parent::_entryUpdate($entryData, $entryId);
+        if ($currentData['status'] != $entryData['status']) {
+            !$result|| $this->getHelper()->sendUserNotification($entryData, $entryId);
+        }
+        return $result;
+    }
 
 	protected function _entryDelete($entryId)
 	{
