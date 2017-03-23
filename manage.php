@@ -89,7 +89,7 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType()) {
 
                 $iaListing->delete($listing)
                     ? iaUtil::redirect(iaLanguage::get('wait_redirect'), iaLanguage::get('listing_removed'),
-                    $iaListing->url('my'))
+                    $iaCore->factory('page', iaCore::FRONT)->getUrlByName('my_listings'))
                     : iaUtil::redirect(iaLanguage::get('wait_redirect'), iaLanguage::get('cant_remove_listing'),
                     $iaListing->url('view', $listing));
             }
