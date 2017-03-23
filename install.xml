@@ -83,7 +83,7 @@
 		<object meta_object="admin_page" id="manage_listings" action="delete">Delete listing</object>
 
 		<permission type="group" type_id="4" access="0">my_listings</permission>
-		<permission type="group" type_id="4" action="add" access="0">view_listing</permission>
+		<permission type="group" type_id="4" action="add" access="1">view_listing</permission>
 		<permission type="group" type_id="4" action="edit" access="0">view_listing</permission>
 		<permission type="group" type_id="4" action="delete" access="0">view_listing</permission>
 
