@@ -17,6 +17,8 @@
  *
  ******************************************************************************/
 
+$iaListing = $iaCore->factoryModule('listing', IA_CURRENT_MODULE);
+
 if (iaView::REQUEST_HTML == $iaView->getRequestType()) {
     $pageActions = [];
     $pageName = $iaView->name();
@@ -75,7 +77,6 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType()) {
 
     $rssFeed = false;
 
-    $iaListing = $iaCore->factoryModule('listing', IA_CURRENT_MODULE);
     $iaCateg = $iaCore->factoryModule('categ', IA_CURRENT_MODULE);
 
     switch ($pageName) {
@@ -215,9 +216,9 @@ if (iaView::REQUEST_XML == $iaView->getRequestType()) {
     $order = ' ORDER BY l.`date_added` DESC';
     $limit = (int)$iaCore->get('directory_listings_perpage', 10);
 
-    if (isset($iaCore->requestPath[0]) && $iaCore->requestPath[0] == 'top') {
+    if (isset($iaCore->requestPath[0]) && 'top' == $iaCore->requestPath[0]) {
         $listings = $iaListing->getTop($limit);
-    } elseif (isset($iaCore->requestPath[0]) && $iaCore->requestPath[0] == 'latest') {
+    } elseif (isset($iaCore->requestPath[0]) && 'latest' == $iaCore->requestPath[0]) {
         $listings = $iaListing->getLatest($limit);
     } else {
         $stmt = "c.`title_alias` = '" . (implode(IA_URL_DELIMITER, $iaCore->requestPath) . IA_URL_DELIMITER) . "'" . $stmt;
