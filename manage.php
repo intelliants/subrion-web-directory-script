@@ -141,9 +141,9 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType()) {
             $item['member_id'] = iaUsers::getIdentity()->id;
         } elseif ($iaCore->get('listing_tie_to_member')) {
             $iaUsers = $iaCore->factory('users');
-            $member = $iaUsers->getInfo($item['email'], 'email');
-
-            $item['member_id'] = ($member) ? $member['id'] : 0;
+            if ($member = $iaUsers->getInfo($item['email'], 'email')) {
+                $item['member_id'] = $member['id'];
+            }
         }
 
         $item['category_id'] = (int)$_POST['tree_id'];
