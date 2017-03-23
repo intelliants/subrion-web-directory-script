@@ -19,83 +19,74 @@
 
 $iaListing = $iaCore->factoryModule('listing', IA_CURRENT_MODULE);
 
-if (iaView::REQUEST_JSON == $iaView->getRequestType())
-{
-	if ('report' == $_POST['action'])
-	{
-		$id = (int)$_POST['id'];
-		$comment = '';
-		if (!empty($_POST['comments']))
-		{
-			$time = date('Y-m-d H:i:s');
-			$iaCore->factory('util');
-			$ip = iaUtil::getIp(false);
-			$comment = <<<COMMENT
+if (iaView::REQUEST_JSON == $iaView->getRequestType()) {
+    if ('report' == $_POST['action']) {
+        $id = (int)$_POST['id'];
+        $comment = '';
+        if (!empty($_POST['comments'])) {
+            $time = date('Y-m-d H:i:s');
+            $iaCore->factory('util');
+            $ip = iaUtil::getIp(false);
+            $comment = <<<COMMENT
 Date: {$time}
 IP: {$ip}
 Comment: {$_POST['comments']}
 
 
 COMMENT;
-		}
+        }
 
-		$listing = $iaListing->getById($id);
+        $listing = $iaListing->getById($id);
 
-		$iaMailer = $iaCore->factory('mailer');
+        $iaMailer = $iaCore->factory('mailer');
 
-		$iaMailer->loadTemplate('reported_as_broken');
-		$iaMailer->setReplacements([
-			'title' => $listing['title'],
-			'comments' => $comment
-		]);
-		$iaMailer->sendToAdministrators();
+        $iaMailer->loadTemplate('reported_as_broken');
+        $iaMailer->setReplacements([
+            'title' => $listing['title'],
+            'comments' => $comment
+        ]);
+        $iaMailer->sendToAdministrators();
 
-		$email = empty($listing['email']) ? $iaDb->one('email', iaDb::convertIds($listing['member_id']), iaUsers::getTable()) : $listing['email'];
+        $email = empty($listing['email']) ? $iaDb->one('email', iaDb::convertIds($listing['member_id']), iaUsers::getTable()) : $listing['email'];
 
-		if ($email)
-		{
-			$iaMailer->loadTemplate('reported_as_broken');
-			$iaMailer->setReplacements([
-				'title' => $listing['title'],
-				'comments' => $comment
-			]);
-			$iaMailer->addAddress($email);
+        if ($email) {
+            $iaMailer->loadTemplate('reported_as_broken');
+            $iaMailer->setReplacements([
+                'title' => $listing['title'],
+                'comments' => $comment
+            ]);
+            $iaMailer->addAddress($email);
 
-			$iaMailer->send();
-		}
+            $iaMailer->send();
+        }
 
-		$fields = ['reported_as_broken' => 1];
+        $fields = ['reported_as_broken' => 1];
 
-		if ($comment)
-		{
-			if (isset($listing['reported_as_broken_comments']) && $listing['reported_as_broken_comments'])
-			{
-				$comment = $listing['reported_as_broken_comments'] . $comment;
-			}
-			$fields['reported_as_broken_comments'] = $comment;
-		}
+        if ($comment) {
+            if (isset($listing['reported_as_broken_comments']) && $listing['reported_as_broken_comments']) {
+                $comment = $listing['reported_as_broken_comments'] . $comment;
+            }
+            $fields['reported_as_broken_comments'] = $comment;
+        }
 
-		$iaDb->update($fields, iaDb::convertIds($id), null, iaListing::getTable());
-	}
+        $iaDb->update($fields, iaDb::convertIds($id), null, iaListing::getTable());
+    }
 }
 
-if (iaView::REQUEST_HTML == $iaView->getRequestType())
-{
-	$listingId = (int)end($iaCore->requestPath);
-	if (!$listingId)
-	{
-		return iaView::errorPage(iaView::ERROR_NOT_FOUND);
-	}
+if (iaView::REQUEST_HTML == $iaView->getRequestType()) {
+    $listingId = (int)end($iaCore->requestPath);
+    if (!$listingId) {
+        return iaView::errorPage(iaView::ERROR_NOT_FOUND);
+    }
 
-	$listing = $iaListing->getById($listingId);
+    $listing = $iaListing->getById($listingId);
 
-	if (empty($listing) || iaCore::STATUS_APPROVAL == $listing['status'] &&
-		!(iaUsers::hasIdentity() && iaUsers::getIdentity()->id == $listing['member_id']))
-	{
-		return iaView::errorPage(iaView::ERROR_NOT_FOUND);
-	}
+    if (empty($listing) || iaCore::STATUS_APPROVAL == $listing['status'] &&
+        !(iaUsers::hasIdentity() && iaUsers::getIdentity()->id == $listing['member_id'])) {
+        return iaView::errorPage(iaView::ERROR_NOT_FOUND);
+    }
 
-	// URL validation
+    // URL validation
 //	$categoryPath = $iaView->url;
 //
 //	unset($categoryPath[count($categoryPath) - 1]);
@@ -110,100 +101,98 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType())
 //		iaUtil::go_to($validUrl);
 //	}
 
-	$iaCateg = $iaCore->factoryModule('categ', IA_CURRENT_MODULE);
+    $iaCateg = $iaCore->factoryModule('categ', IA_CURRENT_MODULE);
 
-	$category = $iaCateg->getById($listing['category_id']);
+    $category = $iaCateg->getById($listing['category_id']);
 
-	$listing['item'] = $iaListing->getItemName();
+    $listing['item'] = $iaListing->getItemName();
 
-	$iaView->set('subpage', $category['id']);
+    $iaView->set('subpage', $category['id']);
 
-	if (!empty($category['parents']))
-	{
-		$condition = "`id` IN({$category['parents']}) AND `parent_id` != -1 AND `status` = 'active'";
-		$parents = $iaCateg->get($condition, 0, null, null, 'c.*', 'level');
+    if (!empty($category['parents'])) {
+        $condition = "`id` IN({$category['parents']}) AND `parent_id` != -1 AND `status` = 'active'";
+        $parents = $iaCateg->get($condition, 0, null, null, 'c.*', 'level');
 
-		foreach ($parents as $p)
-			iaBreadcrumb::add($p['title'], $iaCateg->url('view', $p));
-	}
+        foreach ($parents as $p) {
+            iaBreadcrumb::add($p['title'], $iaCateg->url('view', $p));
+        }
+    }
 
-	$iaItem = $iaCore->factory('item');
+    $iaItem = $iaCore->factory('item');
 
-	if ($listing['url'])
-	{
-		$iaItem->setItemTools([
-			'id' => 'action-visit',
-			'title' => iaLanguage::get('visit_site'),
-			'attributes' => [
-				'href' => $listing['url'],
-				'target' => '_blank',
-			]
-		]);
-	}
+    if ($listing['url']) {
+        $iaItem->setItemTools([
+            'id' => 'action-visit',
+            'title' => iaLanguage::get('visit_site'),
+            'attributes' => [
+                'href' => $listing['url'],
+                'target' => '_blank',
+            ]
+        ]);
+    }
 
-	$iaItem->setItemTools([
-		'id' => 'action-report',
-		'title' => iaLanguage::get('report_listing'),
-		'attributes' => [
-			'href' => '#',
-			'id' => 'js-cmd-report-listing',
-			'data-id' => $listing['id']
-		]
-	]);
+    $iaItem->setItemTools([
+        'id' => 'action-report',
+        'title' => iaLanguage::get('report_listing'),
+        'attributes' => [
+            'href' => '#',
+            'id' => 'js-cmd-report-listing',
+            'data-id' => $listing['id']
+        ]
+    ]);
 
-	if (iaUsers::hasIdentity() && iaUsers::getIdentity()->id == $listing['member_id'])
-	{
-		$actionUrls = [
-			iaCore::ACTION_EDIT => $iaListing->url(iaCore::ACTION_EDIT, $listing),
-			iaCore::ACTION_DELETE => $iaListing->url(iaCore::ACTION_DELETE, $listing)
-		];
-		$iaView->assign('tools', $actionUrls);
+    if (iaUsers::hasIdentity() && iaUsers::getIdentity()->id == $listing['member_id']) {
+        $actionUrls = [
+            iaCore::ACTION_EDIT => $iaListing->url(iaCore::ACTION_EDIT, $listing),
+            iaCore::ACTION_DELETE => $iaListing->url(iaCore::ACTION_DELETE, $listing)
+        ];
+        $iaView->assign('tools', $actionUrls);
 
-		$iaItem->setItemTools([
-			'id' => 'action-edit',
-			'title' => iaLanguage::get('edit'),
-			'attributes' => [
-				'href' => $actionUrls[iaCore::ACTION_EDIT],
-			]
-		]);
-		$iaItem->setItemTools([
-			'id' => 'action-delete',
-			'title' => iaLanguage::get('remove'),
-			'attributes' => [
-				'href' => $actionUrls[iaCore::ACTION_DELETE],
-				'class' => 'js-delete-listing'
-			]
-		]);
-	}
+        $iaItem->setItemTools([
+            'id' => 'action-edit',
+            'title' => iaLanguage::get('edit'),
+            'attributes' => [
+                'href' => $actionUrls[iaCore::ACTION_EDIT],
+            ]
+        ]);
+        $iaItem->setItemTools([
+            'id' => 'action-delete',
+            'title' => iaLanguage::get('remove'),
+            'attributes' => [
+                'href' => $actionUrls[iaCore::ACTION_DELETE],
+                'class' => 'js-delete-listing'
+            ]
+        ]);
+    }
 
-	// update favorites status
-	$listing = $iaItem->updateItemsFavorites([$listing], $iaListing->getItemName());
-	$listing = array_shift($listing);
+    // update favorites status
+    $listing = $iaItem->updateItemsFavorites([$listing], $iaListing->getItemName());
+    $listing = array_shift($listing);
 
-	iaBreadcrumb::replaceEnd($listing['title'], IA_SELF);
+    iaBreadcrumb::replaceEnd($listing['title'], IA_SELF);
 
-	$iaListing->incrementViewsCounter($listingId);
+    $iaListing->incrementViewsCounter($listingId);
 
-	$iaCore->startHook('phpViewListingBeforeStart', [
-		'listing' => $listingId,
-		'item' => 'listings',
-		'title' => $listing['title'],
-		'desc' => substr(strip_tags($listing['description']), 0, 200),
-	]);
+    $iaCore->startHook('phpViewListingBeforeStart', [
+        'listing' => $listingId,
+        'item' => 'listings',
+        'title' => $listing['title'],
+        'desc' => substr(strip_tags($listing['description']), 0, 200),
+    ]);
 
-	$author = $iaCore->factory('users')->getInfo($listing['member_id']);
-	$counter = $iaDb->one(iaDb::STMT_COUNT_ROWS, iaDb::convertIds($listing['member_id'], 'member_id'), iaListing::getTable());
-	$sections = $iaCore->factory('field')->getTabs($iaListing->getItemName(), $listing);
+    $author = $iaCore->factory('users')->getInfo($listing['member_id']);
+    $counter = $iaDb->one(iaDb::STMT_COUNT_ROWS, iaDb::convertIds($listing['member_id'], 'member_id'), iaListing::getTable());
+    $sections = $iaCore->factory('field')->getTabs($iaListing->getItemName(), $listing);
 
-	$iaView->assign('author', $author);
-	$iaView->assign('listings_num', $counter);
-	$iaView->assign('item', $listing);
-	$iaView->assign('sections', $sections);
+    $iaView->assign('author', $author);
+    $iaView->assign('listings_num', $counter);
+    $iaView->assign('item', $listing);
+    $iaView->assign('sections', $sections);
 
-	$iaView->set('keywords', $listing['meta_keywords']);
-	$iaView->set('description', $listing['meta_description']);
+    $iaView->set('keywords', $listing['meta_keywords']);
+    $iaView->set('description', $listing['meta_description']);
 
-	$iaView->title($listing['title']);
+    $iaView->title($listing['title']);
 
-	$iaView->display('view');
+    $iaView->display('view');
 }
