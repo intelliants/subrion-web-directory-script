@@ -356,6 +356,7 @@ $reset_options['categs'] = iaLanguage::get('reset_categs');
         <hook name="phpDbControlBeforeReset" page_type="admin">
             <![CDATA[
 $iaDBControl = $iaCore->factory('dbcontrol', iaCore::ADMIN);
+
 switch ($option) {
     case 'listings':
         $iaDBControl->truncate('listings');
@@ -363,9 +364,7 @@ switch ($option) {
 
     case 'categs':
         $iaDBControl->truncate('categs');
-        $iaDb->query("INSERT INTO `" . $iaCore->iaDb->prefix . "categs`
-(`id`, `_pid`, `title_" . IA_LANGUAGE . "`, `date_added`, `date_modified`, `status`, `level`, `_parents`, `locked`)
-VALUES (1, 0, 'ROOT', NOW(), NOW(), 'active', 0, '1', 1)");
+        $iaCore->factoryModule('categ', 'directory', iaCore::ADMIN)->resetDbStructure();
 }
             ]]>
         </hook>
@@ -373,7 +372,7 @@ VALUES (1, 0, 'ROOT', NOW(), NOW(), 'active', 0, '1', 1)");
             <![CDATA[
 {if !empty($directory_categories)}
     <div class="ia-categories">
-        {include file='ia-categories.tpl' categories=$directory_categories item='categs' id='directory-categories' show_amount=$core.config.directory_show_amount|default:true num_columns=$core.config.directory_categories_columns icons=true}
+        {include 'ia-categories.tpl' categories=$directory_categories item='categs' id='directory-categories' show_amount=$core.config.directory_show_amount|default:true num_columns=$core.config.directory_categories_columns icons=true}
     </div>
 {/if}
             ]]>

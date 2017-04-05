@@ -162,35 +162,37 @@ SQL;
 
         $categories = $this->iaDb->all(['id', self::COL_PARENT_ID, self::COL_CHILDREN], '1 ORDER BY `level` DESC', $start, $limit);
         foreach ($categories as $cat) {
-            if (-1 != $cat[self::COL_PARENT_ID]) {
-                $_id = $cat['id'];
+            if (self::ROOT_PARENT_ID == $cat[self::COL_PARENT_ID]) {
+                continue;
+            }
 
-                $sql = <<<SQL
+            $_id = $cat['id'];
+
+            $sql = <<<SQL
 SELECT COUNT(l.`id`) `num`
 	FROM `{$this->iaDb->prefix}listings` l 
 LEFT JOIN `{$this->iaDb->prefix}members` acc ON (l.`member_id` = acc.`id`) 
 WHERE l.`status`= 'active' AND (acc.`status` = 'active' OR acc.`status` IS NULL) 
 AND l.`category_id` = {$_id}
 SQL;
-                $num_listings = $this->iaDb->getOne($sql);
-                $_num_listings = $num_listings ? $num_listings : 0;
-                $_num_all_listings = 0;
+            $num_listings = $this->iaDb->getOne($sql);
+            $_num_listings = $num_listings ? $num_listings : 0;
+            $_num_all_listings = 0;
 
-                if (!empty($cat['child']) && $cat['child'] != $cat['id']) {
-                    $_num_all_listings = $this->iaDb->one('SUM(`num_listings`)', "`id` IN ({$cat['child']})", iaCateg::getTable());
-                }
-
-                $_num_all_listings+= $_num_listings;
-
-                $crossed = $this->iaDb->one('COUNT(`category_id`) `num`', iaDb::convertIds($_id, 'category_id'), 'listings_categs');
-
-                if ($crossed) {
-                    $_num_listings+= $crossed;
-                    $_num_all_listings+= $crossed;
-                }
-
-                $this->iaDb->update(['num_listings' => $_num_listings, 'num_all_listings' => $_num_all_listings], iaDb::convertIds($_id));
+            if (!empty($cat[self::COL_CHILDREN]) && $cat[self::COL_CHILDREN] != $cat['id']) {
+                $_num_all_listings = $this->iaDb->one('SUM(`num_listings`)', "`id` IN ({$cat[self::COL_CHILDREN]})", iaCateg::getTable());
             }
+
+            $_num_all_listings+= $_num_listings;
+
+            $crossed = $this->iaDb->one('COUNT(`category_id`) `num`', iaDb::convertIds($_id, 'category_id'), 'listings_categs');
+
+            if ($crossed) {
+                $_num_listings+= $crossed;
+                $_num_all_listings+= $crossed;
+            }
+
+            $this->iaDb->update(['num_listings' => $_num_listings, 'num_all_listings' => $_num_all_listings], iaDb::convertIds($_id));
         }
 
         $this->iaDb->resetTable();
@@ -198,14 +200,9 @@ SQL;
         return true;
     }
 
-    public function getCount()
-    {
-        return $this->iaDb->one(iaDb::STMT_COUNT_ROWS, null, self::getTable());
-    }
-
     public function getSlug($title, $parentId = null, $parent = null)
     {
-        if (-1 == $parentId) {
+        if (self::ROOT_PARENT_ID == $parentId) {
             return '';
         }
 

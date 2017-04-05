@@ -128,7 +128,7 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType()) {
             $category = $iaCateg->getOne(iaDb::convertIds($categoryAlias, 'title_alias'));
 
             // requested category not found
-            if ($categoryAlias && (-1 == $category[iaCateg::COL_PARENT_ID])) {
+            if ($categoryAlias && (iaCateg::ROOT_PARENT_ID == $category[iaCateg::COL_PARENT_ID])) {
                 return iaView::errorPage(iaView::ERROR_NOT_FOUND);
             }
             $iaView->set('subpage', $category['id']);
