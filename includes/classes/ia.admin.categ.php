@@ -20,7 +20,6 @@
 class iaCateg extends iaAbstractHelperCategoryHybrid
 {
     protected static $_table = 'categs';
-    protected $_tableFlat = 'categs_flat';
     protected static $_tableCrossed = 'categs_crossed';
 
     protected $_moduleName = 'directory';
@@ -68,12 +67,6 @@ class iaCateg extends iaAbstractHelperCategoryHybrid
 
             $stmt = iaDb::convertIds($itemId, 'crossed_id');
             $this->iaDb->delete($stmt, self::getTableCrossed());
-
-            $stmt = sprintf('`id` IN (SELECT `category_id` FROM `%s%s` WHERE `parent_id` = %d)',
-            $this->iaDb->prefix, $this->_tableFlat, $itemId);
-
-            $this->iaDb->delete($stmt, self::getTable());
-            $this->iaDb->delete(iaDb::convertIds($itemId, self::COL_PARENT_ID), $this->_tableFlat);
         }
 
         return $result;
@@ -224,7 +217,10 @@ SQL;
     public function updateCounters($itemId, array $itemData, $action, $previousData = null)
     {
         parent::updateCounters($itemId, $itemData, $action, $previousData);
-        $this->syncLinkingData($itemId);
+
+        if (iaCore::ACTION_DELETE != $action) {
+            $this->syncLinkingData($itemId);
+        }
     }
 
     public function syncLinkingData($categoryId = null)
