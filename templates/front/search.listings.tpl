@@ -5,7 +5,5 @@
         {/foreach}
     </div>
 {else}
-    <div class="alert alert-info">
-        {lang key='no_web_listings2'}
-    </div>
+    <div class="alert alert-info">{lang key='no_web_listings2'}</div>
 {/if}

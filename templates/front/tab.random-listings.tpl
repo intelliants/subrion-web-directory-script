@@ -13,7 +13,7 @@
                 <p>
                     <span class="fa fa-calendar"></span>
                     {$listing.date_added|date_format:$core.config.date_format}
-                    {if 0 != $listing.rank}
+                    {if $listing.rank}
                         {section name=star loop=$listing.rank}<span class="fa fa-star text-warning"></span>{/section}
                     {/if}
                 </p>

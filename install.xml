@@ -1,526 +1,527 @@
 <?xml version="1.0" encoding="utf-8"?>
 <module type="package" name="directory">
-	<title>Web Directory</title>
-	<summary>This package is intended to create web directory on your Subrion powered website.</summary>
-	<author>Intelliants LLC</author>
-	<contributor>Intelliants LLC</contributor>
-	<version>4.1.1</version>
-	<date>2017-03-23</date>
-	<compatibility>4.1.0</compatibility>
-	<url>listings</url>
+    <title>Web Directory</title>
+    <summary>This package is intended to create web directory on your Subrion powered website.</summary>
+    <author>Intelliants LLC</author>
+    <contributor>Intelliants LLC</contributor>
+    <version>4.1.1</version>
+    <date>2017-03-23</date>
+    <compatibility>4.1.0</compatibility>
+    <url>listings</url>
 
-	<screenshots>
-		<screenshot type="preview" name="preview.jpg">View Listing page</screenshot>
-		<screenshot name="5.jpg">Frontend: Home Page</screenshot>
-		<screenshot name="6.jpg">Frontend: Directory Listings</screenshot>
-		<screenshot name="7.jpg">Frontend: Submit listing page</screenshot>
-		<screenshot name="1.jpg">Admin Panel: Index page</screenshot>
-		<screenshot name="2.jpg">Admin Panel: Category page</screenshot>
-		<screenshot name="3.jpg">Admin Panel: Listing page</screenshot>
-		<screenshot name="4.jpg">Admin Panel: Submit Listing page</screenshot>
-	</screenshots>
+    <screenshots>
+        <screenshot type="preview" name="preview.jpg">View Listing page</screenshot>
+        <screenshot name="5.jpg">Frontend: Home Page</screenshot>
+        <screenshot name="6.jpg">Frontend: Directory Listings</screenshot>
+        <screenshot name="7.jpg">Frontend: Submit listing page</screenshot>
+        <screenshot name="1.jpg">Admin Panel: Index page</screenshot>
+        <screenshot name="2.jpg">Admin Panel: Category page</screenshot>
+        <screenshot name="3.jpg">Admin Panel: Listing page</screenshot>
+        <screenshot name="4.jpg">Admin Panel: Submit Listing page</screenshot>
+    </screenshots>
 
-	<items>
-		<item pages="favorites,view_member" main="view_listing,add_listing,edit_listing">listings</item>
-		<item payable="0">categs</item>
-	</items>
+    <items>
+        <item pages="favorites,view_member" main="view_listing,add_listing,edit_listing">listings</item>
+        <item payable="0">categs</item>
+    </items>
 
-	<actions>
-		<action name="listings" url="directory/listings/" icon="list-2" pages="directory_stats,manage_listings:add,manage_listings:edit"><![CDATA[]]></action>
-		<action name="add_listing" url="directory/listings/add/" icon="plus-alt" pages="manage_listings,manage_listings:edit"><![CDATA[]]></action>
-		<action name="add_listing" url="directory/listings/add/" icon="plus" type="dashboard"><![CDATA[]]></action>
+    <actions>
+        <action name="listings" url="directory/listings/" icon="list-2" pages="directory_stats,manage_listings:add,manage_listings:edit"><![CDATA[]]></action>
+        <action name="add_listing" url="directory/listings/add/" icon="plus-alt" pages="manage_listings,manage_listings:edit"><![CDATA[]]></action>
+        <action name="add_listing_dashboard" url="directory/listings/add/" icon="plus" type="dashboard"><![CDATA[]]></action>
 
-		<action name="categories" url="directory/categories/" icon="folder" pages="directory_stats,manage_categs:add,manage_categs:edit"><![CDATA[]]></action>
-		<action name="add_category" url="directory/categories/add/" icon="folder-plus" pages="manage_categs,manage_categs:edit"><![CDATA[]]></action>
+        <action name="categories" url="directory/categories/" icon="folder" pages="directory_stats,manage_categs:add,manage_categs:edit"><![CDATA[]]></action>
+        <action name="add_category" url="directory/categories/add/" icon="folder-plus" pages="manage_categs,manage_categs:edit"><![CDATA[]]></action>
 
-		<action name="fields" url="fields/listings/" icon="list" pages="listings_fields"><![CDATA[]]></action>
-		<action name="add_field" url="fields/add/?item=listings" icon="plus-alt" pages="listings_fields"><![CDATA[]]></action>
-		<action name="field_groups" url="fieldgroups/" icon="list-2" pages="listings_fields"><![CDATA[]]></action>
-		<action name="add_fieldgroup" url="fieldgroups/add/?item=listings" icon="list-add" pages="listings_fields"><![CDATA[]]></action>
-	</actions>
+        <action name="fields" url="fields/listings/" icon="list" pages="listings_fields"><![CDATA[]]></action>
+        <action name="add_field" url="fields/add/?item=listings" icon="plus-alt" pages="listings_fields"><![CDATA[]]></action>
+        <action name="field_groups" url="fieldgroups/" icon="list-2" pages="listings_fields"><![CDATA[]]></action>
+        <action name="add_fieldgroup" url="fieldgroups/add/?item=listings" icon="list-add" pages="listings_fields"><![CDATA[]]></action>
+    </actions>
 
-	<groups>
-		<group name="directory">Directory</group>
-	</groups>
+    <groups>
+        <group name="directory">Directory</group>
+    </groups>
 
-	<adminpages>
-		<page group="directory" filename="statistics" name="directory_stats" url="directory/" menus="menu">Statistics</page>
-		<page group="directory" menus="menu">Management</page>
-		<page group="directory" filename="categories" name="manage_categs" url="directory/categories/" menus="menu">Categories</page>
-		<page group="directory" filename="listings" name="manage_listings" url="directory/listings/" menus="menu">Listings</page>
-		<page group="directory" menus="menu">Extended</page>
-		<page group="directory" filename="fields" name="listings_fields" url="fields/listings/" menus="menu">Listings Fields</page>
-	</adminpages>
+    <adminpages>
+        <page group="directory" filename="statistics" name="directory_stats" url="directory/" menus="menu">Statistics</page>
+        <page group="directory" menus="menu">Management</page>
+        <page group="directory" filename="categories" name="manage_categs" url="directory/categories/" menus="menu">Categories</page>
+        <page group="directory" filename="listings" name="manage_listings" url="directory/listings/" menus="menu">Listings</page>
+        <page group="directory" menus="menu">Extended</page>
+        <page group="directory" filename="fields" name="listings_fields" url="fields/listings/" menus="menu">Listings Fields</page>
+    </adminpages>
 
-	<pages>
-		<page group="directory" url="|PACKAGE|" name="directory_home" menus="main,directory" suburl="manage/categs" fields_item="listings">Directory</page>
-		<page group="directory" url="|PACKAGE|add/" name="add_listing" filename="manage" parent="view_listing" action="add" menus="directory" fields_item="listings">Add Listing</page>
-		<page group="directory" url="|PACKAGE|edit/" name="edit_listing" filename="manage" parent="view_listing" action="edit" readonly="1" fields_item="listings">Edit Listing</page>
-		<page group="directory" url="|PACKAGE|delete/" name="delete_listing" filename="manage" parent="view_listing" action="delete" readonly="1" fields_item="listings">Delete Listing</page>
-		<page group="directory" url="|PACKAGE|listing/" name="view_listing" filename="view" suburl="manage/categs" readonly="1" nofollow="1" fields_item="listings">View Listing</page>
-		<page group="directory" url="|PACKAGE|rss/" name="rss_listings" service="1">RSS Listings</page>
-		<page group="directory" url="|PACKAGE|new/" name="new_listings" menus="directory" fields_item="listings">New Listings</page>
-		<page group="directory" url="|PACKAGE|top/" name="top_listings" menus="directory" fields_item="listings">Top Listings</page>
-		<page group="directory" url="|PACKAGE|popular/" name="popular_listings" menus="directory" fields_item="listings">Popular Listings</page>
-		<page group="directory" url="|PACKAGE|random/" name="random_listings" menus="directory" fields_item="listings">Random Listings</page>
-		<page group="directory" url="profile/listings/" name="my_listings" menus="account" nofollow="1" parent="profile" fields_item="listings">My Listings</page>
-	</pages>
+    <pages>
+        <page group="directory" url="|PACKAGE|" name="directory_home" menus="main,directory" suburl="manage/categs" fields_item="listings">Directory</page>
+        <page group="directory" url="|PACKAGE|add/" name="add_listing" filename="manage" parent="view_listing" action="add" menus="directory" fields_item="listings">Add Listing</page>
+        <page group="directory" url="|PACKAGE|edit/" name="edit_listing" filename="manage" parent="view_listing" action="edit" readonly="1" fields_item="listings">Edit Listing</page>
+        <page group="directory" url="|PACKAGE|delete/" name="delete_listing" filename="manage" parent="view_listing" action="delete" readonly="1" fields_item="listings">Delete Listing</page>
+        <page group="directory" url="|PACKAGE|listing/" name="view_listing" filename="view" suburl="manage/categs" readonly="1" nofollow="1" fields_item="listings">View Listing</page>
+        <page group="directory" url="|PACKAGE|rss/" name="rss_listings" service="1">RSS Listings</page>
+        <page group="directory" url="|PACKAGE|new/" name="new_listings" menus="directory" fields_item="listings">New Listings</page>
+        <page group="directory" url="|PACKAGE|top/" name="top_listings" menus="directory" fields_item="listings">Top Listings</page>
+        <page group="directory" url="|PACKAGE|popular/" name="popular_listings" menus="directory" fields_item="listings">Popular Listings</page>
+        <page group="directory" url="|PACKAGE|random/" name="random_listings" menus="directory" fields_item="listings">Random Listings</page>
+        <page group="directory" url="profile/listings/" name="my_listings" menus="account" nofollow="1" parent="profile" fields_item="listings">My Listings</page>
+    </pages>
 
-	<permissions>
-		<object id="view_listing" access="1">View Listing</object>
-		<object id="view_listing" action="add" access="1">Add Listing</object>
-		<object id="view_listing" action="edit" access="1">Edit Listing</object>
-		<object id="view_listing" action="delete" access="1">Delete Listing</object>
+    <permissions>
+        <object id="view_listing" access="1">View Listing</object>
+        <object id="view_listing" action="add" access="1">Add Listing</object>
+        <object id="view_listing" action="edit" access="1">Edit Listing</object>
+        <object id="view_listing" action="delete" access="1">Delete Listing</object>
 
-		<object meta_object="admin_page" id="manage_categs" access="1">View listings</object>
-		<object meta_object="admin_page" id="manage_categs" action="add">Add listing</object>
-		<object meta_object="admin_page" id="manage_categs" action="edit">Edit listing</object>
-		<object meta_object="admin_page" id="manage_categs" action="delete">Delete listing</object>
+        <object meta_object="admin_page" id="manage_categs" access="1">View listings</object>
+        <object meta_object="admin_page" id="manage_categs" action="add">Add listing</object>
+        <object meta_object="admin_page" id="manage_categs" action="edit">Edit listing</object>
+        <object meta_object="admin_page" id="manage_categs" action="delete">Delete listing</object>
 
-		<object meta_object="admin_page" id="manage_listings" access="1">View listings</object>
-		<object meta_object="admin_page" id="manage_listings" action="add">Add listing</object>
-		<object meta_object="admin_page" id="manage_listings" action="edit">Edit listing</object>
-		<object meta_object="admin_page" id="manage_listings" action="delete">Delete listing</object>
+        <object meta_object="admin_page" id="manage_listings" access="1">View listings</object>
+        <object meta_object="admin_page" id="manage_listings" action="add">Add listing</object>
+        <object meta_object="admin_page" id="manage_listings" action="edit">Edit listing</object>
+        <object meta_object="admin_page" id="manage_listings" action="delete">Delete listing</object>
 
-		<permission type="group" type_id="4" access="0">my_listings</permission>
-		<permission type="group" type_id="4" action="add" access="1">view_listing</permission>
-		<permission type="group" type_id="4" action="edit" access="0">view_listing</permission>
-		<permission type="group" type_id="4" action="delete" access="0">view_listing</permission>
+        <permission type="group" type_id="4" access="0">my_listings</permission>
+        <permission type="group" type_id="4" action="add" access="1">view_listing</permission>
+        <permission type="group" type_id="4" action="edit" access="0">view_listing</permission>
+        <permission type="group" type_id="4" action="delete" access="0">view_listing</permission>
 
-		<object meta_object="admin_page" id="listings_fields" action="listings" access="1">Allow to manage listing fields</object>
-	</permissions>
+        <object meta_object="admin_page" id="listings_fields" action="listings" access="1">Allow to manage listing fields</object>
+    </permissions>
 
-	<configgroup name="directory">Directory</configgroup>
-	<config group="directory" name="directory_div1" type="divider">Categories</config>
-	<config group="directory" type="select" values="1,2,3,4" name="directory_categories_columns" description="Number of categories columns">2</config>
-	<config group="directory" name="directory_display_subcategories" type="radio" values="1,0" description="Subcategories list below titles">1</config>
-	<config group="directory" name="directory_subcategories_number" type="text" description="Number of subcategories displayed below titles" show="directory_display_subcategories|1">3</config>
-	<config group="directory" name="directory_show_amount" type="radio" values="1,0" description="Show category listings amount">1</config>
-	<config group="directory" name="directory_hide_empty_categories" type="radio" values="1,0" description="Hide empty categories">0</config>
-	<config group="directory" name="directory_div2" type="divider">Listings</config>
-	<config group="directory" name="directory_enable_thumbshots" type="radio" values="1,0" description="Display thumbshots">1</config>
-	<config group="directory" name="directory_enable_alexarank" type="radio" values="1,0" description="Display Alexa Rank">1</config>
-	<config group="directory" name="listing_auto_approval" type="radio" values="1,0" description="Listings auto approval">1</config>
-	<config group="directory" name="listing_tie_to_member" type="radio" values="1,0" description="Tie listings to registered members">1</config>
-	<config group="directory" name="directory_redirect_to_site" type="radio" values="1,0" description="Redirect to a website by clicking on a title" private="0">0</config>
-	<config group="directory" name="directory_lowercase_urls" type="radio" values="1,0" description="Transform listing page URLs to lowercase" private="0">1</config>
-	<config group="directory" name="display_children_listing" type="radio" values="1,0" description="Display listings from child categories">1</config>
-	<config group="directory" name="listing_crossed" type="radio" values="1,0" description="Allow submission in multiple categories" private="0">0</config>
-	<config group="directory" name="listing_crossed_limit" type="text" description="Multiple categories submission default limit" show="listing_crossed|1" private="0">5</config>
-	<config group="directory" name="directory_listings_perpage" type="text" description="Listings per page">10</config>
-	<config group="directory" name="directory_listing_limit" type="text" description="Listing limit for each member" show="0">6</config>
-	<config group="directory" name="directory_duplicate_check" type="radio" description="Check for duplicate listing's field">0</config>
-	<config group="directory" name="directory_duplicate_check_field" type="select" values="'url','domain','title'" description="Check for duplicate" show="directory_duplicate_check|1">url</config>
-	<config group="directory" name="directory_div3" type="divider">Blocks</config>
-	<config group="directory" name="directory_listings_tabs_new" type="radio" values="1,0" description="Display New Listings tab">1</config>
-	<config group="directory" name="directory_listings_tabs_new_limit" type="text" description="Listings in New tab" show="directory_listings_tabs_new|1">6</config>
-	<config group="directory" name="directory_listings_tabs_popular" type="radio" values="1,0" description="Display Popular Listings tab">1</config>
-	<config group="directory" name="directory_listings_tabs_popular_limit" type="text" description="Listings in Popular tab" show="directory_listings_tabs_popular|1">6</config>
-	<config group="directory" name="directory_listings_tabs_random" type="radio" values="1,0" description="Display Random Listings tab">1</config>
-	<config group="directory" name="directory_listings_tabs_random_limit" type="text" description="Listings in Random tab" show="directory_listings_tabs_random|1">6</config>
-	<config group="directory" name="directory_listings_recent_limit" type="text" description="Listings in Recent block">6</config>
-	<config group="directory" name="directory_listings_featured_limit" type="text" description="Listings in Featured block">6</config>
-	<config group="directory" name="directory_listings_sponsored_limit" type="text" description="Listings in Sponsored block">6</config>
+    <configgroup name="directory">Directory</configgroup>
+    <config group="directory" name="directory_div1" type="divider">Categories</config>
+    <config group="directory" type="select" values="1,2,3,4" name="directory_categories_columns" description="Number of categories columns">2</config>
+    <config group="directory" name="directory_display_subcategories" type="radio" values="1,0" description="Subcategories list below titles">1</config>
+    <config group="directory" name="directory_subcategories_number" type="text" description="Number of subcategories displayed below titles" show="directory_display_subcategories|1">3</config>
+    <config group="directory" name="directory_show_amount" type="radio" values="1,0" description="Show category listings amount">1</config>
+    <config group="directory" name="directory_hide_empty_categories" type="radio" values="1,0" description="Hide empty categories">0</config>
+    <config group="directory" name="directory_div2" type="divider">Listings</config>
+    <config group="directory" name="directory_enable_thumbshots" type="radio" values="1,0" description="Display thumbshots">1</config>
+    <config group="directory" name="directory_enable_alexarank" type="radio" values="1,0" description="Display Alexa Rank">1</config>
+    <config group="directory" name="listing_auto_approval" type="radio" values="1,0" description="Listings auto approval">1</config>
+    <config group="directory" name="listing_tie_to_member" type="radio" values="1,0" description="Tie listings to registered members">1</config>
+    <config group="directory" name="directory_redirect_to_site" type="radio" values="1,0" description="Redirect to a website by clicking on a title" private="0">0</config>
+    <config group="directory" name="directory_lowercase_urls" type="radio" values="1,0" description="Transform listing page URLs to lowercase" private="0">1</config>
+    <config group="directory" name="display_children_listing" type="radio" values="1,0" description="Display listings from child categories">1</config>
+    <config group="directory" name="listing_crossed" type="radio" values="1,0" description="Allow submission in multiple categories" private="0">0</config>
+    <config group="directory" name="listing_crossed_limit" type="text" description="Multiple categories submission default limit" show="listing_crossed|1" private="0">5</config>
+    <config group="directory" name="directory_listings_perpage" type="text" description="Listings per page">10</config>
+    <config group="directory" name="directory_listing_limit" type="text" description="Listing limit for each member" show="0">6</config>
+    <config group="directory" name="directory_duplicate_check" type="radio" description="Check for duplicate listing's field">0</config>
+    <config group="directory" name="directory_duplicate_check_field" type="select" values="'url','domain','title'" description="Check for duplicate" show="directory_duplicate_check|1">url</config>
+    <config group="directory" name="directory_div3" type="divider">Blocks</config>
+    <config group="directory" name="directory_listings_tabs_new" type="radio" values="1,0" description="Display New Listings tab">1</config>
+    <config group="directory" name="directory_listings_tabs_new_limit" type="text" description="Listings in New tab" show="directory_listings_tabs_new|1">6</config>
+    <config group="directory" name="directory_listings_tabs_popular" type="radio" values="1,0" description="Display Popular Listings tab">1</config>
+    <config group="directory" name="directory_listings_tabs_popular_limit" type="text" description="Listings in Popular tab" show="directory_listings_tabs_popular|1">6</config>
+    <config group="directory" name="directory_listings_tabs_random" type="radio" values="1,0" description="Display Random Listings tab">1</config>
+    <config group="directory" name="directory_listings_tabs_random_limit" type="text" description="Listings in Random tab" show="directory_listings_tabs_random|1">6</config>
+    <config group="directory" name="directory_listings_recent_limit" type="text" description="Listings in Recent block">6</config>
+    <config group="directory" name="directory_listings_featured_limit" type="text" description="Listings in Featured block">6</config>
+    <config group="directory" name="directory_listings_sponsored_limit" type="text" description="Listings in Sponsored block">6</config>
 
-	<!-- E-mail template for new listing submission notification (Administrators) -->
-	<config group="email_templates" name="new_listing" type="radio" values="1,0" description="New Listing Submitted">1</config>
-	<config group="email_templates" name="new_listing_subject" type="text">New listing submitted</config>
-	<config group="email_templates" name="new_listing_body" type="textarea">
-		<![CDATA[
+    <!-- E-mail template for new listing submission notification (Administrators) -->
+    <config group="email_templates" name="new_listing" type="radio" values="1,0" description="New Listing Submitted">1</config>
+    <config group="email_templates" name="new_listing_subject" type="text">New listing submitted</config>
+    <config group="email_templates" name="new_listing_body" type="textarea">
+        <![CDATA[
 <p>Greetings,</p>
 <p>We have a new listing "{%TITLE%}" at <a href="{%SITE_URL%}">{%SITE_URL%}</a>.</p>
 <p>For more details check the url: <a href="{%URL%}">{%URL%}</a></p>
-		]]>
-	</config>
+        ]]>
+    </config>
 
-	<!-- E-mail template for listing activation notification -->
-	<config group="email_templates" type="divider" name="directory_divider" description="Directory"><![CDATA[]]></config>
-	<config group="email_templates" name="listing_active" type="radio" values="1,0" description="Listing is active">1</config>
-	<config group="email_templates" name="listing_active_subject" type="text">Your listing has gone live</config>
-	<config group="email_templates" name="listing_active_body" type="textarea">
-		<![CDATA[
+    <!-- E-mail template for listing activation notification -->
+    <config group="email_templates" type="divider" name="directory_divider" description="Directory"><![CDATA[]]></config>
+    <config group="email_templates" name="listing_active" type="radio" values="1,0" description="Listing is active">1</config>
+    <config group="email_templates" name="listing_active_subject" type="text">Your listing has gone live</config>
+    <config group="email_templates" name="listing_active_body" type="textarea">
+        <![CDATA[
 <p>Greetings,</p>
 <p>Your listing "{%TITLE%}" at <a href="{%SITE_URL%}">{%SITE_URL%}</a> went live.</p>
 <p>In order to view your listing please refer to the URL: <a href="{%URL%}">{%URL%}</a></p>
-		]]>
-	</config>
+        ]]>
+    </config>
 
-	<!-- E-mail template for listing suspension notification -->
-	<config group="email_templates" name="listing_suspended" type="radio" values="1,0" description="Listing is suspended">1</config>
-	<config group="email_templates" name="listing_suspended_subject" type="text">Your listing has been suspended</config>
-	<config group="email_templates" name="listing_suspended_body" type="textarea">
-		<![CDATA[
+    <!-- E-mail template for listing suspension notification -->
+    <config group="email_templates" name="listing_suspended" type="radio" values="1,0" description="Listing is suspended">1</config>
+    <config group="email_templates" name="listing_suspended_subject" type="text">Your listing has been suspended</config>
+    <config group="email_templates" name="listing_suspended_body" type="textarea">
+        <![CDATA[
 <p>Greetings,</p>
 <p>Your listing "{%TITLE%}" at <a href="{%SITE_URL%}">{%SITE_URL%}</a> has been suspended.</p>
 <p>If you do not know the reason of the suspension or if you want to reactivate your listing, please contact an administrator of the site.</p>
-		]]>
-	</config>
+        ]]>
+    </config>
 
-	<!-- E-mail template for listing banning notification -->
-	<config group="email_templates" name="listing_banned" type="radio" values="1,0" description="Listing is banned">1</config>
-	<config group="email_templates" name="listing_banned_subject" type="text">Your listing has been banned</config>
-	<config group="email_templates" name="listing_banned_body" type="textarea">
-		<![CDATA[
+    <!-- E-mail template for listing banning notification -->
+    <config group="email_templates" name="listing_banned" type="radio" values="1,0" description="Listing is banned">1</config>
+    <config group="email_templates" name="listing_banned_subject" type="text">Your listing has been banned</config>
+    <config group="email_templates" name="listing_banned_body" type="textarea">
+        <![CDATA[
 <p>Greetings,</p>
 <p>Your listing "{%TITLE%}" at <a href="{%SITE_URL%}">{%SITE_URL%}</a> has been banned.</p>
 <p>If you do not know the reason of the banning or if you want to reactivate your listing, please contact an administrator of the site.</p>
-		]]>
-	</config>
+        ]]>
+    </config>
 
-	<!-- E-mail template for listing deletion notification -->
-	<config group="email_templates" name="listing_removed" type="radio" values="1,0" description="Listing is removed">1</config>
-	<config group="email_templates" name="listing_removed_subject" type="text">Your listing has been removed</config>
-	<config group="email_templates" name="listing_removed_body" type="textarea">
-		<![CDATA[
+    <!-- E-mail template for listing deletion notification -->
+    <config group="email_templates" name="listing_removed" type="radio" values="1,0" description="Listing is removed">1</config>
+    <config group="email_templates" name="listing_removed_subject" type="text">Your listing has been removed</config>
+    <config group="email_templates" name="listing_removed_body" type="textarea">
+        <![CDATA[
 <p>Greetings,</p>
 <p>Your listing "{%TITLE%}" at <a href="{%SITE_URL%}">{%SITE_URL%}</a> has been removed.</p>
 <p>If you do not know the reason of the deletion or if you want to recover your listing, please contact an administrator of the site.</p>
-		]]>
-	</config>
+        ]]>
+    </config>
 
-	<!-- E-mail template for reported as broken listing notification -->
-	<config group="email_templates" type="radio" name="reported_as_broken" values="1,0" description="Link marked as broken">1</config>
-	<config group="email_templates" type="text" name="reported_as_broken_subject">Listing is marked as broken</config>
-	<config group="email_templates" type="textarea" name="reported_as_broken_body">
-		<![CDATA[
+    <!-- E-mail template for reported as broken listing notification -->
+    <config group="email_templates" type="radio" name="reported_as_broken" values="1,0" description="Link marked as broken">1</config>
+    <config group="email_templates" type="text" name="reported_as_broken_subject">Listing is marked as broken</config>
+    <config group="email_templates" type="textarea" name="reported_as_broken_body">
+        <![CDATA[
 <p>Greetings,</p>
 <p>Listing "{%TITLE%}" marked as broken.</p>
 <p>Comments:</p>
 <p>{%COMMENTS%}</p>
-		]]>
-	</config>
+        ]]>
+    </config>
 
-	<fields_groups>
-		<group item="listings" name="general" title="General"><![CDATA[]]></group>
-		<group item="categs" name="general" title="General"><![CDATA[]]></group>
-	</fields_groups>
+    <fields_groups>
+        <group item="listings" name="general" title="General"><![CDATA[]]></group>
+        <group item="categs" name="general" title="General"><![CDATA[]]></group>
+    </fields_groups>
 
-	<fields>
-		<field name="title" item="listings" type="text" group="general" length="70" required="1" multilingual="1"
-			page="add_listing,edit_listing,view_member,view_listing,favorites,rss_listings">Title</field>
-		<field name="url" item="listings" type="text" group="general" length="70" required="1" default="http://"
-			page="add_listing,edit_listing,view_member,view_listing,favorites,rss_listings">URL</field>
-		<field name="description" item="listings" type="textarea" group="general" editor="1" required="1" multilingual="1"
-			page="add_listing,edit_listing,view_listing,rss_listings">Description</field>
-		<field name="reciprocal" item="listings" type="text" group="general" length="70" default="http://"
-			page="add_listing,edit_listing,view_listing,favorites">Reciprocal URL</field>
-		<field name="email" item="listings" type="text" group="general" length="70"
-			page="add_listing,edit_listing">Email</field>
-		<field name="meta_description" item="listings" type="textarea" group="general" editor="0" adminonly="1" multilingual="1">Meta-Description</field>
-		<field name="meta_keywords" item="listings" type="text" group="general" length="70" required="0" adminonly="1" multilingual="1">Meta-Keywords</field>
+    <fields>
+        <field name="title" item="listings" type="text" group="general" length="70" required="1" multilingual="1"
+            page="add_listing,edit_listing,view_member,view_listing,favorites,rss_listings">Title</field>
+        <field name="url" item="listings" type="text" group="general" length="70" required="1" default="http://"
+            page="add_listing,edit_listing,view_member,view_listing,favorites,rss_listings">URL</field>
+        <field name="description" item="listings" type="textarea" group="general" editor="1" required="1" multilingual="1"
+            page="add_listing,edit_listing,view_listing,rss_listings">Description</field>
+        <field name="reciprocal" item="listings" type="text" group="general" length="70" default="http://"
+            page="add_listing,edit_listing,view_listing,favorites">Reciprocal URL</field>
+        <field name="email" item="listings" type="text" group="general" length="70"
+            page="add_listing,edit_listing">Email</field>
+        <field name="meta_description" item="listings" type="textarea" group="general" editor="0" adminonly="1" multilingual="1">Meta-Description</field>
+        <field name="meta_keywords" item="listings" type="text" group="general" length="70" required="0" adminonly="1" multilingual="1">Meta-Keywords</field>
 
-		<field name="title" item="categs" type="text" group="general" length="70" required="1" searchable="1" multilingual="1"
-			page="directory_home,rss_listings">Title</field>
-		<field name="description" item="categs" type="textarea" group="general" editor="1" required="0" searchable="1"
-			page="directory_home,rss_listings" multilingual="1">Description</field>
-		<field name="meta_description" item="categs" type="textarea" group="general" editor="0" required="0" adminonly="1" multilingual="1">Meta-Description</field>
-		<field name="meta_keywords" item="categs" type="text" group="general" length="70" required="0" adminonly="1" multilingual="1">Meta-Keywords</field>
-		<field name="icon" item="categs" type="iconpicker" group="general" default="fa-folder" adminonly="1" page="directory_home">Icon</field>
-	</fields>
+        <field name="title" item="categs" type="text" group="general" length="70" required="1" searchable="1" multilingual="1"
+            page="directory_home,rss_listings">Title</field>
+        <field name="description" item="categs" type="textarea" group="general" editor="1" required="0" searchable="1"
+            page="directory_home,rss_listings" multilingual="1">Description</field>
+        <field name="meta_description" item="categs" type="textarea" group="general" editor="0" required="0" adminonly="1" multilingual="1">Meta-Description</field>
+        <field name="meta_keywords" item="categs" type="text" group="general" length="70" required="0" adminonly="1" multilingual="1">Meta-Keywords</field>
+        <field name="icon" item="categs" type="iconpicker" group="general" default="fa-folder" adminonly="1" page="directory_home">Icon</field>
+    </fields>
 
-	<phrases>
-		<phrase category="admin" key="add_category">Add Category</phrase>
-		<phrase category="admin" key="are_you_sure_to_delete_selected_categ">Are you sure you wish to delete this category?</phrase>
-		<phrase category="admin" key="are_you_sure_to_delete_selected_categs">Are you sure you wish to delete these categories?</phrase>
-		<phrase category="admin" key="are_you_sure_to_delete_selected_listings">Are you sure you wish to delete these listings?</phrase>
-		<phrase category="admin" key="broken">Broken</phrase>
-		<phrase category="admin" key="category_added">Category added.</phrase>
-		<phrase category="admin" key="category_deleted">Category deleted.</phrase>
-		<phrase category="admin" key="categories_repaired">Your listings categories have been repaired.</phrase>
-		<phrase category="admin" key="dashboard_listings_add">Add Listing</phrase>
-		<phrase category="admin" key="directory_category_already_exists">Category with similar title alias exists in this category.</phrase>
-		<phrase category="admin" key="directory_package">&quot;Directory&quot; package</phrase>
-		<phrase category="admin" key="edit_category">Edit Category</phrase>
-		<phrase category="admin" key="edit_listing">Edit Listing</phrase>
-		<phrase category="admin" key="no_crossed_categories">No crossed categories.</phrase>
-		<phrase category="admin" key="no_owner">No Owner</phrase>
-		<phrase category="admin" key="parent_category">Parent category</phrase>
-		<phrase category="admin" key="recount_directory_listings">Recount directory listings</phrase>
-		<phrase category="admin" key="recount_directory_listings_success">Directory listings have been successfully recounted.</phrase>
-		<phrase category="admin" key="repair_listings_num">Recount listings categories</phrase>
-		<phrase category="admin" key="repair_categs">Repair listings categories</phrase>
-		<phrase category="admin" key="repair_listings_num_success">Your listings categories have been recounted.</phrase>
-		<phrase category="admin" key="repair_directorycats">Repair directory categories</phrase>
-		<phrase category="admin" key="reported_as_broken">Reported as broken</phrase>
-		<phrase category="admin" key="reported_as_broken_comments">Broken report comments</phrase>
-		<phrase category="admin" key="reset_listings">Reset listings</phrase>
-		<phrase category="admin" key="reset_categs">Reset categories</phrase>
+    <phrases>
+        <phrase category="admin" key="add_category">Add Category</phrase>
+        <phrase category="admin" key="add_listing_dashboard">Add Listing</phrase>
+        <phrase category="admin" key="are_you_sure_to_delete_selected_categ">Are you sure you wish to delete this category?</phrase>
+        <phrase category="admin" key="are_you_sure_to_delete_selected_categs">Are you sure you wish to delete these categories?</phrase>
+        <phrase category="admin" key="are_you_sure_to_delete_selected_listings">Are you sure you wish to delete these listings?</phrase>
+        <phrase category="admin" key="broken">Broken</phrase>
+        <phrase category="admin" key="category_added">Category added.</phrase>
+        <phrase category="admin" key="category_deleted">Category deleted.</phrase>
+        <phrase category="admin" key="categories_repaired">Your listings categories have been repaired.</phrase>
+        <phrase category="admin" key="dashboard_listings_add">Add Listing</phrase>
+        <phrase category="admin" key="directory_category_already_exists">Category with similar title alias exists in this category.</phrase>
+        <phrase category="admin" key="directory_package">&quot;Directory&quot; package</phrase>
+        <phrase category="admin" key="edit_category">Edit Category</phrase>
+        <phrase category="admin" key="edit_listing">Edit Listing</phrase>
+        <phrase category="admin" key="no_crossed_categories">No crossed categories.</phrase>
+        <phrase category="admin" key="no_owner">No Owner</phrase>
+        <phrase category="admin" key="parent_category">Parent category</phrase>
+        <phrase category="admin" key="recount_directory_listings">Recount directory listings</phrase>
+        <phrase category="admin" key="recount_directory_listings_success">Directory listings have been successfully recounted.</phrase>
+        <phrase category="admin" key="repair_listings_num">Recount listings categories</phrase>
+        <phrase category="admin" key="repair_categs">Repair listings categories</phrase>
+        <phrase category="admin" key="repair_listings_num_success">Your listings categories have been recounted.</phrase>
+        <phrase category="admin" key="repair_directorycats">Repair directory categories</phrase>
+        <phrase category="admin" key="reported_as_broken">Reported as broken</phrase>
+        <phrase category="admin" key="reported_as_broken_comments">Broken report comments</phrase>
+        <phrase category="admin" key="reset_listings">Reset listings</phrase>
+        <phrase category="admin" key="reset_categs">Reset categories</phrase>
 
-		<phrase category="common" key="add_listing">Add Listing</phrase>
-		<phrase category="common" key="alexa_rank">Alexa Rank</phrase>
-		<phrase category="common" key="all_listings_num">Number of all listings</phrase>
-		<phrase category="common" key="are_you_sure_to_delete_selected_listing">Are you sure you wish to delete this listing?</phrase>
-		<phrase category="common" key="categs">Categories</phrase>
-		<phrase category="common" key="categories">Categories</phrase>
-		<phrase category="common" key="crossed_categories">Crossed categories</phrase>
-		<phrase category="common" key="directory">Directory</phrase>
-		<phrase category="common" key="field_category_id">Category</phrase>
-		<phrase category="common" key="limit">Limit</phrase>
-		<phrase category="common" key="listings">Listings</phrase>
-		<phrase category="common" key="listing_added">Listing added.</phrase>
-		<phrase category="common" key="listing_added_waiting">Thank you. Your listing has been submitted for administrator consideration. </phrase>
-		<phrase category="common" key="listings_found">Listings found</phrase>
-		<phrase category="common" key="listings_num">Number of listings</phrase>
-		<phrase category="common" key="no_web_listings"><![CDATA[No listings have been submitted here. <a href=":url">Click here</a> to add a listing in this category.]]></phrase>
-		<phrase category="common" key="no_web_listings2"><![CDATA[No listings have been submitted. <a href=":url">Click here</a> to add a listing.]]></phrase>
-		<phrase category="common" key="no_my_listings"><![CDATA[You have not submitted any listings. Start <a href=":url">adding a new listing</a> now.]]></phrase>
-		<phrase category="common" key="prev_crossed">Previous crossed categories</phrase>
+        <phrase category="common" key="add_listing">Add Listing</phrase>
+        <phrase category="common" key="alexa_rank">Alexa Rank</phrase>
+        <phrase category="common" key="all_listings_num">Number of all listings</phrase>
+        <phrase category="common" key="are_you_sure_to_delete_selected_listing">Are you sure you wish to delete this listing?</phrase>
+        <phrase category="common" key="categs">Categories</phrase>
+        <phrase category="common" key="categories">Categories</phrase>
+        <phrase category="common" key="crossed_categories">Crossed categories</phrase>
+        <phrase category="common" key="directory">Directory</phrase>
+        <phrase category="common" key="field_category_id">Category</phrase>
+        <phrase category="common" key="limit">Limit</phrase>
+        <phrase category="common" key="listings">Listings</phrase>
+        <phrase category="common" key="listing_added">Listing added.</phrase>
+        <phrase category="common" key="listing_added_waiting">Thank you. Your listing has been submitted for administrator consideration. </phrase>
+        <phrase category="common" key="listings_found">Listings found</phrase>
+        <phrase category="common" key="listings_num">Number of listings</phrase>
+        <phrase category="common" key="no_web_listings"><![CDATA[No listings have been submitted here. <a href=":url">Click here</a> to add a listing in this category.]]></phrase>
+        <phrase category="common" key="no_web_listings2"><![CDATA[No listings have been submitted. <a href=":url">Click here</a> to add a listing.]]></phrase>
+        <phrase category="common" key="no_my_listings"><![CDATA[You have not submitted any listings. Start <a href=":url">adding a new listing</a> now.]]></phrase>
+        <phrase category="common" key="prev_crossed">Previous crossed categories</phrase>
 
-		<phrase category="frontend" key="author_activity">Author Activity</phrase>
-		<phrase category="frontend" key="cant_remove_listing">Unable to remove the listing.</phrase>
-		<phrase category="frontend" key="comment">Comment</phrase>
-		<phrase category="frontend" key="do_you_want_report_broken">Do you want to report this listing as broken?</phrase>
-		<phrase category="frontend" key="error_update_listing">Unknown error occured during listing editing. Please contact the site administrator if you have this error again.</phrase>
-		<phrase category="frontend" key="error_add_listing">Unknown error occured during listing submission. Please contact the site administrator if you have this error again.</phrase>
-		<phrase category="frontend" key="error_duplicate_field">Listing with specified :field has been already submitted.</phrase>
-		<phrase category="frontend" key="error_locked_category">You are not allowed to submit into a locked category.</phrase>
-		<phrase category="frontend" key="invalid_category">Invalid category.</phrase>
-		<phrase category="frontend" key="keywords">Keywords</phrase>
-		<phrase category="frontend" key="limit_is_exceeded">You may post a limited number of listings.</phrase>
-		<phrase category="frontend" key="listing_updated">Listing updated.</phrase>
-		<phrase category="frontend" key="listing_updated_waiting">Thank you. Your listing has been updated. Waiting for administrator review.</phrase>
-		<phrase category="frontend" key="listing_removed">Listing removed.</phrase>
-		<phrase category="frontend" key="new">New</phrase>
-		<phrase category="frontend" key="no_listings">There are no listings right now.</phrase>
-		<phrase category="frontend" key="popular">Popular</phrase>
-		<phrase category="frontend" key="random">Random</phrase>
-		<phrase category="frontend" key="rank">Rank</phrase>
-		<phrase category="frontend" key="recently_added_listings">Recently Added Listings</phrase>
-		<phrase category="frontend" key="related_categories">Related Categories</phrase>
-		<phrase category="frontend" key="report_listing">Report Listing</phrase>
-		<phrase category="frontend" key="subcategory">Subcategory</phrase>
-		<phrase category="frontend" key="visit_site">Visit the Site</phrase>
-		<phrase category="frontend" key="you_sent_report">Thanks. A report has been sent to the site administrator.</phrase>
-		<phrase category="frontend" key="do_you_really_want_to_delete_listing">Do you really want to remove the listing?</phrase>
-	</phrases>
+        <phrase category="frontend" key="author_activity">Author Activity</phrase>
+        <phrase category="frontend" key="cant_remove_listing">Unable to remove the listing.</phrase>
+        <phrase category="frontend" key="comment">Comment</phrase>
+        <phrase category="frontend" key="do_you_want_report_broken">Do you want to report this listing as broken?</phrase>
+        <phrase category="frontend" key="error_update_listing">Unknown error occured during listing editing. Please contact the site administrator if you have this error again.</phrase>
+        <phrase category="frontend" key="error_add_listing">Unknown error occured during listing submission. Please contact the site administrator if you have this error again.</phrase>
+        <phrase category="frontend" key="error_duplicate_field">Listing with specified :field has been already submitted.</phrase>
+        <phrase category="frontend" key="error_locked_category">You are not allowed to submit into a locked category.</phrase>
+        <phrase category="frontend" key="invalid_category">Invalid category.</phrase>
+        <phrase category="frontend" key="keywords">Keywords</phrase>
+        <phrase category="frontend" key="limit_is_exceeded">You may post a limited number of listings.</phrase>
+        <phrase category="frontend" key="listing_updated">Listing updated.</phrase>
+        <phrase category="frontend" key="listing_updated_waiting">Thank you. Your listing has been updated. Waiting for administrator review.</phrase>
+        <phrase category="frontend" key="listing_removed">Listing removed.</phrase>
+        <phrase category="frontend" key="new">New</phrase>
+        <phrase category="frontend" key="no_listings">There are no listings right now.</phrase>
+        <phrase category="frontend" key="popular">Popular</phrase>
+        <phrase category="frontend" key="random">Random</phrase>
+        <phrase category="frontend" key="rank">Rank</phrase>
+        <phrase category="frontend" key="recently_added_listings">Recently Added Listings</phrase>
+        <phrase category="frontend" key="related_categories">Related Categories</phrase>
+        <phrase category="frontend" key="report_listing">Report Listing</phrase>
+        <phrase category="frontend" key="subcategory">Subcategory</phrase>
+        <phrase category="frontend" key="visit_site">Visit the Site</phrase>
+        <phrase category="frontend" key="you_sent_report">Thanks. A report has been sent to the site administrator.</phrase>
+        <phrase category="frontend" key="do_you_really_want_to_delete_listing">Do you really want to remove the listing?</phrase>
+    </phrases>
 
-	<cron name="Alexa Rank">0 3 * * * modules/directory/includes/cron/alexa-rank.php</cron>
+    <cron name="Alexa Rank">0 3 * * * modules/directory/includes/cron/alexa-rank.php</cron>
 
-	<tooltips>
-		<tooltip key="directory_categories_columns">Number of columns for categories display on directory index page.</tooltip>
-		<tooltip key="directory_display_subcategories">Display subcategories list on directory index page.</tooltip>
-		<tooltip key="directory_subcategories_number">Number of subcategories on directory index page.</tooltip>
-		<tooltip key="directory_show_amount">Display number of listings for category on directory index page.</tooltip>
-		<tooltip key="directory_hide_empty_categories">Hide categories without listings.</tooltip>
+    <tooltips>
+        <tooltip key="directory_categories_columns">Number of columns for categories display on directory index page.</tooltip>
+        <tooltip key="directory_display_subcategories">Display subcategories list on directory index page.</tooltip>
+        <tooltip key="directory_subcategories_number">Number of subcategories on directory index page.</tooltip>
+        <tooltip key="directory_show_amount">Display number of listings for category on directory index page.</tooltip>
+        <tooltip key="directory_hide_empty_categories">Hide categories without listings.</tooltip>
 
-		<tooltip key="directory_enable_thumbshots">Display thumbnails generated by pagepeeker.com website.</tooltip>
-		<tooltip key="directory_enable_alexarank">Display AlexaRank statistics for the listing domains.</tooltip>
-		<tooltip key="listing_tie_to_member">Members will own newly submitted listings that have same email addresses as registered members.</tooltip>
-		<tooltip key="directory_lowercase_urls">Transform listing and category URLs to lowercase during submission.</tooltip>
-		<tooltip key="display_children_listing">If this options is turned ON your visitors will see listings from inner children categories during categories browsing.</tooltip>
-		<tooltip key="listing_crossed">Allow listing submission in multiple categories.</tooltip>
-		<tooltip key="listing_crossed_limit">Max number of categories members are allowed to submit to.</tooltip>
-		<tooltip key="directory_duplicate_check">Enables listing duplicate checking by several fields.</tooltip>
-		<tooltip key="directory_duplicate_check_field">Specify field you wish to use for duplicate checking.</tooltip>
-	</tooltips>
+        <tooltip key="directory_enable_thumbshots">Display thumbnails generated by pagepeeker.com website.</tooltip>
+        <tooltip key="directory_enable_alexarank">Display AlexaRank statistics for the listing domains.</tooltip>
+        <tooltip key="listing_tie_to_member">Members will own newly submitted listings that have same email addresses as registered members.</tooltip>
+        <tooltip key="directory_lowercase_urls">Transform listing and category URLs to lowercase during submission.</tooltip>
+        <tooltip key="display_children_listing">If this options is turned ON your visitors will see listings from inner children categories during categories browsing.</tooltip>
+        <tooltip key="listing_crossed">Allow listing submission in multiple categories.</tooltip>
+        <tooltip key="listing_crossed_limit">Max number of categories members are allowed to submit to.</tooltip>
+        <tooltip key="directory_duplicate_check">Enables listing duplicate checking by several fields.</tooltip>
+        <tooltip key="directory_duplicate_check_field">Specify field you wish to use for duplicate checking.</tooltip>
+    </tooltips>
 
-	<blocks>
-		<!-- Directory Categories -->
-		<block name="directory_categories" title="Directory Categories" position="bottom" type="smarty" header="1" sticky="0" order="1" pages="index">
-			<![CDATA[{ia_hooker name="smartyFrontDirectoryCategories"}]]>
-		</block>
+    <blocks>
+        <!-- Directory Categories -->
+        <block name="directory_categories" title="Directory Categories" position="bottom" type="smarty" header="1" sticky="0" order="1" pages="index">
+            <![CDATA[{ia_hooker name="smartyFrontDirectoryCategories"}]]>
+        </block>
 
-		<block name="directory_categories_tree" title="Top categories" position="left" type="smarty" collapsible="1" sticky="0" pages="directory_home" filename="block.categories-tree"><![CDATA[]]></block>
-		<block name="sponsored_listings" title="Sponsored listings" position="right" type="smarty" header="1" sticky="0" pages="directory_home,index" filename="block.sponsored-listings" classname="box--sponsored"><![CDATA[]]></block>
-		<block name="featured_listings" title="Featured listings" position="right" type="smarty" header="1" sticky="0" pages="directory_home,index" filename="block.featured-listings" classname="box--featured"><![CDATA[]]></block>
-		<block name="recent_listings" title="Recently added listings" position="bottom" type="smarty" header="0" sticky="0" order="2" pages="index" filename="block.recent-listings"><![CDATA[]]></block>
-		<block name="directory_listings_tabs" title="Directory listings tabs" position="right" type="smarty" sticky="1" pages="add_listing,profile,member_funds,my_listings,members" header="0" order="0" filename="block.listings-tabs"><![CDATA[]]></block>
-		<block name="directory_author" title="Author" position="right" type="smarty" sticky="0" header="1" pages="view_listing" collapsible="1" order="3" filename="block.author"><![CDATA[]]></block>
-	</blocks>
+        <block name="directory_categories_tree" title="Top categories" position="left" type="smarty" collapsible="1" sticky="0" pages="directory_home" filename="block.categories-tree"><![CDATA[]]></block>
+        <block name="sponsored_listings" title="Sponsored listings" position="right" type="smarty" header="1" sticky="0" pages="directory_home,index" filename="block.sponsored-listings" classname="box--sponsored"><![CDATA[]]></block>
+        <block name="featured_listings" title="Featured listings" position="right" type="smarty" header="1" sticky="0" pages="directory_home,index" filename="block.featured-listings" classname="box--featured"><![CDATA[]]></block>
+        <block name="recent_listings" title="Recently added listings" position="bottom" type="smarty" header="0" sticky="0" order="2" pages="index" filename="block.recent-listings"><![CDATA[]]></block>
+        <block name="directory_listings_tabs" title="Directory listings tabs" position="right" type="smarty" sticky="1" pages="add_listing,profile,member_funds,my_listings,members" header="0" order="0" filename="block.listings-tabs"><![CDATA[]]></block>
+        <block name="directory_author" title="Author" position="right" type="smarty" sticky="0" header="1" pages="view_listing" collapsible="1" order="3" filename="block.author"><![CDATA[]]></block>
+    </blocks>
 
-	<hooks>
-		<hook name="phpCoreUrlRewrite" filename="hook.rewrite-url" page_type="front"><![CDATA[]]></hook>
-		<hook name="phpCoreBeforePageDisplay" filename="hook.blocks-load" page_type="front"><![CDATA[]]></hook>
-		<hook name="smartyFrontFiltersBeforeFields" type="smarty" page_type="front" filename="search.filters"><![CDATA[]]></hook>
-		<hook name="smartyFrontSearchSortingListings" type="smarty" page_type="front" filename="search.listings.sorting-header"><![CDATA[]]></hook>
-		<hook name="adminDatabaseConsistency" type="smarty" page_type="admin" filename="hook.db-consistency"><![CDATA[]]></hook>
-		<hook name="phpAdminDatabaseConsistencyType" page_type="admin" pages="database">
-			<![CDATA[
+    <hooks>
+        <hook name="phpCoreUrlRewrite" filename="hook.rewrite-url" page_type="front"><![CDATA[]]></hook>
+        <hook name="phpCoreBeforePageDisplay" filename="hook.blocks-load" page_type="front"><![CDATA[]]></hook>
+        <hook name="smartyFrontFiltersBeforeFields" type="smarty" page_type="front" filename="search.filters"><![CDATA[]]></hook>
+        <hook name="smartyFrontSearchSortingListings" type="smarty" page_type="front" filename="search.listings.sorting-header"><![CDATA[]]></hook>
+        <hook name="adminDatabaseConsistency" type="smarty" page_type="admin" filename="hook.db-consistency"><![CDATA[]]></hook>
+        <hook name="phpAdminDatabaseConsistencyType" page_type="admin" pages="database">
+            <![CDATA[
 if ('repair_directorycats' == $type)
 {
-	$iaCateg = $iaCore->factoryModule('categ', 'directory', iaCore::ADMIN);
+    $iaCateg = $iaCore->factoryModule('categ', 'directory', iaCore::ADMIN);
 
-	$iaCateg->rebuildRelation();
-	$iaCateg->syncLinkingData();
+    $iaCateg->rebuildRelation();
+    $iaCateg->syncLinkingData();
 
-	$iaView->setMessages(iaLanguage::get('categories_repaired'), iaView::SUCCESS);
+    $iaView->setMessages(iaLanguage::get('categories_repaired'), iaView::SUCCESS);
 }
-			]]>
-		</hook>
-		<hook name="phpAdminDatabaseBeforeAll" page_type="admin">
-			<![CDATA[
+            ]]>
+        </hook>
+        <hook name="phpAdminDatabaseBeforeAll" page_type="admin">
+            <![CDATA[
 $reset_options['listings'] = iaLanguage::get('reset_listings');
 $reset_options['categs'] = iaLanguage::get('reset_categs');
-			]]>
-		</hook>
-		<hook name="phpDbControlBeforeReset" page_type="admin">
-			<![CDATA[
+            ]]>
+        </hook>
+        <hook name="phpDbControlBeforeReset" page_type="admin">
+            <![CDATA[
 $iaDBControl = $iaCore->factory('dbcontrol', iaCore::ADMIN);
 switch ($option)
 {
-	case 'listings':
-		$iaDBControl->truncate('listings');
-		break;
+    case 'listings':
+        $iaDBControl->truncate('listings');
+        break;
 
-	case 'categs':
-		$iaDBControl->truncate('categs');
-		$iaDb->query("INSERT INTO `" . $iaCore->iaDb->prefix . "categs`
+    case 'categs':
+        $iaDBControl->truncate('categs');
+        $iaDb->query("INSERT INTO `" . $iaCore->iaDb->prefix . "categs`
 (`id`, `parent_id`, `title_" . IA_LANGUAGE . "`, `date_added`, `date_modified`, `status`, `level`, `parents`, `locked`)
 VALUES (1, -1, 'ROOT', NOW(), NOW(), 'active', 0, '1', 1)");
 }
-			]]>
-		</hook>
-		<hook name="smartyFrontDirectoryCategories" type="smarty" page_type="front">
-			<![CDATA[
+            ]]>
+        </hook>
+        <hook name="smartyFrontDirectoryCategories" type="smarty" page_type="front">
+            <![CDATA[
 {if !empty($directory_categories)}
-	<div class="ia-categories">
-		{include file='ia-categories.tpl' categories=$directory_categories item='categs' id='directory-categories' show_amount=$core.config.directory_show_amount|default:true num_columns=$core.config.directory_categories_columns icons=true}
-	</div>
+    <div class="ia-categories">
+        {include file='ia-categories.tpl' categories=$directory_categories item='categs' id='directory-categories' show_amount=$core.config.directory_show_amount|default:true num_columns=$core.config.directory_categories_columns icons=true}
+    </div>
 {/if}
-			]]>
-		</hook>
-		<hook name="populateCommonStatisticsBlock" page_type="front">
-			<![CDATA[
+            ]]>
+        </hook>
+        <hook name="populateCommonStatisticsBlock" page_type="front">
+            <![CDATA[
 $condition = iaDb::printf("`status` = ':status'", array('status' => iaCore::STATUS_ACTIVE));
 $statistics['directory'] = array(
-	array(
-		'title' => iaLanguage::get('listings'),
-		'value' => number_format((int)$iaDb->one(iaDb::STMT_COUNT_ROWS, $condition, 'listings'))
-	),
-	array(
-		'title' => iaLanguage::get('categories'),
-		'value' => number_format((int)$iaDb->one(iaDb::STMT_COUNT_ROWS, $condition . ' AND `parent_id` != -1', 'categs'))
-	)
+    array(
+        'title' => iaLanguage::get('listings'),
+        'value' => number_format((int)$iaDb->one(iaDb::STMT_COUNT_ROWS, $condition, 'listings'))
+    ),
+    array(
+        'title' => iaLanguage::get('categories'),
+        'value' => number_format((int)$iaDb->one(iaDb::STMT_COUNT_ROWS, $condition . ' AND `parent_id` != -1', 'categs'))
+    )
 );
-			]]>
-		</hook>
-		<hook name="smartyViewListingBeforeFooter" type="smarty" page_type="front" filename="hook.report-modal"><![CDATA[]]></hook>
-	</hooks>
+            ]]>
+        </hook>
+        <hook name="smartyViewListingBeforeFooter" type="smarty" page_type="front" filename="hook.report-modal"><![CDATA[]]></hook>
+    </hooks>
 
-	<install>
-		<sql>
-			<![CDATA[
+    <install>
+        <sql>
+            <![CDATA[
 CREATE TABLE IF NOT EXISTS `{prefix}categs`(
-	`id` int(8) unsigned NOT NULL auto_increment,
-	`parent_id` int(8) NOT NULL,
-	`title_alias` varchar(150) NOT NULL default '',
-	`date_added` date,
-	`date_modified` date,
-	`description` text NOT NULL,
-	`status` enum('active', 'inactive') NOT NULL default 'inactive',
-	`order` mediumint(8) NOT NULL default 0,
-	`level` smallint(5) unsigned NOT NULL default 1,
-	`parents` tinytext NOT NULL,
-	`child` text NOT NULL,
-	`num_cols` tinyint(4) unsigned NOT NULL default 0,
-	`num_listings` mediumint(8) unsigned NOT NULL default 0,
-	`num_all_listings` mediumint(8) unsigned NOT NULL default 0,
-	`no_follow` tinyint(1) unsigned NOT NULL default 0,
-	`locked` tinyint(1) unsigned NOT NULL default 0,
-	`views_num` mediumint(8) unsigned NOT NULL default 0,
-	`breadcrumb` text NOT NULL,
-	`featured` tinyint(1) unsigned NOT NULL default 0,
-	`featured_start` datetime NULL,
-	`featured_end` datetime NULL,
-	PRIMARY KEY (`id`),
-	KEY `PARENT` (`parent_id`),
-	KEY `STATUS` (`status`),
-	KEY `ALIAS` (`title_alias`),
-	KEY `ORDER` (`order`)
+    `id` int(8) unsigned NOT NULL auto_increment,
+    `parent_id` int(8) NOT NULL,
+    `title_alias` varchar(150) NOT NULL default '',
+    `date_added` date,
+    `date_modified` date,
+    `description` text NOT NULL,
+    `status` enum('active', 'inactive') NOT NULL default 'inactive',
+    `order` mediumint(8) NOT NULL default 0,
+    `level` smallint(5) unsigned NOT NULL default 1,
+    `parents` tinytext NOT NULL,
+    `child` text NOT NULL,
+    `num_cols` tinyint(4) unsigned NOT NULL default 0,
+    `num_listings` mediumint(8) unsigned NOT NULL default 0,
+    `num_all_listings` mediumint(8) unsigned NOT NULL default 0,
+    `no_follow` tinyint(1) unsigned NOT NULL default 0,
+    `locked` tinyint(1) unsigned NOT NULL default 0,
+    `views_num` mediumint(8) unsigned NOT NULL default 0,
+    `breadcrumb` text NOT NULL,
+    `featured` tinyint(1) unsigned NOT NULL default 0,
+    `featured_start` datetime NULL,
+    `featured_end` datetime NULL,
+    PRIMARY KEY (`id`),
+    KEY `PARENT` (`parent_id`),
+    KEY `STATUS` (`status`),
+    KEY `ALIAS` (`title_alias`),
+    KEY `ORDER` (`order`)
 ) {mysql_version};
-			]]>
-		</sql>
-		<sql>
-			<![CDATA[
+            ]]>
+        </sql>
+        <sql>
+            <![CDATA[
 CREATE TABLE `{prefix}categs_crossed` (
-	`id` int(8) unsigned NOT NULL auto_increment,
-	`category_id` int(8) unsigned NOT NULL default '0',
-	`crossed_id` int(8) unsigned NOT NULL default '0',
-	PRIMARY KEY  (`id`),
-	KEY `category_id` (`category_id`,`crossed_id`)
+    `id` int(8) unsigned NOT NULL auto_increment,
+    `category_id` int(8) unsigned NOT NULL default '0',
+    `crossed_id` int(8) unsigned NOT NULL default '0',
+    PRIMARY KEY  (`id`),
+    KEY `category_id` (`category_id`,`crossed_id`)
 ) {mysql_version};
-			]]>
-		</sql>
-		<sql>
-			<![CDATA[
+            ]]>
+        </sql>
+        <sql>
+            <![CDATA[
 CREATE TABLE IF NOT EXISTS `{prefix}categs_flat`(
-	`parent_id` int(8) unsigned NOT NULL,
-	`category_id` int(8) unsigned NOT NULL,
-	KEY `PARENT` (`parent_id`),
-	KEY `CATEGORY` (`category_id`)
+    `parent_id` int(8) unsigned NOT NULL,
+    `category_id` int(8) unsigned NOT NULL,
+    KEY `PARENT` (`parent_id`),
+    KEY `CATEGORY` (`category_id`)
 ) {mysql_version};
-			]]>
-		</sql>
-		<sql>
-			<![CDATA[
+            ]]>
+        </sql>
+        <sql>
+            <![CDATA[
 CREATE TABLE IF NOT EXISTS `{prefix}listings_categs`(
-	`listing_id` int(8) unsigned NOT NULL,
-	`category_id` int(8) unsigned NOT NULL,
-	KEY `LISTINGTOCATEGORY` (`listing_id`, `category_id`)
+    `listing_id` int(8) unsigned NOT NULL,
+    `category_id` int(8) unsigned NOT NULL,
+    KEY `LISTINGTOCATEGORY` (`listing_id`, `category_id`)
 ) {mysql_version};
-			]]>
-		</sql>
-		<sql>
-			<![CDATA[
+            ]]>
+        </sql>
+        <sql>
+            <![CDATA[
 CREATE TABLE IF NOT EXISTS `{prefix}listings`(
-	`id` int(8) unsigned NOT NULL auto_increment,
-	`member_id` mediumint(8) unsigned NOT NULL,
-	`category_id` int(8) unsigned NOT NULL,
-	`title_alias` varchar(150) NOT NULL default '',
-	`url` tinytext NOT NULL,
-	`reciprocal` tinytext NOT NULL,
-	`domain` varchar(150) NOT NULL,
-	`ip` bigint(12) NOT NULL,
-	`status` enum('approval', 'banned', 'suspended', 'inactive', 'active') NOT NULL default 'approval',
-	`alexa_rank` bigint(16) unsigned default NULL,
-	`rank` tinyint(3) NOT NULL,
-	`date_added` datetime NOT NULL,
-	`date_modified` datetime NOT NULL,
-	`views_num` mediumint(7) unsigned NOT NULL,
-	`featured` tinyint(1) unsigned NOT NULL,
-	`featured_start` datetime NULL,
-	`featured_end` datetime NULL,
-	`sponsored` tinyint(1) unsigned NOT NULL,
-	`sponsored_start` datetime NULL,
-	`sponsored_end` datetime NULL,
-	`sponsored_plan_id` smallint(5) unsigned NULL,
-	`reported_as_broken` tinyint(1) unsigned NOT NULL,
-	`reported_as_broken_comments` TEXT NOT NULL,
-	PRIMARY KEY (`id`),
-	KEY `CATEGORY` (`category_id`),
-	KEY `date_added` (`date_added`),
-	KEY `RANK` (`rank`),
-	KEY `STATUS` (`status`),
-	KEY `featured` (`featured`),
-	KEY `featured_start` (`featured_start`),
-	KEY `sponsored` (`sponsored`)
+    `id` int(8) unsigned NOT NULL auto_increment,
+    `member_id` mediumint(8) unsigned NOT NULL,
+    `category_id` int(8) unsigned NOT NULL,
+    `title_alias` varchar(150) NOT NULL default '',
+    `url` tinytext NOT NULL,
+    `reciprocal` tinytext NOT NULL,
+    `domain` varchar(150) NOT NULL,
+    `ip` bigint(12) NOT NULL,
+    `status` enum('approval', 'banned', 'suspended', 'inactive', 'active') NOT NULL default 'approval',
+    `alexa_rank` bigint(16) unsigned default NULL,
+    `rank` tinyint(3) NOT NULL,
+    `date_added` datetime NOT NULL,
+    `date_modified` datetime NOT NULL,
+    `views_num` mediumint(7) unsigned NOT NULL,
+    `featured` tinyint(1) unsigned NOT NULL,
+    `featured_start` datetime NULL,
+    `featured_end` datetime NULL,
+    `sponsored` tinyint(1) unsigned NOT NULL,
+    `sponsored_start` datetime NULL,
+    `sponsored_end` datetime NULL,
+    `sponsored_plan_id` smallint(5) unsigned NULL,
+    `reported_as_broken` tinyint(1) unsigned NOT NULL,
+    `reported_as_broken_comments` TEXT NOT NULL,
+    PRIMARY KEY (`id`),
+    KEY `CATEGORY` (`category_id`),
+    KEY `date_added` (`date_added`),
+    KEY `RANK` (`rank`),
+    KEY `STATUS` (`status`),
+    KEY `featured` (`featured`),
+    KEY `featured_start` (`featured_start`),
+    KEY `sponsored` (`sponsored`)
 ) {mysql_version};
-			]]>
-		</sql>
-		<sql stage="end">
-			<![CDATA[
+            ]]>
+        </sql>
+        <sql stage="end">
+            <![CDATA[
 INSERT INTO `{prefix}categs`
-	(`id`, `parent_id`, `title_{lang}`, `date_added`, `date_modified`, `status`, `level`, `parents`, `locked`) VALUES
+    (`id`, `parent_id`, `title_{lang}`, `date_added`, `date_modified`, `status`, `level`, `parents`, `locked`) VALUES
 (0, -1, 'ROOT', NOW(), NOW(), 'active', 0, '1', 1);
-			]]>
-		</sql>
-		<sql stage="end">
-			<![CDATA[
+            ]]>
+        </sql>
+        <sql stage="end">
+            <![CDATA[
 UPDATE `{prefix}categs` SET `id` = 0 WHERE `parent_id` = -1;
-			]]>
-		</sql>
-		<code>
-			<![CDATA[
+            ]]>
+        </sql>
+        <code>
+            <![CDATA[
 iaCore::instance()->factoryModule('categ', 'directory', iaCore::ADMIN)->rebuildRelation();
-			]]>
-		</code>
-	</install>
+            ]]>
+        </code>
+    </install>
 
-	<uninstall>
-		<sql>
-			<![CDATA[
+    <uninstall>
+        <sql>
+            <![CDATA[
 DROP TABLE IF EXISTS `{prefix}categs`, `{prefix}categs_crossed`, `{prefix}categs_flat`, `{prefix}listings_categs`, `{prefix}listings`;
-			]]>
-		</sql>
-	</uninstall>
+            ]]>
+        </sql>
+    </uninstall>
 </module>

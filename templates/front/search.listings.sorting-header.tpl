@@ -11,10 +11,8 @@
     </p>
 </div>
 {ia_add_js}
-$(function()
-{
-    $('a', '#js-listings-sorting-options').on('click', function(e)
-    {
+$(function() {
+    $('a', '#js-listings-sorting-options').on('click', function(e) {
         var $this = $(this);
         $this.parent().find('a').not($this).removeClass('active');
         $this.addClass('active');
