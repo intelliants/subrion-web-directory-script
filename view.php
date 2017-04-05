@@ -109,8 +109,9 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType()) {
 
     $iaView->set('subpage', $category['id']);
 
-    if (!empty($category['parents'])) {
-        $condition = "`id` IN({$category['parents']}) AND `parent_id` != -1 AND `status` = 'active'";
+    if (!empty($category[iaCateg::COL_PARENTS])) {
+        $condition = iaDb::convertIds(iaCateg::ROOT_PARENT_ID, iaCateg::COL_PARENT_ID, false);
+        $condition .= " AND `id` IN({$category[iaCateg::COL_PARENTS]}) AND `status` = 'active'";
         $parents = $iaCateg->get($condition, 0, null, null, 'c.*', 'level');
 
         foreach ($parents as $p) {
