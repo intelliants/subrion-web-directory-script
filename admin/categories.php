@@ -24,7 +24,7 @@ class iaBackendController extends iaAbstractControllerModuleBackend
 
     protected $_helperName = 'categ';
 
-    protected $_gridColumns = ['parent_id', 'title', 'title_alias', 'num_all_listings', 'locked', 'level', 'date_added', 'date_modified', 'status'];
+    protected $_gridColumns = ['title', 'title_alias', 'num_all_listings', 'locked', 'level', 'status'];
     protected $_gridFilters = ['title' => self::LIKE, 'status' => self::EQUAL];
     protected $_gridQueryMainTableAlias = 'c';
 
@@ -41,6 +41,8 @@ class iaBackendController extends iaAbstractControllerModuleBackend
     public function init()
     {
         $this->_root = $this->getHelper()->getRoot();
+        $this->_treeSettings = ['parent_id' => iaCateg::COL_PARENT_ID, 'parents' => iaCateg::COL_PARENTS];
+        $this->_gridColumns['parent_id'] = iaCateg::COL_PARENT_ID;
     }
 
     public function _gridQuery($columns, $where, $order, $start, $limit)
@@ -55,41 +57,12 @@ class iaBackendController extends iaAbstractControllerModuleBackend
 
     protected function _entryAdd(array $entryData)
     {
-        $entryData['date_added'] = date(iaDb::DATE_FORMAT);
-        $entryData['date_modified'] = date(iaDb::DATE_FORMAT);
-
-        return parent::_entryAdd($entryData);
+        return $this->getHelper()->insert($entryData);
     }
 
     protected function _entryUpdate(array $entryData, $entryId)
     {
-        $entryData['date_modified'] = date(iaDb::DATE_FORMAT);
-
-        if (empty($entryId) && '0' !== $entryId) {
-            return false;
-        }
-
-        $currentData = $this->getById($entryId);
-
-        if (empty($currentData)) {
-            return false;
-        }
-
-        $result = $this->_update($entryData, $entryId);
-
-        if ($result) {
-            $this->_writeLog(iaCore::ACTION_EDIT, $entryData, $entryId);
-            $this->updateCounters($entryId, $entryData, iaCore::ACTION_EDIT, $currentData);
-
-            $this->_iaCore->startHook('phpListingUpdated', [
-                'itemId' => $entryId,
-                'itemName' => $this->getItemName(),
-                'itemData' => $entryData,
-                'previousData' => $currentData
-            ]);
-        }
-
-        return $result;
+        return $this->getHelper()->update($entryData, $entryId);
     }
 
     protected function _entryDelete($entryId)
@@ -100,12 +73,13 @@ class iaBackendController extends iaAbstractControllerModuleBackend
     protected function _setDefaultValues(array &$entry)
     {
         $entry = [
-            'parent_id' => $this->_root['id'],
-            'parents' => 0,
-            'locked' => false,
-            'featured' => false,
+            'title_alias' => '',
             'status' => iaCore::STATUS_ACTIVE,
-            'title_alias' => ''
+            'featured' => false,
+            'locked' => false,
+
+            iaCateg::COL_PARENT_ID => $this->_root['id'],
+            iaCateg::COL_PARENTS => ''
         ];
     }
 
@@ -113,15 +87,15 @@ class iaBackendController extends iaAbstractControllerModuleBackend
     {
         parent::_preSaveEntry($entry, $data, $action);
 
-        $entry['parent_id'] = empty($data['tree_id']) ? $this->_root['id'] : $data['tree_id'];
+        $entry[iaCateg::COL_PARENT_ID] = empty($data['tree_id']) ? $this->_root['id'] : $data['tree_id'];
         $entry['locked'] = (int)$data['locked'];
         $entry['status'] = $data['status'];
         $entry['order'] = $this->_iaDb->getMaxOrder() + 1;
 
         $entry['title_alias'] = empty($data['title_alias']) ? $data['title'][$this->_iaCore->language['iso']] : $data['title_alias'];
-        $entry['title_alias'] = $this->getHelper()->getSlug($entry['title_alias'], $entry['parent_id']);
+        $entry['title_alias'] = $this->getHelper()->getSlug($entry['title_alias'], $entry[iaCateg::COL_PARENT_ID]);
 
-        if ($this->getHelper()->exists($entry['title_alias'], $entry['parent_id'], $this->getEntryId())) {
+        if ($this->getHelper()->exists($entry['title_alias'], $entry[iaCateg::COL_PARENT_ID], $this->getEntryId())) {
             $this->addMessage('directory_category_already_exists');
         }
 
@@ -148,12 +122,6 @@ class iaBackendController extends iaAbstractControllerModuleBackend
         $this->_iaDb->resetTable();
     }
 
-    public function updateCounters($entryId, array $entryData, $action, $previousData = null)
-    {
-        $this->getHelper()->rebuildRelation();
-        $this->getHelper()->syncLinkingData($entryId);
-    }
-
     protected function _assignValues(&$iaView, array &$entryData)
     {
         parent::_assignValues($iaView, $entryData);
@@ -161,55 +129,8 @@ class iaBackendController extends iaAbstractControllerModuleBackend
         $alias = explode(IA_URL_DELIMITER, substr($entryData['title_alias'], 0, -1));
         $entryData['title_alias'] = end($alias);
 
-        $parent = $this->getHelper()->getById($entryData['parent_id']);
-
-        $entryData['crossed'] = $this->_fetchCrossed();
-
-        $iaView->assign('parent', $parent);
+        $iaView->assign('crossed', $this->_fetchCrossed());
     }
-
-    protected function _getJsonTree(array $data)
-    {
-        $output = [];
-
-        $dynamicLoadMode = ((int)$this->_iaDb->one(iaDb::STMT_COUNT_ROWS) > 150);
-        $noRootMode = isset($data['noroot']) && '' == $data['noroot'];
-
-        $rootId = $noRootMode ? 0 : -1;
-        $parentId = isset($data['id']) && is_numeric($data['id'])
-            ? (int)$data['id']
-            : $rootId;
-
-        $where = $dynamicLoadMode
-            ? '`parent_id` = ' . $parentId
-            : ($noRootMode ? '`id` != ' . $rootId : iaDb::EMPTY_CONDITION);
-
-        // TODO: better solution should be found here. this code will break jstree composition in case if
-        // category to be excluded from the list has children of 2 and more levels deeper
-        empty($data['cid']) || $where.= ' AND `id` != ' . (int)$data['cid'] . ' AND `parent_id` != ' . (int)$data['cid'];
-
-        $where.= ' ORDER BY `title`';
-
-        $rows = $this->_iaDb->all(['id', 'title' => 'title_' . $this->_iaCore->language['iso'], 'parent_id', 'child'], $where);
-
-        foreach ($rows as $row) {
-            $entry = ['id' => $row['id'], 'text' => $row['title']];
-
-            if ($dynamicLoadMode) {
-                $entry['children'] = ($row['child'] && $row['child'] != $row['id']) || 0 === (int)$row['id'];
-            } else {
-                $entry['state'] = [];
-                $entry['parent'] = $noRootMode
-                    ? (0 == $row['parent_id'] ? '#' : $row['parent_id'])
-                    : (0 == $row['id'] ? '#' : $row['parent_id']);
-            }
-
-            $output[] = $entry;
-        }
-
-        return $output;
-    }
-
 
     protected function _fetchCrossed()
     {

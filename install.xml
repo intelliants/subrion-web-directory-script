@@ -402,16 +402,10 @@ $statistics['directory'] = array(
 			<![CDATA[
 CREATE TABLE IF NOT EXISTS `{prefix}categs`(
 	`id` int(8) unsigned NOT NULL auto_increment,
-	`parent_id` int(8) NOT NULL,
 	`title_alias` varchar(150) NOT NULL default '',
-	`date_added` date,
-	`date_modified` date,
 	`description` text NOT NULL,
-	`status` enum('active', 'inactive') NOT NULL default 'inactive',
+	`status` enum('active', 'inactive') NOT NULL default 'active',
 	`order` mediumint(8) NOT NULL default 0,
-	`level` smallint(5) unsigned NOT NULL default 1,
-	`parents` tinytext NOT NULL,
-	`child` text NOT NULL,
 	`num_cols` tinyint(4) unsigned NOT NULL default 0,
 	`num_listings` mediumint(8) unsigned NOT NULL default 0,
 	`num_all_listings` mediumint(8) unsigned NOT NULL default 0,
@@ -423,9 +417,8 @@ CREATE TABLE IF NOT EXISTS `{prefix}categs`(
 	`featured_start` datetime NULL,
 	`featured_end` datetime NULL,
 	PRIMARY KEY (`id`),
-	KEY `PARENT` (`parent_id`),
 	KEY `STATUS` (`status`),
-	KEY `ALIAS` (`title_alias`),
+	KEY `SLUG` (`title_alias`),
 	KEY `ORDER` (`order`)
 ) {mysql_version};
 			]]>
@@ -497,21 +490,9 @@ CREATE TABLE IF NOT EXISTS `{prefix}listings`(
 ) {mysql_version};
 			]]>
 		</sql>
-		<sql stage="end">
-			<![CDATA[
-INSERT INTO `{prefix}categs`
-	(`id`, `parent_id`, `title_{lang}`, `date_added`, `date_modified`, `status`, `level`, `parents`, `locked`) VALUES
-(0, -1, 'ROOT', NOW(), NOW(), 'active', 0, '1', 1);
-			]]>
-		</sql>
-		<sql stage="end">
-			<![CDATA[
-UPDATE `{prefix}categs` SET `id` = 0 WHERE `parent_id` = -1;
-			]]>
-		</sql>
 		<code>
 			<![CDATA[
-iaCore::instance()->factoryModule('categ', 'directory', iaCore::ADMIN)->rebuildRelation();
+$iaCore->factoryModule('categ', 'directory', iaCore::ADMIN)->setupDbStructure();
 			]]>
 		</code>
 	</install>

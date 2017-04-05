@@ -40,6 +40,7 @@ class iaBackendController extends iaAbstractControllerModuleBackend
     public function init()
     {
         $this->_iaCateg = $this->_iaCore->factoryModule('categ', $this->getModuleName(), iaCore::ADMIN);
+        $this->_treeSettings = ['parent_id' => iaCateg::COL_PARENT_ID, 'parents' => iaCateg::COL_PARENTS];
     }
 
     protected function _modifyGridParams(&$conditions, &$values, array $params)
@@ -185,16 +186,23 @@ class iaBackendController extends iaAbstractControllerModuleBackend
     {
         parent::_assignValues($iaView, $entryData);
 
-        $category = $this->_iaCateg->getById($entryData['category_id']);
-        $crossed = $this->_fetchCrossedCategories();
-
-        $entryData['parents'] = $category['parents'];
-
-        $iaView->assign('parent', $category);
-        $iaView->assign('crossed', $crossed);
+        $iaView->assign('crossed', $this->_fetchCrossedCategories());
         $iaView->assign('statuses', $this->getHelper()->getStatuses());
     }
 
+    protected function _getTreeVars(array $entryData)
+    {
+        $category = empty($entryData['category_id'])
+            ? $this->_iaCateg->getRoot()
+            : $this->_iaCateg->getById($entryData['category_id']);
+
+        return [
+            'url' => IA_ADMIN_URL . 'directory/categories/tree.json?noroot',
+            'nodes' => $category[iaCateg::COL_PARENTS],
+            'id' => $category['id'],
+            'title' => $category['title']
+        ];
+    }
 
     protected function _fetchCrossedCategories()
     {
