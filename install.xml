@@ -337,11 +337,10 @@
         <hook name="adminDatabaseConsistency" type="smarty" page_type="admin" filename="hook.db-consistency"><![CDATA[]]></hook>
         <hook name="phpAdminDatabaseConsistencyType" page_type="admin" pages="database">
             <![CDATA[
-if ('repair_directorycats' == $type)
-{
+if ('repair_directorycats' == $type) {
     $iaCateg = $iaCore->factoryModule('categ', 'directory', iaCore::ADMIN);
 
-    $iaCateg->rebuildRelation();
+    $iaCateg->rebuildRelations();
     $iaCateg->syncLinkingData();
 
     $iaView->setMessages(iaLanguage::get('categories_repaired'), iaView::SUCCESS);
@@ -357,8 +356,7 @@ $reset_options['categs'] = iaLanguage::get('reset_categs');
         <hook name="phpDbControlBeforeReset" page_type="admin">
             <![CDATA[
 $iaDBControl = $iaCore->factory('dbcontrol', iaCore::ADMIN);
-switch ($option)
-{
+switch ($option) {
     case 'listings':
         $iaDBControl->truncate('listings');
         break;
@@ -366,8 +364,8 @@ switch ($option)
     case 'categs':
         $iaDBControl->truncate('categs');
         $iaDb->query("INSERT INTO `" . $iaCore->iaDb->prefix . "categs`
-(`id`, `parent_id`, `title_" . IA_LANGUAGE . "`, `date_added`, `date_modified`, `status`, `level`, `parents`, `locked`)
-VALUES (1, -1, 'ROOT', NOW(), NOW(), 'active', 0, '1', 1)");
+(`id`, `_pid`, `title_" . IA_LANGUAGE . "`, `date_added`, `date_modified`, `status`, `level`, `_parents`, `locked`)
+VALUES (1, 0, 'ROOT', NOW(), NOW(), 'active', 0, '1', 1)");
 }
             ]]>
         </hook>
@@ -384,14 +382,14 @@ VALUES (1, -1, 'ROOT', NOW(), NOW(), 'active', 0, '1', 1)");
             <![CDATA[
 $condition = iaDb::printf("`status` = ':status'", array('status' => iaCore::STATUS_ACTIVE));
 $statistics['directory'] = array(
-    array(
+    [
         'title' => iaLanguage::get('listings'),
         'value' => number_format((int)$iaDb->one(iaDb::STMT_COUNT_ROWS, $condition, 'listings'))
-    ),
-    array(
+    ],
+    [
         'title' => iaLanguage::get('categories'),
-        'value' => number_format((int)$iaDb->one(iaDb::STMT_COUNT_ROWS, $condition . ' AND `parent_id` != -1', 'categs'))
-    )
+        'value' => number_format((int)$iaDb->one(iaDb::STMT_COUNT_ROWS, $condition . ' AND `_pid` != 0', 'categs'))
+    ]
 );
             ]]>
         </hook>
