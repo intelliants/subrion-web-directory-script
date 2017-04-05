@@ -17,7 +17,7 @@
  *
  ******************************************************************************/
 
-include_once IA_INCLUDES . 'utils' . IA_DS . 'simplexml.class.php';
+include_once IA_INCLUDES . 'utils/simplexml.class.php';
 
 class iaAlexaRank extends simplexml
 {

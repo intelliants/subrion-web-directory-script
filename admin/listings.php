@@ -128,7 +128,7 @@ class iaBackendController extends iaAbstractControllerModuleBackend
         if (iaValidate::isUrl($entry['url'])) {
             // check alexa
             if ($this->_iaCore->get('directory_enable_alexarank')) {
-                include IA_MODULES . 'directory' . IA_DS . 'includes' . IA_DS . 'alexarank.inc.php';
+                include IA_MODULES . 'directory/includes/alexarank.inc.php';
 
                 if ($alexaData = (new iaAlexaRank())->getAlexa($entry['domain'])) {
                     $entry['alexa_rank'] = $alexaData['rank'];
