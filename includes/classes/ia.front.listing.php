@@ -438,14 +438,15 @@ class iaListing extends abstractDirectoryDirectoryFront
         $sql = <<<SQL
 UPDATE `:table_categs` 
 SET `num_listings` = IF(`id` = :category, `num_listings` + :increment, `num_listings`),
-	`num_all_listings` = `num_all_listings` + :increment
-WHERE FIND_IN_SET(:category, `child`)
+	`num_all_listings` = `num_all_listings` + :increment 
+WHERE FIND_IN_SET(:category, `:col_children`)
 SQL;
 
         $sql = iaDb::printf($sql, [
             'table_categs' => $this->iaDb->prefix . 'categs',
             'category' => (int)$categoryId,
-            'increment' => (int)$increment
+            'increment' => (int)$increment,
+            'col_children' => iaCateg::COL_CHILDREN
         ]);
 
         return $this->iaDb->query($sql);
