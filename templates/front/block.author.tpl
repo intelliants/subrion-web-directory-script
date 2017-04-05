@@ -1,10 +1,10 @@
 {if !empty($author)}
     <div class="ia-item-author">
-        <a class="ia-item-author__image" href="{ia_url type='url' item='members' data=$author}">
+        <a class="ia-item-author__image" href="{$author.link}">
             {ia_image file=$author.avatar type='thumbnail' width=120 title=$author.fullname|default:$author.username gravatar=true email=$author.email}
         </a>
         <div class="ia-item-author__content">
-            <h4 class="ia-item__title"><a href="{ia_url type='url' item='members' data=$author}">{$author.fullname}</a></h4>
+            <h4 class="ia-item__title"><a href="{$author.link}">{$author.fullname}</a></h4>
             <div class="ia-item__additional">
                 <p><span class="fa fa-link"></span> {lang key='listings'}: <b>{$listings_num|string_format:'%d'}</b></p>
                 <p><a href="#send-email-box" data-toggle="modal"><span class="fa fa-envelope"></span> {lang key='send_email'}</a></p>
@@ -13,7 +13,7 @@
                     <p><span class="fa fa-phone"></span> {lang key='field_members_phone'}: {$author.phone}</p>
                 {/if}
             </div>
-            {if $author.facebook || $author.twitter || $author.gplus || $author.linkedin}
+            {if !empty($author.facebook) || !empty($author.twitter) || !empty($author.gplus) || !empty($author.linkedin)}
                 <p class="text-center">
                     {if !empty($author.facebook)}
                         <a href="{$author.facebook}" class="fa-stack fa-lg"><i class="fa fa-circle fa-stack-2x"></i><i class="fa fa-facebook fa-stack-1x fa-inverse"></i></a>
@@ -82,18 +82,14 @@
     </div><!-- /.modal -->
 
     {ia_add_js}
-$(function()
-{
-    $('#send-email').click(function(e)
-    {
+$(function() {
+    $('#send-email').click(function(e) {
         e.preventDefault();
 
-        if (!$(this).hasClass('disabled'))
-        {
+        if (!$(this).hasClass('disabled')) {
             var url = intelli.config.ia_url + 'actions/read.json';
             var params = new Object();
-            $.each($('input', '#send-email-box'), function()
-            {
+            $.each($('input', '#send-email-box'), function() {
                 var input_name = $(this).attr('name');
                 params[input_name] = $(this).val();
             });
@@ -102,18 +98,13 @@ $(function()
             params['email_body'] = $('#email-body').val();
 
             $.ajaxSetup( { async: false } );
-            $.post(url, params, function(data)
-            {
-                if (data.error)
-                {
+            $.post(url, params, function(data) {
+                if (data.error) {
                     $('#author-block-alert').addClass('alert-danger').removeClass('alert-success');
-                }
-                else
-                {
+                } else {
                     $('#author-block-alert').addClass('alert-success').removeClass('alert-danger');
                     $('#send-email').addClass('disabled');
-                    setTimeout(function()
-                    {
+                    setTimeout(function() {
                         $('#send-email-box').modal('hide');
                     }, 1500);
                 }

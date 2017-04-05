@@ -28,7 +28,7 @@
 	<actions>
 		<action name="listings" url="directory/listings/" icon="list-2" pages="directory_stats,manage_listings:add,manage_listings:edit"><![CDATA[]]></action>
 		<action name="add_listing" url="directory/listings/add/" icon="plus-alt" pages="manage_listings,manage_listings:edit"><![CDATA[]]></action>
-		<action name="add_listing" url="directory/listings/add/" icon="plus" type="dashboard"><![CDATA[]]></action>
+		<action name="add_listing_dashboard" url="directory/listings/add/" icon="plus" type="dashboard"><![CDATA[]]></action>
 
 		<action name="categories" url="directory/categories/" icon="folder" pages="directory_stats,manage_categs:add,manage_categs:edit"><![CDATA[]]></action>
 		<action name="add_category" url="directory/categories/add/" icon="folder-plus" pages="manage_categs,manage_categs:edit"><![CDATA[]]></action>
@@ -130,7 +130,7 @@
 <p>Greetings,</p>
 <p>We have a new listing "{%TITLE%}" at <a href="{%SITE_URL%}">{%SITE_URL%}</a>.</p>
 <p>For more details check the url: <a href="{%URL%}">{%URL%}</a></p>
-		]]>
+        ]]>
 	</config>
 
 	<!-- E-mail template for listing activation notification -->
@@ -142,7 +142,7 @@
 <p>Greetings,</p>
 <p>Your listing "{%TITLE%}" at <a href="{%SITE_URL%}">{%SITE_URL%}</a> went live.</p>
 <p>In order to view your listing please refer to the URL: <a href="{%URL%}">{%URL%}</a></p>
-		]]>
+        ]]>
 	</config>
 
 	<!-- E-mail template for listing suspension notification -->
@@ -153,7 +153,7 @@
 <p>Greetings,</p>
 <p>Your listing "{%TITLE%}" at <a href="{%SITE_URL%}">{%SITE_URL%}</a> has been suspended.</p>
 <p>If you do not know the reason of the suspension or if you want to reactivate your listing, please contact an administrator of the site.</p>
-		]]>
+        ]]>
 	</config>
 
 	<!-- E-mail template for listing banning notification -->
@@ -164,7 +164,7 @@
 <p>Greetings,</p>
 <p>Your listing "{%TITLE%}" at <a href="{%SITE_URL%}">{%SITE_URL%}</a> has been banned.</p>
 <p>If you do not know the reason of the banning or if you want to reactivate your listing, please contact an administrator of the site.</p>
-		]]>
+        ]]>
 	</config>
 
 	<!-- E-mail template for listing deletion notification -->
@@ -175,7 +175,7 @@
 <p>Greetings,</p>
 <p>Your listing "{%TITLE%}" at <a href="{%SITE_URL%}">{%SITE_URL%}</a> has been removed.</p>
 <p>If you do not know the reason of the deletion or if you want to recover your listing, please contact an administrator of the site.</p>
-		]]>
+        ]]>
 	</config>
 
 	<!-- E-mail template for reported as broken listing notification -->
@@ -187,7 +187,7 @@
 <p>Listing "{%TITLE%}" marked as broken.</p>
 <p>Comments:</p>
 <p>{%COMMENTS%}</p>
-		]]>
+        ]]>
 	</config>
 
 	<fields_groups>
@@ -197,22 +197,22 @@
 
 	<fields>
 		<field name="title" item="listings" type="text" group="general" length="70" required="1" multilingual="1"
-			page="add_listing,edit_listing,view_member,view_listing,favorites,rss_listings">Title</field>
+			   page="add_listing,edit_listing,view_member,view_listing,favorites,rss_listings">Title</field>
 		<field name="url" item="listings" type="text" group="general" length="70" required="1" default="http://"
-			page="add_listing,edit_listing,view_member,view_listing,favorites,rss_listings">URL</field>
+			   page="add_listing,edit_listing,view_member,view_listing,favorites,rss_listings">URL</field>
 		<field name="description" item="listings" type="textarea" group="general" editor="1" required="1" multilingual="1"
-			page="add_listing,edit_listing,view_listing,rss_listings">Description</field>
+			   page="add_listing,edit_listing,view_listing,rss_listings">Description</field>
 		<field name="reciprocal" item="listings" type="text" group="general" length="70" default="http://"
-			page="add_listing,edit_listing,view_listing,favorites">Reciprocal URL</field>
+			   page="add_listing,edit_listing,view_listing,favorites">Reciprocal URL</field>
 		<field name="email" item="listings" type="text" group="general" length="70"
-			page="add_listing,edit_listing">Email</field>
+			   page="add_listing,edit_listing">Email</field>
 		<field name="meta_description" item="listings" type="textarea" group="general" editor="0" adminonly="1" multilingual="1">Meta-Description</field>
 		<field name="meta_keywords" item="listings" type="text" group="general" length="70" required="0" adminonly="1" multilingual="1">Meta-Keywords</field>
 
 		<field name="title" item="categs" type="text" group="general" length="70" required="1" searchable="1" multilingual="1"
-			page="directory_home,rss_listings">Title</field>
+			   page="directory_home,rss_listings">Title</field>
 		<field name="description" item="categs" type="textarea" group="general" editor="1" required="0" searchable="1"
-			page="directory_home,rss_listings" multilingual="1">Description</field>
+			   page="directory_home,rss_listings" multilingual="1">Description</field>
 		<field name="meta_description" item="categs" type="textarea" group="general" editor="0" required="0" adminonly="1" multilingual="1">Meta-Description</field>
 		<field name="meta_keywords" item="categs" type="text" group="general" length="70" required="0" adminonly="1" multilingual="1">Meta-Keywords</field>
 		<field name="icon" item="categs" type="iconpicker" group="general" default="fa-folder" adminonly="1" page="directory_home">Icon</field>
@@ -220,6 +220,7 @@
 
 	<phrases>
 		<phrase category="admin" key="add_category">Add Category</phrase>
+		<phrase category="admin" key="add_listing_dashboard">Add Listing</phrase>
 		<phrase category="admin" key="are_you_sure_to_delete_selected_categ">Are you sure you wish to delete this category?</phrase>
 		<phrase category="admin" key="are_you_sure_to_delete_selected_categs">Are you sure you wish to delete these categories?</phrase>
 		<phrase category="admin" key="are_you_sure_to_delete_selected_listings">Are you sure you wish to delete these listings?</phrase>
@@ -338,61 +339,61 @@
 			<![CDATA[
 if ('repair_directorycats' == $type)
 {
-	$iaCateg = $iaCore->factoryModule('categ', 'directory', iaCore::ADMIN);
+    $iaCateg = $iaCore->factoryModule('categ', 'directory', iaCore::ADMIN);
 
-	$iaCateg->rebuildRelation();
-	$iaCateg->syncLinkingData();
+    $iaCateg->rebuildRelation();
+    $iaCateg->syncLinkingData();
 
-	$iaView->setMessages(iaLanguage::get('categories_repaired'), iaView::SUCCESS);
+    $iaView->setMessages(iaLanguage::get('categories_repaired'), iaView::SUCCESS);
 }
-			]]>
+            ]]>
 		</hook>
 		<hook name="phpAdminDatabaseBeforeAll" page_type="admin">
 			<![CDATA[
 $reset_options['listings'] = iaLanguage::get('reset_listings');
 $reset_options['categs'] = iaLanguage::get('reset_categs');
-			]]>
+            ]]>
 		</hook>
 		<hook name="phpDbControlBeforeReset" page_type="admin">
 			<![CDATA[
 $iaDBControl = $iaCore->factory('dbcontrol', iaCore::ADMIN);
 switch ($option)
 {
-	case 'listings':
-		$iaDBControl->truncate('listings');
-		break;
+    case 'listings':
+        $iaDBControl->truncate('listings');
+        break;
 
-	case 'categs':
-		$iaDBControl->truncate('categs');
-		$iaDb->query("INSERT INTO `" . $iaCore->iaDb->prefix . "categs`
+    case 'categs':
+        $iaDBControl->truncate('categs');
+        $iaDb->query("INSERT INTO `" . $iaCore->iaDb->prefix . "categs`
 (`id`, `parent_id`, `title_" . IA_LANGUAGE . "`, `date_added`, `date_modified`, `status`, `level`, `parents`, `locked`)
 VALUES (1, -1, 'ROOT', NOW(), NOW(), 'active', 0, '1', 1)");
 }
-			]]>
+            ]]>
 		</hook>
 		<hook name="smartyFrontDirectoryCategories" type="smarty" page_type="front">
 			<![CDATA[
 {if !empty($directory_categories)}
-	<div class="ia-categories">
-		{include file='ia-categories.tpl' categories=$directory_categories item='categs' id='directory-categories' show_amount=$core.config.directory_show_amount|default:true num_columns=$core.config.directory_categories_columns icons=true}
-	</div>
+    <div class="ia-categories">
+        {include file='ia-categories.tpl' categories=$directory_categories item='categs' id='directory-categories' show_amount=$core.config.directory_show_amount|default:true num_columns=$core.config.directory_categories_columns icons=true}
+    </div>
 {/if}
-			]]>
+            ]]>
 		</hook>
 		<hook name="populateCommonStatisticsBlock" page_type="front">
 			<![CDATA[
 $condition = iaDb::printf("`status` = ':status'", array('status' => iaCore::STATUS_ACTIVE));
 $statistics['directory'] = array(
-	array(
-		'title' => iaLanguage::get('listings'),
-		'value' => number_format((int)$iaDb->one(iaDb::STMT_COUNT_ROWS, $condition, 'listings'))
-	),
-	array(
-		'title' => iaLanguage::get('categories'),
-		'value' => number_format((int)$iaDb->one(iaDb::STMT_COUNT_ROWS, $condition . ' AND `parent_id` != -1', 'categs'))
-	)
+    array(
+        'title' => iaLanguage::get('listings'),
+        'value' => number_format((int)$iaDb->one(iaDb::STMT_COUNT_ROWS, $condition, 'listings'))
+    ),
+    array(
+        'title' => iaLanguage::get('categories'),
+        'value' => number_format((int)$iaDb->one(iaDb::STMT_COUNT_ROWS, $condition . ' AND `parent_id` != -1', 'categs'))
+    )
 );
-			]]>
+            ]]>
 		</hook>
 		<hook name="smartyViewListingBeforeFooter" type="smarty" page_type="front" filename="hook.report-modal"><![CDATA[]]></hook>
 	</hooks>
@@ -401,99 +402,98 @@ $statistics['directory'] = array(
 		<sql>
 			<![CDATA[
 CREATE TABLE IF NOT EXISTS `{prefix}categs`(
-	`id` int(8) unsigned NOT NULL auto_increment,
-	`title_alias` varchar(150) NOT NULL default '',
-	`description` text NOT NULL,
-	`status` enum('active', 'inactive') NOT NULL default 'active',
-	`order` mediumint(8) NOT NULL default 0,
-	`num_cols` tinyint(4) unsigned NOT NULL default 0,
-	`num_listings` mediumint(8) unsigned NOT NULL default 0,
-	`num_all_listings` mediumint(8) unsigned NOT NULL default 0,
-	`no_follow` tinyint(1) unsigned NOT NULL default 0,
-	`locked` tinyint(1) unsigned NOT NULL default 0,
-	`views_num` mediumint(8) unsigned NOT NULL default 0,
-	`breadcrumb` text NOT NULL,
-	`featured` tinyint(1) unsigned NOT NULL default 0,
-	`featured_start` datetime NULL,
-	`featured_end` datetime NULL,
-	PRIMARY KEY (`id`),
-	KEY `STATUS` (`status`),
-	KEY `SLUG` (`title_alias`),
-	KEY `ORDER` (`order`)
+    `id` int(8) unsigned NOT NULL auto_increment,
+    `title_alias` varchar(150) NOT NULL default '',
+    `status` enum('active', 'inactive') NOT NULL default 'active',
+    `order` mediumint(8) NOT NULL default 0,
+    `num_cols` tinyint(4) unsigned NOT NULL default 0,
+    `num_listings` mediumint(8) unsigned NOT NULL default 0,
+    `num_all_listings` mediumint(8) unsigned NOT NULL default 0,
+    `no_follow` tinyint(1) unsigned NOT NULL default 0,
+    `locked` tinyint(1) unsigned NOT NULL default 0,
+    `views_num` mediumint(8) unsigned NOT NULL default 0,
+    `breadcrumb` text NOT NULL,
+    `featured` tinyint(1) unsigned NOT NULL default 0,
+    `featured_start` datetime NULL,
+    `featured_end` datetime NULL,
+    PRIMARY KEY (`id`),
+    KEY `STATUS` (`status`),
+    KEY `ALIAS` (`title_alias`),
+    KEY `ORDER` (`order`)
 ) {mysql_version};
-			]]>
+            ]]>
 		</sql>
 		<sql>
 			<![CDATA[
 CREATE TABLE `{prefix}categs_crossed` (
-	`id` int(8) unsigned NOT NULL auto_increment,
-	`category_id` int(8) unsigned NOT NULL default '0',
-	`crossed_id` int(8) unsigned NOT NULL default '0',
-	PRIMARY KEY  (`id`),
-	KEY `category_id` (`category_id`,`crossed_id`)
+    `id` int(8) unsigned NOT NULL auto_increment,
+    `category_id` int(8) unsigned NOT NULL default 0,
+    `crossed_id` int(8) unsigned NOT NULL default 0,
+    PRIMARY KEY  (`id`),
+    KEY `category_id` (`category_id`,`crossed_id`)
 ) {mysql_version};
-			]]>
+            ]]>
 		</sql>
 		<sql>
 			<![CDATA[
 CREATE TABLE IF NOT EXISTS `{prefix}categs_flat`(
-	`parent_id` int(8) unsigned NOT NULL,
-	`category_id` int(8) unsigned NOT NULL,
-	KEY `PARENT` (`parent_id`),
-	KEY `CATEGORY` (`category_id`)
+    `parent_id` int(8) unsigned NOT NULL,
+    `category_id` int(8) unsigned NOT NULL,
+    KEY `PARENT` (`parent_id`),
+    KEY `CATEGORY` (`category_id`)
 ) {mysql_version};
-			]]>
+            ]]>
 		</sql>
 		<sql>
 			<![CDATA[
 CREATE TABLE IF NOT EXISTS `{prefix}listings_categs`(
-	`listing_id` int(8) unsigned NOT NULL,
-	`category_id` int(8) unsigned NOT NULL,
-	KEY `LISTINGTOCATEGORY` (`listing_id`, `category_id`)
+    `listing_id` int(8) unsigned NOT NULL,
+    `category_id` int(8) unsigned NOT NULL,
+    KEY `LISTINGTOCATEGORY` (`listing_id`, `category_id`)
 ) {mysql_version};
-			]]>
+            ]]>
 		</sql>
 		<sql>
 			<![CDATA[
 CREATE TABLE IF NOT EXISTS `{prefix}listings`(
-	`id` int(8) unsigned NOT NULL auto_increment,
-	`member_id` mediumint(8) unsigned NOT NULL,
-	`category_id` int(8) unsigned NOT NULL,
-	`title_alias` varchar(150) NOT NULL default '',
-	`url` tinytext NOT NULL,
-	`reciprocal` tinytext NOT NULL,
-	`domain` varchar(150) NOT NULL,
-	`ip` bigint(12) NOT NULL,
-	`status` enum('approval', 'banned', 'suspended', 'inactive', 'active') NOT NULL default 'approval',
-	`alexa_rank` bigint(16) unsigned default NULL,
-	`rank` tinyint(3) NOT NULL,
-	`date_added` datetime NOT NULL,
-	`date_modified` datetime NOT NULL,
-	`views_num` mediumint(7) unsigned NOT NULL,
-	`featured` tinyint(1) unsigned NOT NULL,
-	`featured_start` datetime NULL,
-	`featured_end` datetime NULL,
-	`sponsored` tinyint(1) unsigned NOT NULL,
-	`sponsored_start` datetime NULL,
-	`sponsored_end` datetime NULL,
-	`sponsored_plan_id` smallint(5) unsigned NULL,
-	`reported_as_broken` tinyint(1) unsigned NOT NULL,
-	`reported_as_broken_comments` TEXT NOT NULL,
-	PRIMARY KEY (`id`),
-	KEY `CATEGORY` (`category_id`),
-	KEY `date_added` (`date_added`),
-	KEY `RANK` (`rank`),
-	KEY `STATUS` (`status`),
-	KEY `featured` (`featured`),
-	KEY `featured_start` (`featured_start`),
-	KEY `sponsored` (`sponsored`)
+    `id` int(8) unsigned NOT NULL auto_increment,
+    `member_id` mediumint(8) unsigned NOT NULL,
+    `category_id` int(8) unsigned NOT NULL,
+    `title_alias` varchar(150) NOT NULL default '',
+    `url` tinytext NOT NULL,
+    `reciprocal` tinytext NOT NULL,
+    `domain` varchar(150) NOT NULL,
+    `ip` bigint(12) NOT NULL,
+    `status` enum('approval', 'banned', 'suspended', 'inactive', 'active') NOT NULL default 'approval',
+    `alexa_rank` bigint(16) unsigned default NULL,
+    `rank` tinyint(3) NOT NULL,
+    `date_added` datetime NOT NULL,
+    `date_modified` datetime NOT NULL,
+    `views_num` mediumint(7) unsigned NOT NULL,
+    `featured` tinyint(1) unsigned NOT NULL,
+    `featured_start` datetime NULL,
+    `featured_end` datetime NULL,
+    `sponsored` tinyint(1) unsigned NOT NULL,
+    `sponsored_start` datetime NULL,
+    `sponsored_end` datetime NULL,
+    `sponsored_plan_id` smallint(5) unsigned NULL,
+    `reported_as_broken` tinyint(1) unsigned NOT NULL,
+    `reported_as_broken_comments` TEXT NOT NULL,
+    PRIMARY KEY (`id`),
+    KEY `CATEGORY` (`category_id`),
+    KEY `date_added` (`date_added`),
+    KEY `RANK` (`rank`),
+    KEY `STATUS` (`status`),
+    KEY `featured` (`featured`),
+    KEY `featured_start` (`featured_start`),
+    KEY `sponsored` (`sponsored`)
 ) {mysql_version};
-			]]>
+            ]]>
 		</sql>
 		<code>
 			<![CDATA[
 $iaCore->factoryModule('categ', 'directory', iaCore::ADMIN)->setupDbStructure();
-			]]>
+            ]]>
 		</code>
 	</install>
 
@@ -501,7 +501,7 @@ $iaCore->factoryModule('categ', 'directory', iaCore::ADMIN)->setupDbStructure();
 		<sql>
 			<![CDATA[
 DROP TABLE IF EXISTS `{prefix}categs`, `{prefix}categs_crossed`, `{prefix}categs_flat`, `{prefix}listings_categs`, `{prefix}listings`;
-			]]>
+            ]]>
 		</sql>
 	</uninstall>
 </module>

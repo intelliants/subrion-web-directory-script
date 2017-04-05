@@ -16,7 +16,7 @@
                     </div>
                     <p class="text-overflow">
                         {$listing.url}
-                        {if 0 != $listing.rank}
+                        {if $listing.rank > 0}
                             <br>{section name=star loop=$listing.rank}<span class="fa fa-star text-info"></span> {/section}
                         {/if}
                     </p>
