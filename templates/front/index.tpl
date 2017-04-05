@@ -50,7 +50,7 @@
 
         {navigation aTotal=$pagination.total aTemplate=$pagination.url aItemsPerPage=$pagination.limit aIgnore=true aTruncateParam=1}
     </div>
-{elseif !empty($category) && $category.parent_id > 0}
+{elseif !empty($category) && $category[iaCateg::COL_PARENT_ID] > 0}
     <div class="alert alert-info">{lang key='no_web_listings'}</div>
 {elseif !isset($category)}
     <div class="alert alert-info">{lang key='no_web_listings'}</div>

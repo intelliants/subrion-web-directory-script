@@ -83,9 +83,11 @@ class iaListing extends abstractDirectoryDirectoryFront
 
     public function get($where, $start = null, $limit = null, $order = null, $prioritizedSorting = false)
     {
+        $this->iaCore->factoryModule('categ', $this->getModuleName());
+
         $sql = 'SELECT SQL_CALC_FOUND_ROWS '
                 . 'l.*, '
-                . "c.`title_{$this->iaCore->language['iso']}` `category_title`, c.`title_alias` `category_alias`, c.`parents` `category_parents`, c.`breadcrumb` `category_breadcrumb`, "
+                . "c.`title_{$this->iaCore->language['iso']}` `category_title`, c.`title_alias` `category_alias`, c.`" . iaCateg::COL_PARENTS . "` `category_parents`, c.`breadcrumb` `category_breadcrumb`, "
                 . 'm.`fullname` `member`, m.`username` `account_username` '
             . 'FROM `' . self::getTable(true) . '` l '
             . "LEFT JOIN `{$this->iaDb->prefix}categs` c ON (l.`category_id` = c.`id`) "
@@ -186,7 +188,7 @@ class iaListing extends abstractDirectoryDirectoryFront
             'SELECT SQL_CALC_FOUND_ROWS li.*,'
                 . 'IF(li.`category_id` IN( ' . $cat_list . ' ), li.`category_id`, cr.`category_id`) `category`, '
                 //. 'IF(li.`category_id` = ' . $cat_id . ', 0, 1) `crossed`, '
-                . 'ca.`title_' . $this->iaCore->language['iso'] . '` `category_title`, ca.`title_alias` `category_alias`, ca.`parents` `category_parents`, ca.`breadcrumb` `category_breadcrumb`, '
+                . 'ca.`title_' . $this->iaCore->language['iso'] . '` `category_title`, ca.`title_alias` `category_alias`, ca.`' . iaCateg::COL_PARENTS . '` `category_parents`, ca.`breadcrumb` `category_breadcrumb`, '
                 . 'ac.`fullname` `member`, ac.`username` `account_username` '
             . 'FROM `' . $this->iaDb->prefix . 'categs` ca, ' . self::getTable(true) . ' li '
                 . 'LEFT JOIN `' . $this->iaDb->prefix . 'listings_categs` cr ON (cr.`listing_id` = li.`id` AND cr.`category_id` = ' . $cat_id . ') '

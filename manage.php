@@ -21,31 +21,7 @@ $iaCateg = $iaCore->factoryModule('categ', IA_CURRENT_MODULE);
 
 if (iaView::REQUEST_JSON == $iaView->getRequestType()) {
     if (1 == count($iaCore->requestPath) && 'tree' == $iaCore->requestPath[0]) {
-        $categoryId = empty($_GET['id']) ? 0 : (int)$_GET['id'];
-
-        $output = [];
-
-        $where = "`parent_id` = $categoryId AND `status` = 'active'";
-        $where .= ' ORDER BY `title`';
-
-        $entries = $iaCateg->getAll($where, [
-            'id',
-            'title' => 'title_' . $iaCore->language['iso'],
-            'title_alias',
-            'locked',
-            'child',
-            'value' => 'id'
-        ]);
-
-        foreach ($entries as $row) {
-            $entry = ['id' => $row['id'], 'text' => $row['title']];
-            empty($row['locked']) || $entry['state'] = ['disabled' => true];
-            $entry['children'] = $row['child'] && $row['child'] != $row['id'] || empty($row['child']);
-
-            $output[] = $entry;
-        }
-
-        $iaView->assign($output);
+        $iaView->assign($iaCateg->getJsonTree($_GET));
     }
 }
 

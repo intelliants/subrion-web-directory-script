@@ -128,18 +128,19 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType()) {
             $category = $iaCateg->getOne(iaDb::convertIds($categoryAlias, 'title_alias'));
 
             // requested category not found
-            if ($categoryAlias && (-1 == $category['parent_id'])) {
+            if ($categoryAlias && (-1 == $category[iaCateg::COL_PARENT_ID])) {
                 return iaView::errorPage(iaView::ERROR_NOT_FOUND);
             }
             $iaView->set('subpage', $category['id']);
 
             // start breadcrumb
-            if ($category && trim($category['parents'])) {
+            if ($category && trim($category[iaCateg::COL_PARENTS])) {
                 if (IA_CURRENT_MODULE == $iaCore->get('default_package')) {
                     iaBreadcrumb::remove(iaBreadcrumb::POSITION_LAST);
                 }
 
-                $condition = "`id` IN({$category['parents']}) AND `parent_id` != -1 AND `status` = 'active'";
+                $condition = iaDb::convertIds(iaCateg::ROOT_PARENT_ID, iaCateg::COL_PARENT_ID, false);
+                $condition .= " AND `id` IN({$category[iaCateg::COL_PARENTS]}) AND `status` = 'active'";
                 $parents = $iaCateg->get($condition, 0, null, null, 'c.*', 'level');
 
                 $filters = []; // pre-fill filters
@@ -153,21 +154,21 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType()) {
             }
             // end
 
-            $children = (empty($category['child']) || empty($category['parents']) || !$iaCore->get('display_children_listing'))
+            $children = (empty($category[iaCateg::COL_CHILDREN]) || empty($category[iaCateg::COL_PARENTS]) || !$iaCore->get('display_children_listing'))
                 ? $category['id']
-                : $category['id'] . ',' . $category['child'];
+                : $category['id'] . ',' . $category[iaCateg::COL_CHILDREN];
 
             $iaCateg->incrementViewsCounter($category['id']);
 
             $listings = $iaListing->getByCategoryId($children, '', $pagination['start'], $pagination['limit'], $order);
 
-            if (-1 != $category['parent_id']) {
+            if (iaCateg::ROOT_PARENT_ID != $category[iaCateg::COL_PARENT_ID]) {
                 $iaView->set('description', $category['meta_description']);
                 $iaView->set('keywords', $category['meta_keywords']);
             }
             $iaView->assign('category', $category);
 
-            if (isset($category) && -1 != $category['parent_id'] && isset($category['title'])) {
+            if (isset($category) && iaCateg::ROOT_PARENT_ID != $category[iaCateg::COL_PARENT_ID] && isset($category['title'])) {
                 $iaView->title($category['title']);
             }
     }

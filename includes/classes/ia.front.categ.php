@@ -17,10 +17,12 @@
  *
  ******************************************************************************/
 
-class iaCateg extends abstractDirectoryDirectoryFront
+class iaCateg extends iaAbstractFrontHelperCategoryHybrid
 {
     protected static $_table = 'categs';
     protected static $_tableCrossed = 'categs_crossed';
+
+    protected $_moduleName = 'directory';
 
     protected $_itemName = 'categs';
 

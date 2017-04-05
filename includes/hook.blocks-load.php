@@ -59,14 +59,14 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType()) {
 
         $category = ('directory_home' == $iaView->name()) ? $iaView->getValues('category') : $iaDb->row('id', '`level` = 0', iaCateg::getTable());
 
-        $condition = "c.`parent_id` = {$category['id']} AND c.`status` = 'active'";
+        $condition = "c.`" . iaCateg::COL_PARENT_ID . "` = {$category['id']} AND c.`status` = 'active'";
         $hideIfEmpty && ($condition .= ' AND c.`num_all_listings` != 0');
 
         $children = $iaCateg->get($condition, $category['id']);
 
         if ($iaCore->get('directory_display_subcategories')) {
             foreach ($children as $key => $cat) {
-                $condition = "c.`parent_id` = {$cat['id']} AND c.`status` = 'active'";
+                $condition = "c.`" . iaCateg::COL_PARENT_ID . "` = {$cat['id']} AND c.`status` = 'active'";
                 $hideIfEmpty && ($condition .= ' AND c.`num_all_listings` != 0');
 
                 $children[$key]['subcategories'] = $iaCateg->get($condition, $cat['id'], 0, $iaCore->get('directory_subcategories_number'));
