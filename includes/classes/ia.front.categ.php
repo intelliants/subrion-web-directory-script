@@ -17,7 +17,7 @@
  *
  ******************************************************************************/
 
-class iaCateg extends iaAbstractFrontHelperCategoryHybrid
+class iaCateg extends iaAbstractFrontHelperCategoryFlat
 {
     protected static $_table = 'categs';
     protected static $_tableCrossed = 'categs_crossed';

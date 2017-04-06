@@ -40,7 +40,6 @@ class iaBackendController extends iaAbstractControllerModuleBackend
     public function init()
     {
         $this->_iaCateg = $this->_iaCore->factoryModule('categ', $this->getModuleName(), iaCore::ADMIN);
-        $this->_treeSettings = ['parent_id' => iaCateg::COL_PARENT_ID, 'parents' => iaCateg::COL_PARENTS];
     }
 
     protected function _modifyGridParams(&$conditions, &$values, array $params)
@@ -188,6 +187,7 @@ class iaBackendController extends iaAbstractControllerModuleBackend
 
         $iaView->assign('crossed', $this->_fetchCrossedCategories());
         $iaView->assign('statuses', $this->getHelper()->getStatuses());
+        $iaView->assign('tree', $this->getHelper()->getTreeVars($entryData));
     }
 
     protected function _getTreeVars(array $entryData)

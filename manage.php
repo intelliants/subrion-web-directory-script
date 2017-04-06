@@ -36,9 +36,8 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType()) {
 
     switch ($pageAction) {
         case iaCore::ACTION_ADD:
-            $listing = [
-                'category_id' => 0
-            ];
+            $category = $iaCateg->getRoot();
+            $listing = ['category_id' => $category['id']];
 
             break;
         case iaCore::ACTION_EDIT:
@@ -51,13 +50,11 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType()) {
                 $listing = $iaListing->getById($listingId);
                 if (empty($listing)) {
                     return iaView::errorPage(iaView::ERROR_NOT_FOUND);
-                } else {
-                    if (!iaUsers::hasIdentity() || $listing['member_id'] != iaUsers::getIdentity()->id) {
-                        return iaView::accessDenied();
-                    }
+                } elseif (!iaUsers::hasIdentity() || $listing['member_id'] != iaUsers::getIdentity()->id) {
+                    return iaView::accessDenied();
                 }
 
-                $category = $iaCateg->getOne(iaDb::convertIds($listing['category_id']));
+                $category = $iaCateg->getById($listing['category_id']);
             }
 
             if (iaCore::ACTION_DELETE == $pageAction) {
@@ -239,7 +236,6 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType()) {
         $listing = array_merge((array)$listing, $item);
     }
 
-    $category = empty($category) ? ['id' => 0, 'parents' => ''] : $category;
     empty($id) || $category['crossed'] = $iaCateg->getCrossedByListingId($id);
 
     if (iaCore::ACTION_EDIT == $pageAction) {
@@ -260,7 +256,7 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType()) {
 
     $iaView->assign('sections', $sections);
     $iaView->assign('item', $listing);
-    $iaView->assign('category', $category);
+    $iaView->assign('tree', $iaCateg->getTreeVars($category['id'], $category['title']));
 
     $iaView->display('manage');
 }

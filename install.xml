@@ -355,15 +355,12 @@ $reset_options['categs'] = iaLanguage::get('reset_categs');
         </hook>
         <hook name="phpDbControlBeforeReset" page_type="admin">
             <![CDATA[
-$iaDBControl = $iaCore->factory('dbcontrol', iaCore::ADMIN);
-
 switch ($option) {
     case 'listings':
-        $iaDBControl->truncate('listings');
+        $iaCore->factory('dbcontrol', iaCore::ADMIN)->truncate('listings');
         break;
 
     case 'categs':
-        $iaDBControl->truncate('categs');
         $iaCore->factoryModule('categ', 'directory', iaCore::ADMIN)->resetDbStructure();
 }
             ]]>
@@ -428,16 +425,6 @@ CREATE TABLE `{prefix}categs_crossed` (
     `crossed_id` int(8) unsigned NOT NULL default 0,
     PRIMARY KEY  (`id`),
     KEY `category_id` (`category_id`,`crossed_id`)
-) {mysql_version};
-            ]]>
-        </sql>
-        <sql>
-            <![CDATA[
-CREATE TABLE IF NOT EXISTS `{prefix}categs_flat`(
-    `parent_id` int(8) unsigned NOT NULL,
-    `category_id` int(8) unsigned NOT NULL,
-    KEY `PARENT` (`parent_id`),
-    KEY `CATEGORY` (`category_id`)
 ) {mysql_version};
             ]]>
         </sql>

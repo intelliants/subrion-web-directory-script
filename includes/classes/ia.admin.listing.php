@@ -216,4 +216,26 @@ SQL;
 
         return false;
     }
+
+    public function getTreeVars(array $entryData)
+    {
+        $iaCateg = $this->iaCore->factoryModule('categ', $this->getModuleName());
+
+        $category = empty($entryData['category_id'])
+            ? $iaCateg->getRoot()
+            : $iaCateg->getById($entryData['category_id']);
+
+        $nodes = [];
+        if ($parents = $iaCateg->getParents($category['id'])) {
+            foreach ($parents as $entry)
+                $nodes[] = $entry['id'];
+        }
+
+        return [
+            'url' => IA_ADMIN_URL . 'directory/categories/tree.json?noroot',
+            'nodes' => implode(',', $nodes),
+            'id' => $category['id'],
+            'title' => $category['title']
+        ];
+    }
 }

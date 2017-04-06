@@ -41,7 +41,6 @@ class iaBackendController extends iaAbstractControllerModuleBackend
     public function init()
     {
         $this->_root = $this->getHelper()->getRoot();
-        $this->_treeSettings = ['parent_id' => iaCateg::COL_PARENT_ID, 'parents' => iaCateg::COL_PARENTS];
         $this->_gridColumns['parent_id'] = iaCateg::COL_PARENT_ID;
     }
 
@@ -78,8 +77,7 @@ class iaBackendController extends iaAbstractControllerModuleBackend
             'featured' => false,
             'locked' => false,
 
-            iaCateg::COL_PARENT_ID => $this->_root['id'],
-            iaCateg::COL_PARENTS => ''
+            iaCateg::COL_PARENT_ID => $this->_root['id']
         ];
     }
 
@@ -87,10 +85,11 @@ class iaBackendController extends iaAbstractControllerModuleBackend
     {
         parent::_preSaveEntry($entry, $data, $action);
 
-        $entry[iaCateg::COL_PARENT_ID] = empty($data['tree_id']) ? $this->_root['id'] : $data['tree_id'];
         $entry['locked'] = (int)$data['locked'];
         $entry['status'] = $data['status'];
         $entry['order'] = $this->_iaDb->getMaxOrder() + 1;
+
+        $entry[iaCateg::COL_PARENT_ID] = isset($data['tree_id']) ? (int)$data['tree_id'] : $this->_root['id'];
 
         $entry['title_alias'] = empty($data['title_alias']) ? $data['title'][$this->_iaCore->language['iso']] : $data['title_alias'];
         $entry['title_alias'] = $this->getHelper()->getSlug($entry['title_alias'], $entry[iaCateg::COL_PARENT_ID]);
@@ -130,6 +129,7 @@ class iaBackendController extends iaAbstractControllerModuleBackend
         $entryData['title_alias'] = end($alias);
 
         $iaView->assign('crossed', $this->_fetchCrossed());
+        $iaView->assign('tree', $this->getHelper()->getTreeVars($this->getEntryId(), $entryData, $this->getPath()));
     }
 
     protected function _fetchCrossed()

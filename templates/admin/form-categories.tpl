@@ -5,7 +5,7 @@
 
     {if $item[iaCateg::COL_PARENT_ID]}
         {capture name='general' append='fieldset_before'}
-            {include 'tree.tpl' url="{$smarty.const.IA_ADMIN_URL}directory/categories/tree.json?cid={$id}"}
+            {include 'tree.tpl'}
 
             <div id="crossed_fieldzone" class="row">
                 <label class="col col-lg-2 control-label">
@@ -41,7 +41,7 @@
 
         {$exceptions = []}
     {else}
-        <input type="hidden" name="_pid" id="parent_id" value="0">
+        <input type="hidden" name="tree_id" value="0">
 
         {$exceptions = ['meta_description', 'meta_keywords', 'icon']}
     {/if}

@@ -128,47 +128,36 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType()) {
             $category = $iaCateg->getOne(iaDb::convertIds($categoryAlias, 'title_alias'));
 
             // requested category not found
-            if ($categoryAlias && (iaCateg::ROOT_PARENT_ID == $category[iaCateg::COL_PARENT_ID])) {
+            if ($categoryAlias && $category['id'] == $iaCateg->getRootId()) {
                 return iaView::errorPage(iaView::ERROR_NOT_FOUND);
             }
             $iaView->set('subpage', $category['id']);
 
             // start breadcrumb
-            if ($category && trim($category[iaCateg::COL_PARENTS])) {
-                if (IA_CURRENT_MODULE == $iaCore->get('default_package')) {
-                    iaBreadcrumb::remove(iaBreadcrumb::POSITION_LAST);
-                }
-
-                $condition = iaDb::convertIds(iaCateg::ROOT_PARENT_ID, iaCateg::COL_PARENT_ID, false);
-                $condition .= " AND `id` IN({$category[iaCateg::COL_PARENTS]}) AND `status` = 'active'";
-                $parents = $iaCateg->get($condition, 0, null, null, 'c.*', 'level');
-
-                $filters = []; // pre-fill filters
-
-                foreach ($parents as $key => $parent) {
-                    (0 === $key || 1 === $key) && $filters[0 == $key ? 'c' : 'sc'] = $parent['id'];
-                    iaBreadcrumb::toEnd($parent['title'], $iaCateg->url('default', $parent));
-                }
-
-                $iaView->set('filtersParams', $filters);
+            if (IA_CURRENT_MODULE == $iaCore->get('default_package')) {
+                iaBreadcrumb::remove(iaBreadcrumb::POSITION_LAST);
             }
-            // end
 
-            $children = (empty($category[iaCateg::COL_CHILDREN]) || empty($category[iaCateg::COL_PARENTS]) || !$iaCore->get('display_children_listing'))
-                ? $category['id']
-                : $category['id'] . ',' . $category[iaCateg::COL_CHILDREN];
+            $filters = []; // pre-fill filters
+
+            foreach ($iaCateg->getParents($category['id']) as $key => $parent) {
+                (0 === $key || 1 === $key) && $filters[0 == $key ? 'c' : 'sc'] = $parent['id'];
+                iaBreadcrumb::toEnd($parent['title'], $iaCateg->url('default', $parent));
+            }
+
+            $iaView->set('filtersParams', $filters);
+            // end
 
             $iaCateg->incrementViewsCounter($category['id']);
 
-            $listings = $iaListing->getByCategoryId($children, '', $pagination['start'], $pagination['limit'], $order);
+            $listings = $iaListing->getByCategoryId($category['id'], $pagination['start'], $pagination['limit'], $order);
 
-            if (iaCateg::ROOT_PARENT_ID != $category[iaCateg::COL_PARENT_ID]) {
-                $iaView->set('description', $category['meta_description']);
-                $iaView->set('keywords', $category['meta_keywords']);
-            }
             $iaView->assign('category', $category);
 
-            if (isset($category) && iaCateg::ROOT_PARENT_ID != $category[iaCateg::COL_PARENT_ID] && isset($category['title'])) {
+            if ($iaCateg->getRootId() != $category['id']) {
+                $iaView->set('description', $category['meta_description']);
+                $iaView->set('keywords', $category['meta_keywords']);
+
                 $iaView->title($category['title']);
             }
     }

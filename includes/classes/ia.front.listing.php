@@ -44,12 +44,16 @@ class iaListing extends abstractDirectoryDirectoryFront
 
     protected $_foundRows = 0;
 
+    private $_iaCateg;
+
     private $_baseUrl = '';
 
 
     public function init()
     {
         parent::init();
+
+        $this->_iaCateg = $this->iaCore->factoryModule('categ', $this->getModuleName());
 
         $this->_baseUrl = $this->getModuleName() == $this->iaCore->get('default_package')
             ? IA_URL
@@ -83,11 +87,9 @@ class iaListing extends abstractDirectoryDirectoryFront
 
     public function get($where, $start = null, $limit = null, $order = null, $prioritizedSorting = false)
     {
-        $this->iaCore->factoryModule('categ', $this->getModuleName());
-
         $sql = 'SELECT SQL_CALC_FOUND_ROWS '
                 . 'l.*, '
-                . "c.`title_{$this->iaCore->language['iso']}` `category_title`, c.`title_alias` `category_alias`, c.`" . iaCateg::COL_PARENTS . "` `category_parents`, c.`breadcrumb` `category_breadcrumb`, "
+                . "c.`title_{$this->iaCore->language['iso']}` `category_title`, c.`title_alias` `category_alias`, c.`breadcrumb` `category_breadcrumb`, "
                 . 'm.`fullname` `member`, m.`username` `account_username` '
             . 'FROM `' . self::getTable(true) . '` l '
             . "LEFT JOIN `{$this->iaDb->prefix}categs` c ON (l.`category_id` = c.`id`) "
@@ -133,9 +135,7 @@ class iaListing extends abstractDirectoryDirectoryFront
 
             case 'c':
             case 'sc':
-                $iaCateg = $this->iaCore->factoryModule('categ', $this->getModuleName());
-
-                $child = $this->iaDb->one('child', iaDb::convertIds((int)$value), $iaCateg::getTable());
+                $child = $this->iaDb->one('child', iaDb::convertIds((int)$value), iaCateg::getTable());
 
                 if (!$child) { // it's abnormal situation if the value is empty, it probably means that DB structure is not valid/updated
                     return ['col' => ':column', 'cond' => '=', 'val' => (int)$value, 'field' => 'category_id'];
@@ -180,22 +180,23 @@ class iaListing extends abstractDirectoryDirectoryFront
         return true;
     }
 
-    public function getByCategoryId($cat_list, $where, $start = 0, $limit = 0, $order = false, $status = iaCore::STATUS_ACTIVE)
+    public function getByCategoryId($categoryId, $start, $limit, $order)
     {
-        $tmp = explode(',', $cat_list);
-        $cat_id = $tmp[0];
+        $where = $this->iaCore->get('display_children_listing')
+            ? 'li.`category_id` IN (SELECT `category_id` FROM `' . $this->_iaCateg->getTableFlat(true) . '` WHERE `parent_id` = ' . (int)$categoryId . ')'
+            : 'li.`category_id` = ' . (int)$categoryId;
+
         $sql =
-            'SELECT SQL_CALC_FOUND_ROWS li.*,'
-                . 'IF(li.`category_id` IN( ' . $cat_list . ' ), li.`category_id`, cr.`category_id`) `category`, '
+            'SELECT SQL_CALC_FOUND_ROWS li.*, '
+                //. 'IF(li.`category_id` IN( ' . $cat_list . ' ), li.`category_id`, cr.`category_id`) `category`, '
                 //. 'IF(li.`category_id` = ' . $cat_id . ', 0, 1) `crossed`, '
-                . 'ca.`title_' . $this->iaCore->language['iso'] . '` `category_title`, ca.`title_alias` `category_alias`, ca.`' . iaCateg::COL_PARENTS . '` `category_parents`, ca.`breadcrumb` `category_breadcrumb`, '
+                . 'ca.`title_' . $this->iaCore->language['iso'] . '` `category_title`, ca.`title_alias` `category_alias`, ca.`breadcrumb` `category_breadcrumb`, '
                 . 'ac.`fullname` `member`, ac.`username` `account_username` '
             . 'FROM `' . $this->iaDb->prefix . 'categs` ca, ' . self::getTable(true) . ' li '
-                . 'LEFT JOIN `' . $this->iaDb->prefix . 'listings_categs` cr ON (cr.`listing_id` = li.`id` AND cr.`category_id` = ' . $cat_id . ') '
+                . 'LEFT JOIN `' . $this->iaDb->prefix . 'listings_categs` cr ON (cr.`listing_id` = li.`id` AND cr.`category_id` = ' . (int)$categoryId . ') '
                 . 'LEFT JOIN `' . $this->iaDb->prefix . 'members` ac ON (ac.`id` = li.`member_id`) '
-            . 'WHERE li.`status` = \'' . $status . '\' '
-                . '&& (li.`category_id` IN( ' . $cat_list . ' ) OR cr.`category_id` is not NULL) && ca.`id` = li.`category_id` '
-                . $where
+            . 'WHERE li.`status` = \'active\' '
+                . '&& (' .  $where . ' OR cr.`category_id` is not NULL) && ca.`id` = li.`category_id` '
                 . " ORDER BY `sponsored` DESC, `featured` DESC, $order "
                 . ($start || $limit ? " LIMIT $start, $limit " : '');
 
@@ -436,17 +437,17 @@ class iaListing extends abstractDirectoryDirectoryFront
     protected function _changeNumListing($categoryId, $increment = 1)
     {
         $sql = <<<SQL
-UPDATE `:table_categs` 
+UPDATE `:table_data` 
 SET `num_listings` = IF(`id` = :category, `num_listings` + :increment, `num_listings`),
 	`num_all_listings` = `num_all_listings` + :increment 
-WHERE FIND_IN_SET(:category, `:col_children`)
+WHERE `id` IN (SELECT `category_id` FROM `:table_flat` WHERE `parent_id` = :category)
 SQL;
 
         $sql = iaDb::printf($sql, [
-            'table_categs' => $this->iaDb->prefix . 'categs',
+            'table_data' => $this->_iaCateg->getTable(true),
+            'table_flat' => $this->_iaCateg->getTableFlat(true),
             'category' => (int)$categoryId,
-            'increment' => (int)$increment,
-            'col_children' => iaCateg::COL_CHILDREN
+            'increment' => (int)$increment
         ]);
 
         return $this->iaDb->query($sql);

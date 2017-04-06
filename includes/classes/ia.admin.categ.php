@@ -17,7 +17,7 @@
  *
  ******************************************************************************/
 
-class iaCateg extends iaAbstractHelperCategoryHybrid
+class iaCateg extends iaAbstractHelperCategoryFlat
 {
     protected static $_table = 'categs';
     protected static $_tableCrossed = 'categs_crossed';
@@ -26,8 +26,6 @@ class iaCateg extends iaAbstractHelperCategoryHybrid
 
     protected $_itemName = 'categs';
     protected $_statuses = [iaCore::STATUS_ACTIVE, iaCore::STATUS_INACTIVE];
-
-    protected $_flatStructureEnabled = true;
 
     protected $_activityLog = ['item' => 'category'];
 
@@ -117,7 +115,7 @@ SQL;
 
     public function exists($slug, $parentId, $id = null)
     {
-        $wherePattern = sprintf('`title_alias` = :slug AND `%s` = :parent', self::COL_PARENT_ID);
+        $wherePattern = self::_cols('`title_alias` = :slug AND `:col_pid` = :parent');
 
         return is_null($id)
             ? (bool)$this->iaDb->exists($wherePattern, ['slug' => $slug, 'parent' => $parentId], self::getTable())
@@ -229,50 +227,35 @@ SQL;
             $root = $this->getRoot();
             $categoryId = $root['id'];
         } else {
-            $category = $this->getById($categoryId, false);
-            $parent = $this->getById($category[self::COL_PARENT_ID], false);
-
-            $this->_updateBreadcrumbs($category, $parent);
+            if ($category = $this->getById($categoryId, false)) {
+                $this->_updateBreadcrumbs($category);
+            }
 
             $this->iaDb->update($category, iaDb::convertIds($categoryId), null, self::getTable());
         }
 
-        $children = $this->iaDb->all(iaDb::ALL_COLUMNS_SELECTION, iaDb::convertIds($categoryId, self::COL_PARENT_ID), null, null, self::getTable());
+        foreach ($this->getChildren($categoryId) as $category) {
+            $this->_updateSlug($category);
+            $this->_updateBreadcrumbs($category);
 
-        foreach ($children as $child) {
-            foreach (explode(',', $child[self::COL_CHILDREN]) as $id) {
-                if (!trim($id) || (!$category = $this->getById($id, false))) {
-                    continue;
-                }
-
-                $parent = $this->getById($category[self::COL_PARENT_ID], false);
-
-                $this->_updateSlug($category, $parent);
-                $this->_updateBreadcrumbs($category, $parent);
-
-                $this->iaDb->update($category, iaDb::convertIds($id), null, self::getTable());
-            }
+            $this->iaDb->update($category, iaDb::convertIds($category['id']), null, self::getTable());
         }
     }
 
-    protected function _updateSlug(array &$category, array $parent)
+    protected function _updateSlug(array &$category)
     {
-        $category['title_alias'] = $this->getSlug($category['title_' . $this->iaView->language], $category[self::COL_PARENT_ID], $parent);
+        $category['title_alias'] = $this->getSlug($category['title_' . $this->iaView->language], $category[self::COL_PARENT_ID]);
     }
 
-    protected function _updateBreadcrumbs(array &$category, array $parent)
+    protected function _updateBreadcrumbs(array &$category)
     {
         $breadcrumbs = [];
 
         $titleKey = 'title_' . $this->iaView->language;
         $baseUrl = str_replace(IA_URL, '', $this->getInfo('url'));
 
-        if (!empty($parent[self::COL_PARENTS])) {
-            $parents = $this->iaDb->all([$titleKey, 'title_alias'],
-                "`id` IN({$parent[self::COL_PARENTS]}) && `" . self::COL_PARENT_ID . "` != " . self::ROOT_PARENT_ID . " && `status` = 'active' ORDER BY `level`",
-                null, null, self::getTable());
-
-            foreach ($parents as $p) {
+        foreach ($this->getParents($category['id']) as $p) {
+            if ($p[self::COL_PARENT_ID] != self::ROOT_PARENT_ID) {
                 $breadcrumbs[$p[$titleKey]] = $baseUrl . $p['title_alias'];
             }
         }

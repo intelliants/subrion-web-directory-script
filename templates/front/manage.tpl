@@ -4,7 +4,7 @@
     {include 'plans.tpl'}
 
     {capture name='general' append='fieldset_before'}
-        {include 'tree.tpl' url="{$core.packages.directory.url}add/tree.json"}
+        {include 'tree.tpl'}
 
         {if $core.config.listing_crossed}
             <div class="fieldset">

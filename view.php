@@ -109,14 +109,8 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType()) {
 
     $iaView->set('subpage', $category['id']);
 
-    if (!empty($category[iaCateg::COL_PARENTS])) {
-        $condition = iaDb::convertIds(iaCateg::ROOT_PARENT_ID, iaCateg::COL_PARENT_ID, false);
-        $condition .= " AND `id` IN({$category[iaCateg::COL_PARENTS]}) AND `status` = 'active'";
-        $parents = $iaCateg->get($condition, 0, null, null, 'c.*', 'level');
-
-        foreach ($parents as $p) {
-            iaBreadcrumb::add($p['title'], $iaCateg->url('view', $p));
-        }
+    foreach ($iaCateg->getParents($category['id']) as $p) {
+        iaBreadcrumb::add($p['title'], $iaCateg->url('view', $p));
     }
 
     $iaItem = $iaCore->factory('item');
