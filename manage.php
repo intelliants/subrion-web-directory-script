@@ -150,7 +150,7 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType()) {
             if (iaValidate::isUrl($item['url'])) {
                 // check alexa
                 if ($iaCore->get('directory_enable_alexarank')) {
-                    include IA_MODULES . $iaCore->modulesData['directory']['name'] . IA_DS . 'includes' . IA_DS . 'alexarank.inc.php';
+                    include IA_MODULES . $iaCore->modulesData['directory']['name'] . IA_DS . 'includes/alexarank.inc.php';
                     $iaAlexaRank = new iaAlexaRank();
 
                     $alexaData = $iaAlexaRank->getAlexa($item['domain']);
