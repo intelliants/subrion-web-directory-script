@@ -23,6 +23,7 @@ interface iaDirectoryModule
 
     const STATUS_BANNED = 'banned';
     const STATUS_SUSPENDED = 'suspended';
+    const STATUS_TRASH = 'trash';
 }
 
 abstract class abstractDirectoryModuleAdmin extends abstractModuleAdmin implements iaDirectoryModule

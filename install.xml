@@ -448,7 +448,7 @@ CREATE TABLE IF NOT EXISTS `{prefix}listings`(
     `reciprocal` tinytext NOT NULL,
     `domain` varchar(150) NOT NULL,
     `ip` bigint(12) NOT NULL,
-    `status` enum('approval', 'banned', 'suspended', 'inactive', 'active') NOT NULL default 'approval',
+    `status` enum('approval', 'banned', 'suspended', 'inactive', 'active', 'trash') NOT NULL default 'approval',
     `alexa_rank` bigint(16) unsigned default NULL,
     `rank` tinyint(3) NOT NULL,
     `date_added` datetime NOT NULL,

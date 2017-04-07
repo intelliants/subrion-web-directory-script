@@ -66,7 +66,7 @@ class iaBackendController extends iaAbstractControllerModuleBackend
 
     protected function _entryDelete($entryId)
     {
-        return ($this->_root['id'] == $entryId) ? false : (bool)$this->getHelper()->delete($entryId);
+        return $this->getHelper()->delete($entryId);
     }
 
     protected function _setDefaultValues(array &$entry)

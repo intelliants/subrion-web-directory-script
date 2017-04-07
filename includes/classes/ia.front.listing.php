@@ -17,7 +17,7 @@
  *
  ******************************************************************************/
 
-class iaListing extends abstractDirectoryDirectoryFront
+class iaListing extends abstractDirectoryDirectoryFront implements iaDirectoryModule
 {
     protected static $_table = 'listings';
     protected static $_tableCrossed = 'listings_categs';
@@ -169,7 +169,7 @@ class iaListing extends abstractDirectoryDirectoryFront
 
         return [
             'items' => $this->get($stmtWhere, $start, $limit),
-            'total_number' => $this->iaDb->foundRows()
+            'total_number' => $this->getFoundRows()
         ];
     }
 
@@ -231,177 +231,99 @@ class iaListing extends abstractDirectoryDirectoryFront
         return $this->iaDb->one('id', iaDb::convertIds($listing[$field], $field), self::getTable()) ? $field : false;
     }
 
-    public function insert(array $entryData)
+    public function insert(array $itemData)
     {
-        $crossed = false;
+        $itemData['date_added'] = date(iaDb::DATETIME_FORMAT);
+        $itemData['date_modified'] = date(iaDb::DATETIME_FORMAT);
 
-        $rawValues = [
-            'date_added' => iaDb::FUNCTION_NOW,
-            'date_modified' => iaDb::FUNCTION_NOW
-        ];
-
-        if (isset($entryData['crossed_links'])) {
-            $crossed = $entryData['crossed_links'];
-
-            unset($entryData['crossed_links']);
+        if ($this->iaCore->get('directory_lowercase_urls')) {
+            $itemData['title_alias'] = strtolower($itemData['title_alias']);
         }
 
-        $this->iaCore->get('directory_lowercase_urls') && $entryData['title_alias'] = strtolower($entryData['title_alias']);
+        if ($id = parent::insert($itemData)) {
+            $this->_sendAdminNotification($id);
+        }
 
-        $entryData['id'] = $this->iaDb->insert($entryData, $rawValues, self::getTable());
+        return $id;
+    }
 
-        if ($entryData['id']) {
-            if ($this->iaCore->get('listing_crossed')) {
-                if ($crossed) {
-                    $this->iaDb->setTable(self::getTableCrossed());
+    public function update(array $itemData, $id)
+    {
+        $itemData['date_modified'] = date(iaDb::DATETIME_FORMAT);
 
-                    $crossedLimit = $this->iaCore->get('listing_crossed_limit', 5);
-                    $crossed = explode(',', $crossed);
-                    $count = count($crossed) > $crossedLimit ? $crossedLimit : count($crossed);
-                    $crossedInput = [];
+        return parent::update($itemData, $id);
+    }
 
-                    for ($i = 0; $i < $count; $i++) {
-                        if ($crossed[$i] != $entryData['category_id']) {
-                            $crossedInput[] = ['listing_id' => $entryData['id'], 'category_id' => (int)$crossed[$i]];
-                        }
-                    }
+    public function updateCounters($itemId, array $itemData, $action, $previousData = null)
+    {
+        $this->_saveCrossedCategories($action, $itemId, $itemData, $previousData);
+        empty($itemData['category_id']) || $this->_updateListingCounters($itemData, $previousData);
+    }
 
-                    $crossedInput && $this->iaDb->insert($crossedInput);
+    protected function _saveCrossedCategories($action, $itemId, array $itemData, $oldData = null)
+    {
+        if (!$this->iaCore->get('listing_crossed') || !isset($itemData['category_id'])) {
+            return;
+        }
 
-                    $this->iaDb->resetTable();
+        $this->iaDb->setTable(self::getTableCrossed());
+
+        $this->iaDb->delete(iaDb::convertIds($itemId, 'listing_id'));
+
+        if (!empty($_POST['crossed_links'])) {
+            $data = $_POST['crossed_links'];
+            is_array($data) || $data = explode(',', $data);
+
+            $count = max($this->iaCore->get('listing_crossed_limit', 5), count($data));
+            $crossedInput = [];
+
+            for ($i = 0; $i < $count; $i++) {
+                if ($data[$i] != $itemData['category_id']) {
+                    $crossedInput[] = ['listing_id' => $itemId, 'category_id' => (int)$data[$i]];
                 }
             }
 
-            // update category counter
-            if (iaCore::STATUS_ACTIVE == $entryData['status']) {
-                if (!empty($crossedInput)) {
+            $this->iaDb->insert($crossedInput);
+
+            // update crossed counters
+            if (!empty($oldData['status']) && !empty($itemData['status'])) {
+                if ((iaCore::ACTION_DELETE == $action && iaCore::STATUS_ACTIVE == $itemData['status'])
+                    || (iaCore::STATUS_ACTIVE == $oldData['status'] && iaCore::STATUS_ACTIVE != $itemData['status'])) {
+                    $diff = -1;
+                } else if (iaCore::STATUS_ACTIVE != $oldData['status'] && iaCore::STATUS_ACTIVE == $itemData['status']) {
+                    $diff = 1;
+                }
+
+                if (isset($diff)) {
                     foreach ($crossedInput as $entry) {
-                        $this->_changeNumListing($entry['category_id']);
+                        $this->_changeNumListing($entry['category_id'], $diff);
                     }
                 }
-
-                $this->_changeNumListing($entryData['category_id']);
             }
-
-            $this->_sendAdminNotification($entryData['id']);
         }
 
-        return $entryData['id'];
+        $this->iaDb->resetTable();
     }
 
-    public function update(array $listing, $id)
+    protected function _updateListingCounters(array $itemData, $oldData = null)
     {
-        // prevent accidental update
-        if (!$id) {
-            return false;
-        }
-
-        $oldData = $this->getById($id);
-        $status = isset($listing['status']) ? $listing['status'] : false;
-        $categ = isset($listing['category_id']) ? $listing['category_id'] : $oldData['category_id'];
-
-        if ($this->iaCore->get('listing_crossed')) {
-            $crossed = $this->iaDb->onefield('category_id', iaDb::convertIds($id, 'listing_id'), 0, null, self::getTableCrossed());
-
-            if (isset($listing['crossed_links'])) {
-                $crossed = $listing['crossed_links'];
-
-                unset($listing['crossed_links']);
-            }
-
-            if ($crossed) {
-                $this->iaDb->setTable(self::getTableCrossed());
-
-                $this->iaDb->delete(iaDb::convertIds($id, 'listing_id'));
-
-                $crossedLimit = $this->iaCore->get('listing_crossed_limit', 5);
-
-                is_array($crossed) || $crossed = explode(',', $crossed);
-
-                $count = count($crossed) > $crossedLimit ? $crossedLimit : count($crossed);
-                $crossedInput = [];
-
-                for ($i = 0; $i < $count; $i++) {
-                    if ($crossed[$i] != $listing['category_id']) {
-                        $crossedInput[] = ['listing_id' => $id, 'category_id' => (int)$crossed[$i]];
-                    }
+        if ((!empty($itemData['category_id']) && !empty($oldData['category_id']))
+            || (!empty($itemData['status']) && !empty($oldData['status']))) {
+            if ($itemData['category_id'] == $oldData['category_id']) {
+                if (iaCore::STATUS_ACTIVE == $oldData['status'] && iaCore::STATUS_ACTIVE != $itemData['status']) {
+                    $this->_changeNumListing($itemData['category_id'], -1);
+                } elseif (iaCore::SiaATATUS_ACTIVE != $oldData['status'] && iaCore::STATUS_ACTIVE == $itemData['status']) {
+                    $this->_changeNumListing($itemData['category_id']);
                 }
-
-                $crossedInput && $this->iaDb->insert($crossedInput);
-
-                $this->iaDb->resetTable();
-            }
-        }
-
-        $return = $this->iaDb->update($listing, iaDb::convertIds($id), ['date_modified' => iaDb::FUNCTION_NOW], self::getTable());
-
-        // If status changed
-        if ($categ == $oldData['category_id']) {
-            if (iaCore::STATUS_ACTIVE == $oldData['status'] && iaCore::STATUS_ACTIVE != $status) {
-                $this->_changeNumListing($categ, -1);
-            } elseif (iaCore::STATUS_ACTIVE != $oldData['status'] && iaCore::STATUS_ACTIVE == $status) {
-                $this->_changeNumListing($categ);
-            }
-        } else { // If category changed
-            if (iaCore::STATUS_ACTIVE == $status) {
-                $this->_changeNumListing($categ);
-            }
-            if (iaCore::STATUS_ACTIVE == $oldData['status']) {
-                $this->_changeNumListing($oldData['category_id'], -1);
-            }
-        }
-
-        if ((iaCore::STATUS_ACTIVE == $oldData['status'] && iaCore::STATUS_ACTIVE != $status)
-            || (iaCore::STATUS_ACTIVE != $oldData['status'] && iaCore::STATUS_ACTIVE == $status)) {
-            if (isset($oldData['member_id']) && !isset($listing['member_id'])) {
-                $listing['member_id'] = $oldData['member_id'];
-            }
-
-            if (isset($oldData['title_alias']) && !isset($listing['title_alias'])) {
-                $listing['title_alias'] = $oldData['title_alias'];
-            }
-
-            if (isset($oldData['category_alias']) && !isset($listing['category_alias'])) {
-                $listing['category_alias'] = $oldData['category_alias'];
-            }
-
-            if ($crossed) {
-                $diff = ($status == iaCore::STATUS_ACTIVE) ? 1 : -1;
-                foreach ($crossedInput as $entry) {
-                    $this->_changeNumListing($entry['category_id'], $diff);
+            } else { // If category changed
+                if (iaCore::STATUS_ACTIVE == $itemData['status']) {
+                    $this->_changeNumListing($itemData['category_id']);
+                }
+                if (iaCore::STATUS_ACTIVE == $oldData['status']) {
+                    $this->_changeNumListing($oldData['category_id'], -1);
                 }
             }
         }
-
-        return $return;
-    }
-
-    /**
-     * Delete listing record
-     *
-     * @param array $listingData listing details
-     *
-     * @return bool
-     */
-    public function delete($listingData)
-    {
-        $result = (bool)$this->iaDb->delete('`id` = :id', self::getTable(), ['id' => $listingData['id']]);
-
-        if ($result) {
-            if ($this->iaCore->get('listing_crossed')) {
-                $crossed = $this->iaDb->onefield('category_id', "`listing_id` = '{$listingData['id']}'", 0, null, self::getTableCrossed());
-
-                foreach ($crossed as $ccid) {
-                    $this->_changeNumListing($ccid, -1);
-                }
-
-                $this->iaDb->delete(iaDb::convertIds($listingData['id'], 'listing_id'), self::getTableCrossed());
-            }
-
-            $this->_changeNumListing($listingData['category_id'], -1);
-        }
-
-        return $result;
     }
 
     /**

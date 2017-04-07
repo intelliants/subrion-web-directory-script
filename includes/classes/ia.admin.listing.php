@@ -17,7 +17,7 @@
  *
  ******************************************************************************/
 
-class iaListing extends abstractDirectoryModuleAdmin
+class iaListing extends abstractDirectoryModuleAdmin implements iaDirectoryModule
 {
     protected static $_table = 'listings';
     protected static $_tableCrossed = 'listings_categs';
@@ -61,6 +61,30 @@ class iaListing extends abstractDirectoryModuleAdmin
         }
 
         return $result;
+    }
+
+    public function updateCounters($itemId, array $itemData, $action, $previousData = null)
+    {
+        parent::updateCounters($itemId, $itemData, $action, $previousData);
+
+        // update counters
+        if ((!empty($itemData['category_id']) && !empty($previousData['category_id']))
+            || (!empty($itemData['status']) && !empty($previousData['status']))) {
+            if ($itemData['category_id'] == $previousData['category_id']) {
+                if (iaCore::STATUS_ACTIVE == $previousData['status'] && iaCore::STATUS_ACTIVE != $itemData['status']) {
+                    $this->_changeNumListing($itemData['category_id'], -1);
+                } elseif (iaCore::STATUS_ACTIVE != $previousData['status'] && iaCore::STATUS_ACTIVE == $itemData['status']) {
+                    $this->_changeNumListing($itemData['category_id']);
+                }
+            } else { // If category changed
+                if (iaCore::STATUS_ACTIVE == $itemData['status']) {
+                    $this->_changeNumListing($itemData['category_id']);
+                }
+                if (iaCore::STATUS_ACTIVE == $previousData['status']) {
+                    $this->_changeNumListing($previousData['category_id'], -1);
+                }
+            }
+        }
     }
 
     public function getSitemapEntries()
@@ -125,14 +149,20 @@ SQL;
         return $this->iaDb->getAll($sql);
     }
 
-    protected function _changeNumListing($categoryId, $aInt = 1)
+    protected function _changeNumListing($categoryId, $factor = 1)
     {
         $sql = <<<SQL
-UPDATE `{$this->iaDb->prefix}categs` 
-	SET `num_listings`=if (`id` = $categoryId, `num_listings` + {$aInt}, `num_listings`),
-	`num_all_listings` = `num_all_listings` + {$aInt} 
-WHERE FIND_IN_SET({$categoryId}, `child`) 
+UPDATE `:table_data` 
+	SET `num_listings` = IF(`id` = :id, `num_listings` + :factor, `num_listings`),
+	`num_all_listings` = `num_all_listings` + :factor 
+WHERE `id` IN (SELECT `category_id` FROM `:table_flat` WHERE `parent_id` = :id)
 SQL;
+        $sql = iaDb::printf($sql, [
+            'table_data' => iaCateg::getTable(true),
+            'table_flat' => iaCateg::getTableFlat(true),
+            'id' => (int)$categoryId,
+            'factor' => $factor
+        ]);
 
         return $this->iaDb->query($sql);
     }
@@ -162,50 +192,6 @@ SQL;
         }
 
         return false;
-    }
-
-    public function recountListingsNum()
-    {
-        $this->iaDb->setTable('categs');
-        $rows = $this->iaDb->all(['id', 'parent_id', 'child']);
-
-        $categories = [];
-        foreach ($rows as $c) {
-            $c['child'] = explode(',', $c['child']);
-            $categories[$c['id']] = $c;
-        }
-        unset($rows);
-
-        $sql = <<<SQL
-SELECT l.`category_id`, COUNT(l.`id`) 
-	FROM `{$this->iaDb->prefix}listings` `l` 
-LEFT JOIN `{$this->iaDb->prefix}members` `m` ON l.`member_id`= m.`id` 
-WHERE l.`status`= 'active' AND (m.`status` = 'active' OR m.`status` IS NULL) 
-GROUP BY l.`category_id`
-SQL;
-        $num_listings = $this->iaDb->getKeyValue($sql);
-
-        foreach ($categories as $cat) {
-            $_id = $cat['id'];
-            $_num_listings = isset($num_listings[$_id]) ? $num_listings[$_id] : 0;
-            $_num_all_listings = 0;
-
-            if (!empty($cat['child'])) {
-                foreach ($cat['child'] as $i) {
-                    $_num_all_listings += isset($num_listings[$i]) ? $num_listings[$i] : 0;
-                }
-            }
-
-            $this->iaDb->update(["num_listings" => $_num_listings, "num_all_listings" => $_num_all_listings], "`id` = '{$_id}' LIMIT 1");
-        }
-
-        $crossed = $this->iaDb->all('`category_id`, COUNT(`category_id`) `num`', '1 GROUP BY `category_id`', 0, null, 'listings_categs');
-
-        foreach ($crossed as $cc) {
-            $this->_changeNumListing($cc['category_id'], $cc['num']);
-        }
-
-        $this->iaDb->resetTable();
     }
 
     public function getDomain($aUrl = '')

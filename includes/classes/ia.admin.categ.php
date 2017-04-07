@@ -17,7 +17,7 @@
  *
  ******************************************************************************/
 
-class iaCateg extends iaAbstractHelperCategoryFlat
+class iaCateg extends iaAbstractHelperCategoryFlat implements iaDirectoryModule
 {
     protected static $_table = 'categs';
     protected static $_tableCrossed = 'categs_crossed';
@@ -56,6 +56,8 @@ class iaCateg extends iaAbstractHelperCategoryFlat
 
     public function delete($itemId)
     {
+        $children = $this->getChildren($itemId);
+
         if ($result = parent::delete($itemId)) {
             $stmt = iaDb::convertIds($itemId, 'category_id');
             $this->iaDb->delete($stmt, 'listings_categs');
@@ -65,6 +67,11 @@ class iaCateg extends iaAbstractHelperCategoryFlat
 
             $stmt = iaDb::convertIds($itemId, 'crossed_id');
             $this->iaDb->delete($stmt, self::getTableCrossed());
+
+            // set 'Trash' status to all the listings in this category and subcategories
+            //$where = '`id` IN (SELECT `category_id` ';
+
+            //$this->iaDb->update(['status' => self::STATUS_TRASH]);
         }
 
         return $result;
