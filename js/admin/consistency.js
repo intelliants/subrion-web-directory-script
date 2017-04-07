@@ -1,5 +1,5 @@
 $(function () {
-    $('#js-cmd-recount-listings').bind('click', function (e) {
+    $('#js-cmd-recount-listings').on('click', function (e) {
         e.preventDefault();
 
         var start = 0,
@@ -21,25 +21,25 @@ $(function () {
 
         $.post(url, {action: 'pre_recount_listings'}, function (response) {
             total = response.total;
+
+            var timer = setInterval(function () {
+                $.post(url, {start: start, limit: limit, action: action}, function () {
+                    start += limit;
+                    progress = Math.round(start / total * 100);
+
+                    if (start > total) {
+                        clearInterval(timer);
+                        barHolder.removeClass('active');
+                        bar.css('width', '100%');
+                        intelli.notifFloatBox({msg: _t('done'), type: 'notif', autohide: true});
+                        button.text(startText).prop('disabled', false);
+                    }
+                    else {
+                        bar.css('width', progress + '%');
+                        button.text(progress + '%');
+                    }
+                });
+            }, interval);
         });
-
-        var timer = setInterval(function () {
-            $.post(url, {start: start, limit: limit, action: action}, function (response) {
-                start += limit;
-                progress = Math.round(start / total * 100);
-
-                if (start > total) {
-                    clearInterval(timer);
-                    barHolder.removeClass('active');
-                    bar.css('width', '100%');
-                    intelli.notifFloatBox({msg: _t('done'), type: 'notif', autohide: true});
-                    button.text(startText).prop('disabled', false);
-                }
-                else {
-                    bar.css('width', progress + '%');
-                    button.text(progress + '%');
-                }
-            });
-        }, interval);
     });
 });

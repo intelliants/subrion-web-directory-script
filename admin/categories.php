@@ -164,7 +164,7 @@ SQL;
         if (isset($_POST['action'])) {
             switch ($_POST['action']) {
                 case 'recount_listings':
-                    $this->getHelper()->recountListingsNum((int)$_POST['start'], (int)$_POST['limit']);
+                    $this->getHelper()->recountListingsNum($_POST['start'], $_POST['limit']);
                     break;
 
                 case 'pre_recount_listings':

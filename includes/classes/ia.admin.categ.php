@@ -151,39 +151,29 @@ SQL;
     {
         $this->iaDb->setTable(self::getTable());
 
-        $categories = $this->iaDb->all(['id', self::COL_PARENT_ID, self::COL_CHILDREN], '1 ORDER BY `level` DESC', $start, $limit);
-        foreach ($categories as $cat) {
-            if (self::ROOT_PARENT_ID == $cat[self::COL_PARENT_ID]) {
-                continue;
-            }
+        $rows = $this->iaDb->all([iaDb::ID_COLUMN_SELECTION], iaDb::convertIds(self::ROOT_PARENT_ID, self::COL_PARENT_ID, false)
+            . ' ORDER BY `level` DESC', (int)$start, (int)$limit);
 
-            $_id = $cat['id'];
-
+        foreach ($rows as $row) {
             $sql = <<<SQL
 SELECT COUNT(l.`id`) `num`
 	FROM `{$this->iaDb->prefix}listings` l 
 LEFT JOIN `{$this->iaDb->prefix}members` acc ON (l.`member_id` = acc.`id`) 
 WHERE l.`status`= 'active' AND (acc.`status` = 'active' OR acc.`status` IS NULL) 
-AND l.`category_id` = {$_id}
+AND l.`category_id` = {$row['id']}
 SQL;
-            $num_listings = $this->iaDb->getOne($sql);
-            $_num_listings = $num_listings ? $num_listings : 0;
-            $_num_all_listings = 0;
+            $where = sprintf('`id` IN (SELECT `category_id` FROM `%s` WHERE `parent_id` = %d)', self::getTableFlat(true), $row['id']);
 
-            if (!empty($cat[self::COL_CHILDREN]) && $cat[self::COL_CHILDREN] != $cat['id']) {
-                $_num_all_listings = $this->iaDb->one('SUM(`num_listings`)', "`id` IN ({$cat[self::COL_CHILDREN]})", iaCateg::getTable());
-            }
+            $counterFlat = (int)$this->iaDb->getOne($sql);
+            $counterRecursive = (int)$this->iaDb->one('SUM(`num_listings`)', $where, iaCateg::getTable());
 
-            $_num_all_listings+= $_num_listings;
-
-            $crossed = $this->iaDb->one('COUNT(`category_id`) `num`', iaDb::convertIds($_id, 'category_id'), 'listings_categs');
-
+            $crossed = (int)$this->iaDb->one('COUNT(`category_id`) `num`', iaDb::convertIds($row['id'], 'category_id'), 'listings_categs');
             if ($crossed) {
-                $_num_listings+= $crossed;
-                $_num_all_listings+= $crossed;
+                $counterFlat += $crossed;
+                $counterRecursive += $crossed;
             }
 
-            $this->iaDb->update(['num_listings' => $_num_listings, 'num_all_listings' => $_num_all_listings], iaDb::convertIds($_id));
+            $this->iaDb->update(['num_listings' => $counterFlat, 'num_all_listings' => $counterRecursive], iaDb::convertIds($row['id']));
         }
 
         $this->iaDb->resetTable();

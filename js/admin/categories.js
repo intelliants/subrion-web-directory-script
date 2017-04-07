@@ -9,7 +9,7 @@ Ext.onReady(function () {
                         name: 'parent_title',
                         title: _t('parent_category'),
                         renderer: function (value, metadata, record) {
-                            return (record.data.level <= 1)
+                            return (record.data.level < 1)
                                 ? value
                                 : '<a href="' + window.location.href + 'edit/' + record.data.parent_id + '/">' + value + '</a>'
                         },

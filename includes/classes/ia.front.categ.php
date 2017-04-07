@@ -85,48 +85,9 @@ SQL;
         return $result;
     }
 
-    /**
-     * Rebuild categories relations
-     * Fields will be updated: parents, child, level, title_alias
-     */
-    public function rebuildRelation()
+    protected function _processValues(&$rows, $singleRow = false, $fieldNames = [])
     {
-        $table_flat = $this->iaDb->prefix . 'categs_flat';
-        $table = self::getTable(true);
-
-        $insert_second = 'INSERT INTO ' . $table_flat . ' (`parent_id`, `category_id`) SELECT t.`_pid`, t.`id` FROM ' . $table . ' t WHERE t.`_pid` != 0';
-        $insert_first = 'INSERT INTO ' . $table_flat . ' (`parent_id`, `category_id`) SELECT t.`id`, t.`id` FROM ' . $table . ' t WHERE t.`_pid` != 0';
-        $update_level = 'UPDATE ' . $table . ' s SET `level` = (SELECT COUNT(`category_id`)-1 FROM ' . $table_flat . ' f WHERE f.`category_id` = s.`id`) WHERE s.`_pid` != 0';
-        $update_child = 'UPDATE ' . $table . ' s SET `child` = (SELECT GROUP_CONCAT(`category_id`) FROM ' . $table_flat . ' f WHERE f.`parent_id` = s.`id` AND s.`_pid` != 0)';
-        $update_parent = 'UPDATE ' . $table . ' s SET `parents` = (SELECT GROUP_CONCAT(`parent_id`) FROM ' . $table_flat . ' f WHERE f.`category_id` = s.`id` AND f.`parent_id` != 0);';
-
-        $num = 1;
-        $count = 0;
-
-        $iaDb = &$this->iaDb;
-        $iaDb->truncate($table_flat);
-        $iaDb->query($insert_first);
-        $iaDb->query($insert_second);
-
-        while ($num > 0 && $count < 10) {
-            $count++;
-            $num = 0;
-            $sql = 'INSERT INTO ' . $table_flat . ' (`parent_id`, `category_id`) '
-                    . 'SELECT DISTINCT t.`id`, h' . $count . '.`id` FROM ' . $table . ' t, ' . $table . ' h0 ';
-            $where = ' WHERE h0.`parent_id` = t.`id` ';
-
-            for ($i = 1; $i <= $count; $i++) {
-                $sql.= 'LEFT JOIN ' . $table . ' h' . $i . ' ON (h' . $i . '.`parent_id` = h' . ($i - 1) . '.`id`) ';
-                $where.= ' AND h' . $i . '.`id` IS NOT NULL';
-            }
-            if ($iaDb->query($sql . $where)) {
-                $num = $iaDb->getAffected();
-            }
-        }
-
-        $iaDb->query($update_level);
-        $iaDb->query($update_child);
-        $iaDb->query($update_parent);
+        parent::_processValues($rows, $singleRow, ['breadcrumb']);
     }
 
     /**
