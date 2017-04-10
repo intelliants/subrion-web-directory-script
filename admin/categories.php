@@ -169,7 +169,10 @@ SQL;
 
                 case 'pre_recount_listings':
                     $this->getHelper()->resetCounters();
-                    $output['total'] = $this->getHelper()->getCount();
+
+                    $this->_iaCore->factoryModule('listing', $this->getModuleName(), iaCore::ADMIN);
+                    $output['total'] = $this->_iaDb->one(iaDb::STMT_COUNT_ROWS,
+                        iaDb::convertIds(iaCore::STATUS_ACTIVE, 'status'), iaListing::getTable());
             }
         }
 

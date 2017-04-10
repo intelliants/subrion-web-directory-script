@@ -62,7 +62,7 @@ class iaListing extends abstractDirectoryModuleAdmin implements iaDirectoryModul
         $result = parent::delete($listingId);
 
         if ($result) {
-            $iaCateg = $this->iaCore->factoryModule('categ', $this->getModuleName());
+            $iaCateg = $this->iaCore->factoryModule('categ', $this->getModuleName(), iaCore::ADMIN);
 
             if ($this->iaCore->get('listing_crossed')) {
                 $stmt = iaDb::convertIds($listingId, 'listing_id');
@@ -74,8 +74,6 @@ class iaListing extends abstractDirectoryModuleAdmin implements iaDirectoryModul
 
                 $this->iaDb->delete($stmt, self::getTableCrossed());
             }
-
-            $iaCateg->recountById($listingData['category_id'], -1);
 
             $listingData['status'] = 'removed';
             $this->sendUserNotification($listingData);
@@ -159,8 +157,7 @@ SQL;
 
             if ($email) {
                 if ($listingId) {
-                    $listing = $this->get('l.`id`, l.`title`, l.`title_alias`, l.`status` ', 'l.`id` = ' . $listingId);
-                    $listingData = is_array($listing) && $listing ? array_shift($listing) : $listingData;
+                    $listingData = $this->getById($listingId);
                 }
 
                 $iaMailer = $this->iaCore->factory('mailer');

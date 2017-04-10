@@ -29,16 +29,15 @@ class iaCateg extends iaAbstractHelperCategoryFlat implements iaDirectoryModule
 
     protected $_activityLog = ['item' => 'category'];
 
-    /*protected $_recountOptions = [
+    protected $_recountOptions = [
         'listingsTable' => 'listings'
-    ];*/
+    ];
 
     private $_urlPatterns = [
         'default' => ':base:title_alias'
     ];
 
     public $dashboardStatistics = ['icon' => 'folder', 'url' => 'directory/categories/'];
-
 
 
     public function getSitemapEntries()
@@ -133,7 +132,7 @@ SQL;
             ? (bool)$this->iaDb->exists($wherePattern, ['slug' => $slug, 'parent' => $parentId], self::getTable())
             : (bool)$this->iaDb->exists($wherePattern . ' AND `id` != :id', ['slug' => $slug, 'parent' => $parentId, 'id' => $id], self::getTable());
     }
-
+/*
     public function recount($start, $limit)
     {
         $this->iaDb->setTable(self::getTable());
@@ -144,9 +143,9 @@ SQL;
         foreach ($rows as $row) {
             $sql = <<<SQL
 SELECT COUNT(l.`id`) `num`
-	FROM `{$this->iaDb->prefix}listings` l 
-LEFT JOIN `{$this->iaDb->prefix}members` acc ON (l.`member_id` = acc.`id`) 
-WHERE l.`status`= 'active' AND (acc.`status` = 'active' OR acc.`status` IS NULL) 
+  FROM `{$this->iaDb->prefix}listings` l 
+  LEFT JOIN `{$this->iaDb->prefix}members` m ON (l.`member_id` = acc.`id`) 
+WHERE l.`status`= 'active' AND (m.`status` = 'active' OR m.`status` IS NULL) 
 AND l.`category_id` = {$row['id']}
 SQL;
             $where = sprintf('`id` IN (SELECT `category_id` FROM `%s` WHERE `parent_id` = %d)', self::getTableFlat(true), $row['id']);
@@ -166,6 +165,27 @@ SQL;
         $this->iaDb->resetTable();
 
         return true;
+    }
+*/
+    public function recount($start, $limit)
+    {
+        parent::recount($start, $limit);
+
+        $where = '`status` = :status ORDER BY `id`';
+        $this->iaDb->bind($where, ['status' => iaCore::STATUS_ACTIVE]);
+
+        $rows = $this->iaDb->all(['id'], $where, (int)$start, (int)$limit, $this->_recountOptions['listingsTable']);
+
+        if ($rows) {
+            $this->iaDb->setTable('listings_categs');
+            foreach ($rows as $row) {
+                if ($crossed = (int)$this->iaDb->one('COUNT(`category_id`) `num`', iaDb::convertIds($row['id'], 'category_id'))) {
+                    var_dump($row, $crossed);
+                    $this->recountById($row['category_id'], $crossed);
+                }
+            }
+            $this->iaDb->resetTable();
+        }
     }
 
     public function getSlug($title, $parentId = null, $parent = null)
