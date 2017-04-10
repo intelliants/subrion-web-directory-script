@@ -29,11 +29,16 @@ class iaCateg extends iaAbstractHelperCategoryFlat implements iaDirectoryModule
 
     protected $_activityLog = ['item' => 'category'];
 
+    /*protected $_recountOptions = [
+        'listingsTable' => 'listings'
+    ];*/
+
     private $_urlPatterns = [
         'default' => ':base:title_alias'
     ];
 
     public $dashboardStatistics = ['icon' => 'folder', 'url' => 'directory/categories/'];
+
 
 
     public function getSitemapEntries()
@@ -56,7 +61,7 @@ class iaCateg extends iaAbstractHelperCategoryFlat implements iaDirectoryModule
 
     public function delete($itemId)
     {
-        $children = $this->getChildren($itemId);
+        //$children = $this->getChildren($itemId);
 
         if ($result = parent::delete($itemId)) {
             $stmt = iaDb::convertIds($itemId, 'category_id');
@@ -124,37 +129,12 @@ SQL;
     {
         $wherePattern = self::_cols('`title_alias` = :slug AND `:col_pid` = :parent');
 
-        return is_null($id)
+        empty($id)
             ? (bool)$this->iaDb->exists($wherePattern, ['slug' => $slug, 'parent' => $parentId], self::getTable())
             : (bool)$this->iaDb->exists($wherePattern . ' AND `id` != :id', ['slug' => $slug, 'parent' => $parentId, 'id' => $id], self::getTable());
     }
 
-    /**
-     * Change category listings counter.
-     * Parent categories counter will be changed too.
-     *
-     * @param int $categoryId category Id
-     * @param int $increment
-     *
-     * @return mixed
-     */
-    public function changeNumListing($categoryId, $increment = 1)
-    {
-        $sql = <<<SQL
-UPDATE `:table_categs` SET `num_listings` = IF(`id` = :category, `num_listings` + :increment, `num_listings`),
-	`num_all_listings` = `num_all_listings` + :increment
-WHERE FIND_IN_SET(:category, `child`)
-SQL;
-        $sql = iaDb::printf($sql, [
-            'table_categs' => self::getTable(true),
-            'category' => (int)$categoryId,
-            'increment' => (int)$increment
-        ]);
-
-        return $this->iaDb->query($sql);
-    }
-
-    public function recountListingsNum($start = 0, $limit = 10)
+    public function recount($start, $limit)
     {
         $this->iaDb->setTable(self::getTable());
 
@@ -190,20 +170,24 @@ SQL;
 
     public function getSlug($title, $parentId = null, $parent = null)
     {
-        if (self::ROOT_PARENT_ID == $parentId) {
-            return '';
-        }
-
         $slug = iaSanitize::alias($title);
 
         if ('category' == $slug) {
             $id = $this->iaDb->getNextId(self::getTable());
-            $slug.= '-' . $id;
+            $slug .= '-' . $id;
         }
 
-        $parent || $parent = $this->getById($parentId, false);
+        $slug .= IA_URL_DELIMITER;
 
-        $slug = ltrim($parent['title_alias'] . $slug . IA_URL_DELIMITER, IA_URL_DELIMITER);
+        if (self::ROOT_PARENT_ID != $parentId) {
+            if (!$parent) {
+                $parent = $this->getById($parentId, false);
+            }
+            if (!empty($parent['title_alias'])) {
+                $slug = $parent['title_alias'] . $slug;
+            }
+        }
+
         $this->iaCore->get('directory_lowercase_urls', true) && $slug = strtolower($slug);
 
         return $slug;

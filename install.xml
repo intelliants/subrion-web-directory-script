@@ -340,7 +340,7 @@
 if ('repair_directorycats' == $type) {
     $iaCateg = $iaCore->factoryModule('categ', 'directory', iaCore::ADMIN);
 
-    $iaCateg->rebuildRelations();
+    $iaCateg->rebuild();
     $iaCateg->syncLinkingData();
 
     $iaView->setMessages(iaLanguage::get('categories_repaired'), iaView::SUCCESS);
@@ -401,8 +401,6 @@ CREATE TABLE IF NOT EXISTS `{prefix}categs`(
     `status` enum('active', 'inactive') NOT NULL default 'active',
     `order` mediumint(8) NOT NULL default 0,
     `num_cols` tinyint(4) unsigned NOT NULL default 0,
-    `num_listings` mediumint(8) unsigned NOT NULL default 0,
-    `num_all_listings` mediumint(8) unsigned NOT NULL default 0,
     `no_follow` tinyint(1) unsigned NOT NULL default 0,
     `locked` tinyint(1) unsigned NOT NULL default 0,
     `views_num` mediumint(8) unsigned NOT NULL default 0,

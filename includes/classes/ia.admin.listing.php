@@ -37,24 +37,45 @@ class iaListing extends abstractDirectoryModuleAdmin implements iaDirectoryModul
     public $dashboardStatistics = ['icon' => 'link'];
 
 
+    public function insert(array $itemData)
+    {
+        $itemData['date_added'] = date(iaDb::DATETIME_FORMAT);
+        $itemData['date_modified'] = date(iaDb::DATETIME_FORMAT);
+
+        return parent::insert($itemData);
+    }
+
+    public function update(array $itemData, $id)
+    {
+        $itemData['date_modified'] = date(iaDb::DATETIME_FORMAT);
+
+        if ($result = parent::update($itemData, $id)) {
+            $this->sendUserNotification($itemData, $id);
+        }
+
+        return $result;
+    }
+
     public function delete($listingId)
     {
         $listingData = $this->getById($listingId);
         $result = parent::delete($listingId);
 
         if ($result) {
+            $iaCateg = $this->iaCore->factoryModule('categ', $this->getModuleName());
+
             if ($this->iaCore->get('listing_crossed')) {
                 $stmt = iaDb::convertIds($listingId, 'listing_id');
                 $crossed = $this->iaDb->onefield('category_id', $stmt, 0, null, self::getTableCrossed());
 
                 foreach ($crossed as $ccid) {
-                    $this->_changeNumListing($ccid, -1);
+                    $iaCateg->recountById($ccid, -1);
                 }
 
                 $this->iaDb->delete($stmt, self::getTableCrossed());
             }
 
-            $this->_changeNumListing($listingData['category_id'], -1);
+            $iaCateg->recountById($listingData['category_id'], -1);
 
             $listingData['status'] = 'removed';
             $this->sendUserNotification($listingData);
@@ -65,26 +86,8 @@ class iaListing extends abstractDirectoryModuleAdmin implements iaDirectoryModul
 
     public function updateCounters($itemId, array $itemData, $action, $previousData = null)
     {
-        parent::updateCounters($itemId, $itemData, $action, $previousData);
-
-        // update counters
-        if ((!empty($itemData['category_id']) && !empty($previousData['category_id']))
-            || (!empty($itemData['status']) && !empty($previousData['status']))) {
-            if ($itemData['category_id'] == $previousData['category_id']) {
-                if (iaCore::STATUS_ACTIVE == $previousData['status'] && iaCore::STATUS_ACTIVE != $itemData['status']) {
-                    $this->_changeNumListing($itemData['category_id'], -1);
-                } elseif (iaCore::STATUS_ACTIVE != $previousData['status'] && iaCore::STATUS_ACTIVE == $itemData['status']) {
-                    $this->_changeNumListing($itemData['category_id']);
-                }
-            } else { // If category changed
-                if (iaCore::STATUS_ACTIVE == $itemData['status']) {
-                    $this->_changeNumListing($itemData['category_id']);
-                }
-                if (iaCore::STATUS_ACTIVE == $previousData['status']) {
-                    $this->_changeNumListing($previousData['category_id'], -1);
-                }
-            }
-        }
+        $this->_checkIfCountersNeedsUpdate($action, $itemData, $previousData,
+            $this->iaCore->factoryModule('categ', $this->getModuleName(), iaCore::ADMIN));
     }
 
     public function getSitemapEntries()
@@ -147,24 +150,6 @@ SQL;
         ]);
 
         return $this->iaDb->getAll($sql);
-    }
-
-    protected function _changeNumListing($categoryId, $factor = 1)
-    {
-        $sql = <<<SQL
-UPDATE `:table_data` 
-	SET `num_listings` = IF(`id` = :id, `num_listings` + :factor, `num_listings`),
-	`num_all_listings` = `num_all_listings` + :factor 
-WHERE `id` IN (SELECT `category_id` FROM `:table_flat` WHERE `parent_id` = :id)
-SQL;
-        $sql = iaDb::printf($sql, [
-            'table_data' => iaCateg::getTable(true),
-            'table_flat' => iaCateg::getTableFlat(true),
-            'id' => (int)$categoryId,
-            'factor' => $factor
-        ]);
-
-        return $this->iaDb->query($sql);
     }
 
     public function sendUserNotification(array $listingData, $listingId = null)

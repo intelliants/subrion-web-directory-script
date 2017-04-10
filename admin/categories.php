@@ -91,7 +91,7 @@ class iaBackendController extends iaAbstractControllerModuleBackend
 
         $entry[iaCateg::COL_PARENT_ID] = isset($data['tree_id']) ? (int)$data['tree_id'] : $this->_root['id'];
 
-        $entry['title_alias'] = empty($data['title_alias']) ? $data['title'][$this->_iaCore->language['iso']] : $data['title_alias'];
+        $entry['title_alias'] = empty($data['title_alias']) ? $data['title'][iaLanguage::getMasterLanguage()->code] : $data['title_alias'];
         $entry['title_alias'] = $this->getHelper()->getSlug($entry['title_alias'], $entry[iaCateg::COL_PARENT_ID]);
 
         if ($this->getHelper()->exists($entry['title_alias'], $entry[iaCateg::COL_PARENT_ID], $this->getEntryId())) {
@@ -164,10 +164,11 @@ SQL;
         if (isset($_POST['action'])) {
             switch ($_POST['action']) {
                 case 'recount_listings':
-                    $this->getHelper()->recountListingsNum($_POST['start'], $_POST['limit']);
+                    $this->getHelper()->recount($_POST['start'], $_POST['limit']);
                     break;
 
                 case 'pre_recount_listings':
+                    $this->getHelper()->resetCounters();
                     $output['total'] = $this->getHelper()->getCount();
             }
         }

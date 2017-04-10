@@ -67,19 +67,12 @@ class iaBackendController extends iaAbstractControllerModuleBackend
 
     protected function _entryAdd(array $entryData)
     {
-        $entryData['date_added'] = date(iaDb::DATETIME_FORMAT);
-        $entryData['date_modified'] = date(iaDb::DATETIME_FORMAT);
-
-        return parent::_entryAdd($entryData);
+        return $this->getHelper()->insert($entryData);
     }
 
     protected function _entryUpdate(array $entryData, $entryId)
     {
-        $entryData['date_modified'] = date(iaDb::DATETIME_FORMAT);
-        $result = parent::_entryUpdate($entryData, $entryId);
-        !$result || $this->getHelper()->sendUserNotification($entryData, $entryId);
-
-        return $result;
+        return $this->getHelper()->update($entryData, $entryId);
     }
 
     protected function _entryDelete($entryId)
@@ -121,7 +114,9 @@ class iaBackendController extends iaAbstractControllerModuleBackend
         $entry['rank'] = min(5, max(0, (int)$data['rank']));
         $entry['category_id'] = (int)$data['tree_id'];
 
-        $entry['title_alias'] = empty($data['title_alias']) ? $data['title'][$this->_iaCore->language['iso']] : $data['title_alias'];
+        $entry['title_alias'] = empty($data['title_alias'])
+            ? $data['title'][iaLanguage::getMasterLanguage()->code]
+            : $data['title_alias'];
         $entry['title_alias'] = $this->_getTitleAlias($entry['title_alias']);
 
         if (iaValidate::isUrl($entry['url'])) {
@@ -147,38 +142,11 @@ class iaBackendController extends iaAbstractControllerModuleBackend
         if (!empty($data['crossed_links'])) {
             foreach (explode(',', $data['crossed_links']) as $categoryId) {
                 $this->_iaDb->insert(['listing_id' => $this->getEntryId(), 'category_id' => $categoryId]);
-                $this->_iaCateg->changeNumListing($categoryId);
+                $this->_iaCateg->recountById($categoryId);
             }
         }
 
         $this->_iaDb->resetTable();
-    }
-
-    public function updateCounters($entryId, array $entryData, $action, $previousData = null)
-    {
-        switch ($action) {
-            case iaCore::ACTION_EDIT:
-                if ($entryData['category_id'] == $previousData['category_id']) {
-                    if (iaCore::STATUS_ACTIVE == $previousData['status'] && iaCore::STATUS_ACTIVE != $entryData['status']) {
-                        $this->_iaCateg->changeNumListing($entryData['category_id'], -1);
-                    } elseif (iaCore::STATUS_ACTIVE != $previousData['status'] && iaCore::STATUS_ACTIVE == $entryData['status']) {
-                        $this->_iaCateg->changeNumListing($entryData['category_id']);
-                    }
-                } else { // category changed
-                    iaCore::STATUS_ACTIVE == $entryData['status']
-                        && $this->_iaCateg->changeNumListing($entryData['category_id']);
-                    iaCore::STATUS_ACTIVE == $previousData['status']
-                        && $this->_iaCateg->changeNumListing($previousData['category_id'], -1);
-                }
-                break;
-            case iaCore::ACTION_ADD:
-                $entryData['status'] == iaCore::STATUS_ACTIVE
-                    && $this->_iaCateg->changeNumListing($entryData['category_id']);
-                break;
-            case iaCore::ACTION_DELETE:
-                $entryData['status'] == iaCore::STATUS_ACTIVE
-                    && $this->_iaCateg->changeNumListing($entryData['category_id'], -1);
-        }
     }
 
     protected function _assignValues(&$iaView, array &$entryData)
@@ -188,20 +156,6 @@ class iaBackendController extends iaAbstractControllerModuleBackend
         $iaView->assign('crossed', $this->_fetchCrossedCategories());
         $iaView->assign('statuses', $this->getHelper()->getStatuses());
         $iaView->assign('tree', $this->getHelper()->getTreeVars($entryData));
-    }
-
-    protected function _getTreeVars(array $entryData)
-    {
-        $category = empty($entryData['category_id'])
-            ? $this->_iaCateg->getRoot()
-            : $this->_iaCateg->getById($entryData['category_id']);
-
-        return [
-            'url' => IA_ADMIN_URL . 'directory/categories/tree.json?noroot',
-            'nodes' => $category[iaCateg::COL_PARENTS],
-            'id' => $category['id'],
-            'title' => $category['title']
-        ];
     }
 
     protected function _fetchCrossedCategories()

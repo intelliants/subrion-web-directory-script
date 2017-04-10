@@ -257,7 +257,7 @@ class iaListing extends abstractDirectoryDirectoryFront implements iaDirectoryMo
     public function updateCounters($itemId, array $itemData, $action, $previousData = null)
     {
         $this->_saveCrossedCategories($action, $itemId, $itemData, $previousData);
-        empty($itemData['category_id']) || $this->_updateListingCounters($itemData, $previousData);
+        $this->_checkIfCountersNeedsUpdate($action, $itemData, $previousData, $this->_iaCateg);
     }
 
     protected function _saveCrossedCategories($action, $itemId, array $itemData, $oldData = null)
@@ -296,34 +296,13 @@ class iaListing extends abstractDirectoryDirectoryFront implements iaDirectoryMo
 
                 if (isset($diff)) {
                     foreach ($crossedInput as $entry) {
-                        $this->_changeNumListing($entry['category_id'], $diff);
+                        $this->_iaCateg->recountById($entry['category_id'], $diff);
                     }
                 }
             }
         }
 
         $this->iaDb->resetTable();
-    }
-
-    protected function _updateListingCounters(array $itemData, $oldData = null)
-    {
-        if ((!empty($itemData['category_id']) && !empty($oldData['category_id']))
-            || (!empty($itemData['status']) && !empty($oldData['status']))) {
-            if ($itemData['category_id'] == $oldData['category_id']) {
-                if (iaCore::STATUS_ACTIVE == $oldData['status'] && iaCore::STATUS_ACTIVE != $itemData['status']) {
-                    $this->_changeNumListing($itemData['category_id'], -1);
-                } elseif (iaCore::SiaATATUS_ACTIVE != $oldData['status'] && iaCore::STATUS_ACTIVE == $itemData['status']) {
-                    $this->_changeNumListing($itemData['category_id']);
-                }
-            } else { // If category changed
-                if (iaCore::STATUS_ACTIVE == $itemData['status']) {
-                    $this->_changeNumListing($itemData['category_id']);
-                }
-                if (iaCore::STATUS_ACTIVE == $oldData['status']) {
-                    $this->_changeNumListing($oldData['category_id'], -1);
-                }
-            }
-        }
     }
 
     /**
@@ -345,34 +324,6 @@ class iaListing extends abstractDirectoryDirectoryFront implements iaDirectoryMo
 
             $iaMailer->sendToAdministrators();
         }
-    }
-
-    /**
-     * Change category listings counter.
-     * Parent categories counter will be changed too.
-     *
-     * @param int $categoryId category Id
-     * @param int $increment
-     *
-     * @return mixed
-     */
-    protected function _changeNumListing($categoryId, $increment = 1)
-    {
-        $sql = <<<SQL
-UPDATE `:table_data` 
-SET `num_listings` = IF(`id` = :category, `num_listings` + :increment, `num_listings`),
-	`num_all_listings` = `num_all_listings` + :increment 
-WHERE `id` IN (SELECT `category_id` FROM `:table_flat` WHERE `parent_id` = :category)
-SQL;
-
-        $sql = iaDb::printf($sql, [
-            'table_data' => $this->_iaCateg->getTable(true),
-            'table_flat' => $this->_iaCateg->getTableFlat(true),
-            'category' => (int)$categoryId,
-            'increment' => (int)$increment
-        ]);
-
-        return $this->iaDb->query($sql);
     }
 
     protected function _processValues(&$rows, $singleRow = false, $fieldNames = [])
