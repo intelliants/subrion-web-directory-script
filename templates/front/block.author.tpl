@@ -40,20 +40,20 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title">{lang key="send_email"}</h4>
+                    <h4 class="modal-title">{lang key='send_email'}</h4>
                 </div>
                 <div class="modal-body">
                     <div id="author-block-alert" class="alert" style="display: none;"></div>
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="from-name">{lang key='your_name'}:</label>
+                                <label for="from-name">{lang key='your_name'}</label>
                                 <input type="text" id="from-name" name="from_name" class="form-control">
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="from-email">{lang key='your_email'}:</label>
+                                <label for="from-email">{lang key='your_email'}</label>
                                 <input type="text" id="from-email" name="from_email" class="form-control">
                             </div>
                         </div>

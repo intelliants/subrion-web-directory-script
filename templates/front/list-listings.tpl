@@ -21,7 +21,7 @@
             {printFavorites item=$listing itemtype='listings' guests=true}
             {accountActions item=$listing itemtype='listings'}
 
-            <a href="{ia_url item='listings' data=$listing type='url'}">{lang key='details'} <span class="fa fa-angle-double-right"></span></a>
+            <a href="{$listing.link}">{lang key='details'} <span class="fa fa-angle-double-right"></span></a>
         </div>
 
         <div class="ia-item__title">
