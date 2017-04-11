@@ -229,7 +229,7 @@
         <phrase category="admin" key="category_deleted">Category deleted.</phrase>
         <phrase category="admin" key="categories_repaired">Your listings categories have been repaired.</phrase>
         <phrase category="admin" key="dashboard_listings_add">Add Listing</phrase>
-        <phrase category="admin" key="directory_category_already_exists">Category with similar title alias exists in this category.</phrase>
+        <phrase category="admin" key="directory_category_already_exists">Category with similar slug exists in this category.</phrase>
         <phrase category="admin" key="directory_package">&quot;Directory&quot; package</phrase>
         <phrase category="admin" key="edit_category">Edit Category</phrase>
         <phrase category="admin" key="edit_listing">Edit Listing</phrase>

@@ -32,7 +32,7 @@
 
     {capture name='title' append='field_after'}
         <div id="title_alias" class="row">
-            <label for="field_title_alias" class="col col-lg-2 control-label">{lang key='title_alias'} <a href="#" class="js-tooltip" title="{$tooltips.slug_literal}"><i class="i-info"></i></a></label>
+            <label for="field_title_alias" class="col col-lg-2 control-label">{lang key='slug'} <a href="#" class="js-tooltip" title="{$tooltips.slug_literal}"><i class="i-info"></i></a></label>
             <div class="col col-lg-4">
                 <input type="text" name="title_alias" id="field_title_alias" value="{if isset($item.title_alias)}{$item.title_alias}{/if}">
                 <p class="help-block text-break-word">{lang key='page_url_will_be'}: <span class="text-danger" id="title_url">{$smarty.const.IA_URL}{if isset($item.title_alias) && isset($category.title_alias)}{$category.title_alias}{$item.title_alias}{/if}</span></p>
