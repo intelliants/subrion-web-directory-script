@@ -246,8 +246,8 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType()) {
                 'href' => $iaListing->url('view', $listing),
             ]
         ]);
-    } elseif (1 == count($_GET) && is_numeric($cid = key($_GET))) {
-        $category = $iaCateg->getById($cid);
+    } elseif (isset($_GET['category']) && is_numeric($_GET['category'])) {
+        $category = $iaCateg->getById($_GET['category']);
     }
 
     $listing['item'] = $iaListing->getItemName();
