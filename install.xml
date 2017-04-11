@@ -384,7 +384,7 @@ $statistics['directory'] = array(
     ],
     [
         'title' => iaLanguage::get('categories'),
-        'value' => number_format((int)$iaDb->one(iaDb::STMT_COUNT_ROWS, $condition . ' AND `_pid` != 0', 'categs'))
+        'value' => number_format((int)$iaDb->one(iaDb::STMT_COUNT_ROWS, $condition . ' AND `parent_id` != 0', 'categs'))
     ]
 );
             ]]>
