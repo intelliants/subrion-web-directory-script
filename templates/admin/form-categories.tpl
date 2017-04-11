@@ -27,6 +27,9 @@
                     <input type="hidden" id="crossed" name="crossed" value="{if isset($crossed) && $crossed}{','|implode:array_keys($crossed)}{elseif isset($smarty.post.crossed)}{$smarty.post.crossed}{/if}">
                 </div>
             </div>
+            {ia_add_js}
+intelli.cid = {$id|default:0}
+            {/ia_add_js}
         {/capture}
 
         {capture name='title' append='field_after'}

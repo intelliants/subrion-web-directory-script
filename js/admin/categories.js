@@ -105,7 +105,7 @@ Ext.onReady(function () {
 
                                 return params;
                             },
-                            url: intelli.config.admin_url + '/directory/categories/tree.json?cid=' + intelli.cid
+                            url: intelli.config.admin_url + '/directory/categories/tree.json?noroot&cid=' + intelli.cid
                         },
                         multiple: true
                     },
@@ -118,9 +118,8 @@ Ext.onReady(function () {
                 .on('click.jstree', function (e) {
                     var crossedJsTree = $('#tree-crossed').jstree(true);
                     var selectedNodes = crossedJsTree.get_selected();
-                    var currentCatId = $('input[name="id"]').val();
 
-                    if (selectedNodes == currentCatId) {
+                    if (selectedNodes == intelli.cid) {
                         crossedJsTree.deselect_node(e.target);
                     }
                     else {
@@ -151,12 +150,12 @@ intelli.fillUrlBox = function () {
     var category = $('#input-tree').val();
     var cache = title + '%%' + category;
 
-    if ('' != title && intelli.titleCache != cache) {
+    if ('' !== title && intelli.titleCache != cache) {
         $.get(intelli.config.admin_url + '/directory/categories/slug.json', {
             title: title,
             category: category
         }, function (response) {
-            if ('' != response.data) {
+            if ('' !== response.data) {
                 $('#title_url').text(response.data);
                 $('#title_box').fadeIn();
             }
