@@ -314,12 +314,13 @@ class iaListing extends abstractDirectoryDirectoryFront implements iaDirectoryMo
     {
         if ($this->iaCore->get('new_listing')) {
             $listingData = $this->getById($listingId);
+
             $iaMailer = $this->iaCore->factory('mailer');
 
             $iaMailer->loadTemplate('new_listing');
             $iaMailer->setReplacements([
                 'title' => $listingData['title'],
-                'url' => IA_ADMIN_URL . 'directory/listings/edit/' . $listingData['id']
+                'url' => IA_ADMIN_URL . 'directory/listings/edit/' . $listingData['id'] . '/'
             ]);
 
             $iaMailer->sendToAdministrators();

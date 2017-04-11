@@ -124,6 +124,16 @@ class iaListing extends abstractDirectoryModuleAdmin implements iaDirectoryModul
         return iaDb::printf($this->_urlPatterns[$action], $data);
     }
 
+    public function getById($id, $process = true)
+    {
+        $row = $this->get('l.*', 'l.`id` = ' . (int)$id, null, 0, 1);
+        $row && $row = $row[0];
+
+        $process && $this->_processValues($row, true);
+
+        return $row;
+    }
+
     public function get($columns, $where, $order, $start = null, $limit = null)
     {
         $sql = <<<SQL
@@ -151,8 +161,10 @@ SQL;
 
     public function sendUserNotification(array $listingData, $listingId = null)
     {
-        if ($this->iaCore->get('listing_' . $listingData['status'])) {
-            $email = ($listingData['email']) ? $listingData['email'] : $this->iaDb->one('email', iaDb::convertIds($listingData['member_id']), iaUsers::getTable());
+        if (isset($listingData['status']) && $this->iaCore->get('listing_' . $listingData['status'])) {
+            $email = empty($listingData['email'])
+                ? $this->iaDb->one('email', iaDb::convertIds($listingData['member_id']), iaUsers::getTable())
+                : $listingData['email'];
 
             if ($email) {
                 if ($listingId) {

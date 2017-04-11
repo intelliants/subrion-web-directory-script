@@ -128,7 +128,7 @@
     <config group="email_templates" name="new_listing_body" type="textarea">
         <![CDATA[
 <p>Greetings,</p>
-<p>We have a new listing "{%TITLE%}" at <a href="{%SITE_URL%}">{%SITE_URL%}</a>.</p>
+<p>We have a new listing "{%TITLE%}" at <a href="{%SITE_URL%}">{%SITE_NAME%}</a>.</p>
 <p>For more details check the url: <a href="{%URL%}">{%URL%}</a></p>
         ]]>
     </config>
@@ -140,7 +140,7 @@
     <config group="email_templates" name="listing_active_body" type="textarea">
         <![CDATA[
 <p>Greetings,</p>
-<p>Your listing "{%TITLE%}" at <a href="{%SITE_URL%}">{%SITE_URL%}</a> went live.</p>
+<p>Your listing "{%TITLE%}" at <a href="{%SITE_URL%}">{%SITE_NAME%}</a> went live.</p>
 <p>In order to view your listing please refer to the URL: <a href="{%URL%}">{%URL%}</a></p>
         ]]>
     </config>
@@ -151,7 +151,7 @@
     <config group="email_templates" name="listing_suspended_body" type="textarea">
         <![CDATA[
 <p>Greetings,</p>
-<p>Your listing "{%TITLE%}" at <a href="{%SITE_URL%}">{%SITE_URL%}</a> has been suspended.</p>
+<p>Your listing "{%TITLE%}" at <a href="{%SITE_URL%}">{%SITE_NAME%}</a> has been suspended.</p>
 <p>If you do not know the reason of the suspension or if you want to reactivate your listing, please contact an administrator of the site.</p>
         ]]>
     </config>
@@ -162,7 +162,7 @@
     <config group="email_templates" name="listing_banned_body" type="textarea">
         <![CDATA[
 <p>Greetings,</p>
-<p>Your listing "{%TITLE%}" at <a href="{%SITE_URL%}">{%SITE_URL%}</a> has been banned.</p>
+<p>Your listing "{%TITLE%}" at <a href="{%SITE_URL%}">{%SITE_NAME%}</a> has been banned.</p>
 <p>If you do not know the reason of the banning or if you want to reactivate your listing, please contact an administrator of the site.</p>
         ]]>
     </config>
@@ -173,7 +173,7 @@
     <config group="email_templates" name="listing_removed_body" type="textarea">
         <![CDATA[
 <p>Greetings,</p>
-<p>Your listing "{%TITLE%}" at <a href="{%SITE_URL%}">{%SITE_URL%}</a> has been removed.</p>
+<p>Your listing "{%TITLE%}" at <a href="{%SITE_URL%}">{%SITE_NAME%}</a> has been removed.</p>
 <p>If you do not know the reason of the deletion or if you want to recover your listing, please contact an administrator of the site.</p>
         ]]>
     </config>
