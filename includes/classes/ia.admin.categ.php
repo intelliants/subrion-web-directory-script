@@ -180,7 +180,6 @@ SQL;
             $this->iaDb->setTable('listings_categs');
             foreach ($rows as $row) {
                 if ($crossed = (int)$this->iaDb->one('COUNT(`category_id`) `num`', iaDb::convertIds($row['id'], 'category_id'))) {
-                    var_dump($row, $crossed);
                     $this->recountById($row['category_id'], $crossed);
                 }
             }

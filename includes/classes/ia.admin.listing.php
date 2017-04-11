@@ -162,15 +162,15 @@ SQL;
     public function sendUserNotification(array $listingData, $listingId = null)
     {
         if (isset($listingData['status']) && $this->iaCore->get('listing_' . $listingData['status'])) {
+            if ($listingId) {
+                $listingData = $this->getById($listingId);
+            }
+
             $email = empty($listingData['email'])
                 ? $this->iaDb->one('email', iaDb::convertIds($listingData['member_id']), iaUsers::getTable())
                 : $listingData['email'];
 
             if ($email) {
-                if ($listingId) {
-                    $listingData = $this->getById($listingId);
-                }
-
                 $iaMailer = $this->iaCore->factory('mailer');
 
                 $iaMailer->loadTemplate('listing_' . $listingData['status']);
