@@ -257,7 +257,7 @@ class iaListing extends abstractDirectoryDirectoryFront implements iaDirectoryMo
     public function updateCounters($itemId, array $itemData, $action, $previousData = null)
     {
         $this->_saveCrossedCategories($action, $itemId, $itemData, $previousData);
-        $this->_checkIfCountersNeedsUpdate($action, $itemData, $previousData, $this->_iaCateg);
+        $this->_checkIfCountersNeedUpdate($action, $itemData, $previousData, $this->_iaCateg);
     }
 
     protected function _saveCrossedCategories($action, $itemId, array $itemData, $oldData = null)

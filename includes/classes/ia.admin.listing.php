@@ -84,7 +84,7 @@ class iaListing extends abstractDirectoryModuleAdmin implements iaDirectoryModul
 
     public function updateCounters($itemId, array $itemData, $action, $previousData = null)
     {
-        $this->_checkIfCountersNeedsUpdate($action, $itemData, $previousData,
+        $this->_checkIfCountersNeedUpdate($action, $itemData, $previousData,
             $this->iaCore->factoryModule('categ', $this->getModuleName(), iaCore::ADMIN));
     }
 
@@ -95,7 +95,7 @@ class iaListing extends abstractDirectoryModuleAdmin implements iaDirectoryModul
         $stmt = 'l.`status` = :status';
         $this->iaDb->bind($stmt, ['status' => iaCore::STATUS_ACTIVE]);
 
-        if ($entries = $this->get('l.`title_alias`', $stmt, 'l.`date_modified` DESC')) {
+        if ($entries = $this->get('l.`id`, l.`title_alias`', $stmt, 'ORDER BY l.`date_modified` DESC')) {
             foreach ($entries as $entry) {
                 $result[] = $this->url('view', $entry);
             }
@@ -124,15 +124,14 @@ class iaListing extends abstractDirectoryModuleAdmin implements iaDirectoryModul
         return iaDb::printf($this->_urlPatterns[$action], $data);
     }
 
-    public function get($columns, $where, $order = '', $start = null, $limit = null)
+    public function get($columns, $where, $order, $start = null, $limit = null)
     {
         $sql = <<<SQL
 SELECT :columns, c.`title_:lang` `category_title`, c.`title_alias` `category_alias`, m.`fullname` `member` 
 	FROM `:prefix:table_listings` l 
 LEFT JOIN `:prefix:table_categories` c ON (l.`category_id` = c.`id`) 
 LEFT JOIN `:prefix:table_members` m ON (l.`member_id` = m.`id`) 
-WHERE :where :order
-LIMIT :start, :limit
+WHERE :where :order :limit
 SQL;
         $sql = iaDb::printf($sql, [
             'lang' => $this->iaCore->language['iso'],
@@ -144,7 +143,7 @@ SQL;
             'where' => $where,
             'order' => $order,
             'start' => $start,
-            'limit' => $limit
+            'limit' => $start || $limit ? sprintf('LIMIT %d, %d', $start, $limit) : ''
         ]);
 
         return $this->iaDb->getAll($sql);

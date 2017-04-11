@@ -37,14 +37,14 @@ class iaCateg extends iaAbstractHelperCategoryFlat implements iaDirectoryModule
         'default' => ':base:title_alias'
     ];
 
-    public $dashboardStatistics = ['icon' => 'folder', 'url' => 'directory/categories/'];
+    //public $dashboardStatistics = ['icon' => 'folder', 'url' => 'directory/categories/'];
 
 
     public function getSitemapEntries()
     {
         $result = [];
 
-        $where = '`status` = :status AND `parent_id` != -1 ORDER BY `level`, `title`';
+        $where = $this->_cols('`status` = :status AND `:col_pid` != :root_pid ORDER BY `level`, `title_' . $this->iaView->language . '`');
         $this->iaDb->bind($where, ['status' => iaCore::STATUS_ACTIVE]);
 
         if ($entries = $this->iaDb->all(['title_alias'], $where, null, null, self::getTable())) {

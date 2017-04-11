@@ -164,7 +164,7 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType()) {
 
     $pagination['total'] = $iaListing->getFoundRows();
 
-    iaLanguage::set('no_web_listings', iaLanguage::getf('no_web_listings', ['url' => IA_MODULE_URL . 'add/' . (!empty($category) ? '?category=' . $category['id'] : '')]));
+    iaLanguage::set('no_web_listings', iaLanguage::getf('no_web_listings', ['url' => IA_MODULE_URL . 'add/' . (!empty($category) ? '?' . $category['id'] : '')]));
 
     if ($listings) {
         $listings = $iaCore->factory('item')->updateItemsFavorites($listings, $iaListing->getItemName());
@@ -176,7 +176,7 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType()) {
         $pageActions[] = [
             'icon' => 'plus-square',
             'title' => iaLanguage::get('add_listing'),
-            'url' => IA_MODULE_URL . 'add/' . (empty($category['id']) ? '' : '?category=' . $category['id'])
+            'url' => IA_MODULE_URL . 'add/' . (empty($category['id']) ? '' : '?' . $category['id'])
         ];
     }
 
