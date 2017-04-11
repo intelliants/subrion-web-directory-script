@@ -135,13 +135,10 @@ class iaListing extends abstractDirectoryDirectoryFront implements iaDirectoryMo
 
             case 'c':
             case 'sc':
-                $child = $this->iaDb->one('child', iaDb::convertIds((int)$value), iaCateg::getTable());
+                $subQuery = sprintf('SELECT `category_id` FROM `%s` WHERE `parent_id` = %d',
+                    $this->_iaCateg->getTableFlat(true), $value);
 
-                if (!$child) { // it's abnormal situation if the value is empty, it probably means that DB structure is not valid/updated
-                    return ['col' => ':column', 'cond' => '=', 'val' => (int)$value, 'field' => 'category_id'];
-                }
-
-                return ['col' => ':column', 'cond' => 'IN', 'val' => '(' . $child . ')', 'field' => 'category_id'];
+                return ['col' => ':column', 'cond' => 'IN', 'val' => '(' . $subQuery . ')', 'field' => 'category_id'];
         }
     }
 

@@ -5,7 +5,7 @@ $(function () {
         $scSelect = $('#js-l-sc');
 
     $cSelect.on('change', function (e) {
-        var value = $(this).val(), doNotRespond = intelli.flags.doNotRespond;
+        var value = $(this).val();
 
         $scSelect.val(0).prop('disabled', true).find('option:not(:first)').remove();
 
@@ -17,7 +17,7 @@ $(function () {
                     var d = $scSelect.data('value');
                     $.each(response, function (index, item) {
                         var $option = $('<option>').val(item.id).text(item.text);
-                        if (d == item.id) $option.attr('selected', true);
+                        if (d == item.id) $option.prop('selected', true);
                         $scSelect.append($option);
                     });
 

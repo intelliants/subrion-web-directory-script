@@ -17,7 +17,19 @@
  *
  ******************************************************************************/
 
-$iaListing = $iaCore->factoryModule('listing', IA_CURRENT_MODULE);
+$iaCateg = $iaCore->factoryModule('categ', IA_CURRENT_MODULE);
+
+if (iaView::REQUEST_JSON == $iaView->getRequestType()) {
+    $output = [];
+
+    if (isset($_GET['id']) && ($children = $iaCateg->getChildren($_GET['id']))) {
+        foreach ($children as $child) {
+            $output[] = ['id' => $child['id'], 'text' => $child['title']];
+        }
+    }
+
+    $iaView->assign($output);
+}
 
 if (iaView::REQUEST_HTML == $iaView->getRequestType()) {
     $pageActions = [];
@@ -41,6 +53,8 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType()) {
     $pagination['start'] = ($page - 1) * $pagination['limit'];
 
     $order = '';
+
+    $iaListing = $iaCore->factoryModule('listing', IA_CURRENT_MODULE);
 
     $listings = [];
     $orders = ['date_added-asc', 'date_added-desc', 'rank-desc', 'rank-asc', 'title-desc', 'title-asc'];
@@ -76,8 +90,6 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType()) {
     }
 
     $rssFeed = false;
-
-    $iaCateg = $iaCore->factoryModule('categ', IA_CURRENT_MODULE);
 
     switch ($pageName) {
         case 'my_listings':
