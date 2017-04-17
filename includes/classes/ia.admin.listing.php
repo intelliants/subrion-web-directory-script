@@ -49,11 +49,7 @@ class iaListing extends abstractDirectoryModuleAdmin implements iaDirectoryModul
     {
         $itemData['date_modified'] = date(iaDb::DATETIME_FORMAT);
 
-        if ($result = parent::update($itemData, $id)) {
-            $this->sendUserNotification($itemData, $id);
-        }
-
-        return $result;
+        return parent::update($itemData, $id);
     }
 
     public function delete($listingId)
@@ -86,6 +82,14 @@ class iaListing extends abstractDirectoryModuleAdmin implements iaDirectoryModul
     {
         $this->_checkIfCountersNeedUpdate($action, $itemData, $previousData,
             $this->iaCore->factoryModule('categ', $this->getModuleName(), iaCore::ADMIN));
+
+        if (iaCore::ACTION_EDIT == $action) {
+            $ownerId = empty($itemData['member_id']) ? $previousData['member_id'] : $itemData['member_id'];
+
+            if ($ownerId && iaUsers::getIdentity()->id != $ownerId) {
+                $this->sendUserNotification($itemData, $itemId);
+            }
+        }
     }
 
     public function getSitemapEntries()
@@ -198,7 +202,7 @@ SQL;
 
     public function getTreeVars(array $entryData)
     {
-        $iaCateg = $this->iaCore->factoryModule('categ', $this->getModuleName());
+        $iaCateg = $this->iaCore->factoryModule('categ', $this->getModuleName(), iaCore::ADMIN);
 
         $category = empty($entryData['category_id'])
             ? $iaCateg->getRoot()
