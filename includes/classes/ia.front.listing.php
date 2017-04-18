@@ -109,6 +109,8 @@ class iaListing extends abstractDirectoryDirectoryFront implements iaDirectoryMo
 
     public function coreSearch($stmt, $start, $limit, $order)
     {
+        $stmt .= " AND l.`status` = '" . iaCore::STATUS_ACTIVE . "'";
+
         $rows = $this->get($stmt, $start, $limit, $order, true);
         $count = $this->getFoundRows();
 
