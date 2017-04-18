@@ -53,6 +53,14 @@ class iaCateg extends iaAbstractFrontHelperCategoryFlat
         return self::$_tableCrossed;
     }
 
+    public function getBySlug($slug)
+    {
+        $where = '`status` = :status AND `title_alias` = :slug';
+        $this->iaDb->bind($where, ['status' => iaCore::STATUS_ACTIVE, 'slug' => $slug]);
+
+        return $this->getOne($where);
+    }
+
     public function get($where = '', $catId = '0', $start = 0, $limit = null, $fields = 'c.*', $order = null)
     {
         $where || $where = iaDb::EMPTY_CONDITION;

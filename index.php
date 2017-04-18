@@ -214,8 +214,8 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType()) {
 }
 
 if (iaView::REQUEST_XML == $iaView->getRequestType()) {
-    $stmt = '';
-    $order = ' ORDER BY l.`date_added` DESC';
+    $iaListing = $iaCore->factoryModule('listing', IA_CURRENT_MODULE);
+
     $limit = (int)$iaCore->get('directory_listings_perpage', 10);
 
     if (isset($iaCore->requestPath[0]) && 'top' == $iaCore->requestPath[0]) {
@@ -223,8 +223,10 @@ if (iaView::REQUEST_XML == $iaView->getRequestType()) {
     } elseif (isset($iaCore->requestPath[0]) && 'latest' == $iaCore->requestPath[0]) {
         $listings = $iaListing->getLatest($limit);
     } else {
-        $stmt = "c.`title_alias` = '" . (implode(IA_URL_DELIMITER, $iaCore->requestPath) . IA_URL_DELIMITER) . "'" . $stmt;
-        $listings = $iaListing->get($stmt, 0, $limit);
+        $slug = implode(IA_URL_DELIMITER, $iaCore->requestPath) . IA_URL_DELIMITER;
+        $category = $iaCateg->getBySlug($slug);
+
+        $listings = $iaListing->getByCategoryId($category['id'], 0, $limit, 'li.`date_added` DESC');
     }
 
     $output = [
