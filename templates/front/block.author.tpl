@@ -48,13 +48,13 @@
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="from-name">{lang key='your_name'}</label>
-                                <input type="text" id="from-name" name="from_name" class="form-control">
+                                <input type="text" id="from-name" name="from_name" class="form-control"{if $member} value="{$member.fullname|escape}"{/if}>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="from-email">{lang key='your_email'}</label>
-                                <input type="text" id="from-email" name="from_email" class="form-control">
+                                <input type="text" id="from-email" name="from_email" class="form-control"{if $member} value="{$member.email|escape}"{/if}>
                             </div>
                         </div>
                     </div>
