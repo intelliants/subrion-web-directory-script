@@ -208,11 +208,7 @@ SQL;
             ? $iaCateg->getRoot()
             : $iaCateg->getById($entryData['category_id']);
 
-        $nodes = [];
-        if ($parents = $iaCateg->getParents($category['id'])) {
-            foreach ($parents as $entry)
-                $nodes[] = $entry['id'];
-        }
+        $nodes = $iaCateg->getParents($category['id'], true);
 
         return [
             'url' => IA_ADMIN_URL . 'directory/categories/tree.json?noroot',

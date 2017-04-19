@@ -35,12 +35,9 @@ class iaBackendController extends iaAbstractControllerModuleBackend
     protected $_phraseAddSuccess = 'category_added';
     protected $_phraseGridEntryDeleted = 'category_deleted';
 
-    private $_root;
-
 
     public function init()
     {
-        $this->_root = $this->getHelper()->getRoot();
         $this->_gridColumns['parent_id'] = iaCateg::COL_PARENT_ID;
     }
 
@@ -77,7 +74,7 @@ class iaBackendController extends iaAbstractControllerModuleBackend
             'featured' => false,
             'locked' => false,
 
-            iaCateg::COL_PARENT_ID => $this->_root['id']
+            iaCateg::COL_PARENT_ID => $this->getHelper()->getRootId()
         ];
     }
 
@@ -89,7 +86,7 @@ class iaBackendController extends iaAbstractControllerModuleBackend
         $entry['status'] = $data['status'];
         $entry['order'] = $this->_iaDb->getMaxOrder() + 1;
 
-        $entry[iaCateg::COL_PARENT_ID] = isset($data['tree_id']) ? (int)$data['tree_id'] : $this->_root['id'];
+        $entry[iaCateg::COL_PARENT_ID] = isset($data['tree_id']) ? (int)$data['tree_id'] : $this->getHelper()->getRootId();
 
         $entry['title_alias'] = empty($data['title_alias']) ? $data['title'][iaLanguage::getMasterLanguage()->code] : $data['title_alias'];
         $entry['title_alias'] = $this->getHelper()->getSlug($entry['title_alias'], $entry[iaCateg::COL_PARENT_ID]);
