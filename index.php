@@ -86,6 +86,7 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType()) {
         list($sort, $type) = explode('-', $_SESSION['d_order']);
         $iaView->assign('sort_name', $sort);
         $iaView->assign('sort_type', $type);
+        ('title' == $sort) && $sort .= '_' . $iaView->language;
         $order = ' `' . $sort . '` ' . $type;
     }
 
@@ -177,12 +178,6 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType()) {
     $pagination['total'] = $iaListing->getFoundRows();
 
     iaLanguage::set('no_web_listings', iaLanguage::getf('no_web_listings', ['url' => IA_MODULE_URL . 'add/' . (empty($category) ? '' : '?category=' . $category['id'])]));
-
-    if ($listings) {
-        $listings = $iaCore->factory('item')->updateItemsFavorites($listings, $iaListing->getItemName());
-
-        $iaCore->factory('field')->filter($iaListing->getItemName(), $listings);
-    }
 
     if ($iaAcl->isAccessible('add_listing', iaCore::ACTION_ADD)) {
         $pageActions[] = [
