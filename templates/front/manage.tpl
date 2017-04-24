@@ -14,12 +14,12 @@
                 <div class="fieldset__content">
                     <a href="#" id="change_crossed" class="categories-toggle js-categories-toggle" data-toggle="#tree-crossed">{lang key='open_close'}</a>
                     <div id="tree-crossed" class="tree categories-tree" style="display:none"></div>
-                    <input type="hidden" id="crossed_links" name="crossed_links" value="{if isset($smarty.post.crossed_links)}{$smarty.post.crossed_links|escape}{/if}">
+                    <input type="hidden" id="crossed_links" name="crossed_links"{if isset($smarty.post.crossed_links)} value="{$smarty.post.crossed_links|escape}"{/if}>
 
                     <p class="m-t">
-                        {if $category && isset($category.crossed) && $category.crossed}
+                        {if isset($crossed)}
                             {lang key='prev_crossed'}:
-                            {foreach $category.crossed as $entryId => $link}
+                            {foreach $crossed as $entryId => $link}
                                 <span class="label label-success js-checked-crossed-node" data-id="{$entryId}">{$link}</span>{if !$link@last} {/if}
                             {/foreach}
                         {/if}

@@ -107,19 +107,41 @@ SQL;
      */
     public function getCrossedByListingId($listingId)
     {
+        $where = sprintf('c.`id` = lc.`category_id` AND lc.`listing_id` = %d', $listingId);
+
+        return $this->_getCrossed($where);
+    }
+
+    public function getCrossedByIds($ids)
+    {
+        // sanitizing
+        $array = [];
+        foreach (explode(',', $ids) as $id) {
+            if (trim($id)) {
+                $array[] = (int)$id;
+            }
+        }
+
+        $where = sprintf('c.`id` IN (%s)', implode(',', $array));
+
+        return $this->_getCrossed($where);
+    }
+
+    protected function _getCrossed($where)
+    {
         $this->iaCore->factoryModule('listing', $this->getModuleName());
 
         $sql = <<<SQL
 SELECT c.`id`, c.`title_:lang` `title` 
 	FROM `:prefix:table_categories` c, `:prefix:table_listings_categories` lc
-WHERE c.`id` = lc.`category_id` AND lc.`listing_id` = :id
+WHERE :where
 SQL;
         $sql = iaDb::printf($sql, [
             'prefix' => $this->iaDb->prefix,
             'table_categories' => self::getTable(),
             'table_listings_categories' => iaListing::getTableCrossed(),
             'lang' => $this->iaCore->language['iso'],
-            'id' => (int)$listingId
+            'where' => $where
         ]);
 
         return $this->iaDb->getKeyValue($sql);

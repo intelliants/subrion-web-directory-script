@@ -8,7 +8,7 @@
 
         {if $core.config.listing_crossed}
             <div id="crossed_fieldzone" class="row">
-                <label for="" class="col col-lg-2 control-label">
+                <label class="col col-lg-2 control-label">
                     {lang key='crossed_categories'} <span class="label label-info" id="crossed-limit">{$core.config.listing_crossed_limit - count($crossed)|default:0}</span><br>
                     <a href="#" class="categories-toggle js-categories-toggle" data-toggle="#tree-crossed">{lang key='open_close'}</a>
                 </label>

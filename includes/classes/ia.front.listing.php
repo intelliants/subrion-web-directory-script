@@ -255,11 +255,11 @@ class iaListing extends abstractDirectoryDirectoryFront implements iaDirectoryMo
 
     public function updateCounters($itemId, array $itemData, $action, $previousData = null)
     {
-        $this->_saveCrossedCategories($action, $itemId, $itemData, $previousData);
+        $this->_saveCrossed($itemId, $itemData, $previousData, $action);
         $this->_checkIfCountersNeedUpdate($action, $itemData, $previousData, $this->_iaCateg);
     }
 
-    protected function _saveCrossedCategories($action, $itemId, array $itemData, $oldData = null)
+    protected function _saveCrossed($itemId, array $itemData, $previousData, $action)
     {
         if (!$this->iaCore->get('listing_crossed') || !isset($itemData['category_id'])) {
             return;
@@ -269,15 +269,17 @@ class iaListing extends abstractDirectoryDirectoryFront implements iaDirectoryMo
 
         $this->iaDb->delete(iaDb::convertIds($itemId, 'listing_id'));
 
-        if (!empty($_POST['crossed_links'])) {
+        if (isset($_POST['crossed_links'])) {
             $data = $_POST['crossed_links'];
-            is_array($data) || $data = explode(',', $data);
+            if (!is_array($data)) {
+                $data = explode(',', $data);
+            }
 
-            $count = max($this->iaCore->get('listing_crossed_limit', 5), count($data));
+            $count = min($this->iaCore->get('listing_crossed_limit', 5), count($data));
             $crossedInput = [];
 
             for ($i = 0; $i < $count; $i++) {
-                if ($data[$i] != $itemData['category_id']) {
+                if (trim($data[$i]) && $data[$i] != $itemData['category_id']) {
                     $crossedInput[] = ['listing_id' => $itemId, 'category_id' => (int)$data[$i]];
                 }
             }
@@ -285,18 +287,19 @@ class iaListing extends abstractDirectoryDirectoryFront implements iaDirectoryMo
             $this->iaDb->insert($crossedInput);
 
             // update crossed counters
-            if (!empty($oldData['status']) && !empty($itemData['status'])) {
-                if ((iaCore::ACTION_DELETE == $action && iaCore::STATUS_ACTIVE == $itemData['status'])
-                    || (iaCore::STATUS_ACTIVE == $oldData['status'] && iaCore::STATUS_ACTIVE != $itemData['status'])) {
-                    $diff = -1;
-                } else if (iaCore::STATUS_ACTIVE != $oldData['status'] && iaCore::STATUS_ACTIVE == $itemData['status']) {
-                    $diff = 1;
+            if (!empty($itemData['status'])) {
+                if (!$previousData) {
+                    $previousData['status'] = iaCore::STATUS_INACTIVE;
                 }
 
-                if (isset($diff)) {
-                    foreach ($crossedInput as $entry) {
-                        $this->_iaCateg->recountById($entry['category_id'], $diff);
-                    }
+                $diff = 1;
+                if (iaCore::ACTION_DELETE == $action && iaCore::STATUS_ACTIVE == $itemData['status']
+                    || (iaCore::STATUS_ACTIVE != $itemData['status'] && iaCore::STATUS_ACTIVE == $previousData['status'])) {
+                    $diff = -1;
+                }
+
+                foreach ($crossedInput as $entry) {
+                    $this->_iaCateg->recountById($entry['category_id'], $diff);
                 }
             }
         }

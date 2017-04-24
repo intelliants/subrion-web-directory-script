@@ -121,11 +121,6 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType()) {
 
         $item['category_id'] = (int)$_POST['tree_id'];
         $item['status'] = $iaCore->get('listing_auto_approval') ? iaCore::STATUS_ACTIVE : iaCore::STATUS_APPROVAL;
-
-        if ($iaCore->get('listing_crossed')) {
-            $item['crossed_links'] = $_POST['crossed_links'] ? $_POST['crossed_links'] : false;
-        }
-
         $item['title_alias'] = iaSanitize::alias($_POST['title'][$iaView->language]);
 
         $category = $iaCateg->getById($item['category_id']);
@@ -236,16 +231,18 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType()) {
         $listing = array_merge((array)$listing, $item);
     }
 
-    empty($id) || $category['crossed'] = $iaCateg->getCrossedByListingId($id);
-
     if (iaCore::ACTION_EDIT == $pageAction) {
         $iaCore->factory('item')->setItemTools([
             'id' => 'action-visit',
             'title' => iaLanguage::get('view'),
-            'attributes' => [
-                'href' => $iaListing->url('view', $listing),
-            ]
+            'attributes' => ['href' => $iaListing->url('view', $listing)]
         ]);
+
+        $crossedCategories = isset($_POST['crossed_links'])
+            ? $iaCateg->getCrossedByIds($_POST['crossed_links'])
+            : $iaCateg->getCrossedByListingId($listing['id']);
+
+        $iaView->assign('crossed', $crossedCategories);
     } elseif (isset($_GET['category']) && is_numeric($_GET['category'])) {
         $category = $iaCateg->getById($_GET['category']);
     }

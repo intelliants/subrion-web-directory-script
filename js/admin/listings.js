@@ -109,7 +109,12 @@ Ext.onReady(function () {
                     core: {
                         data: {
                             data: function (n) {
-                                return {id: n.id == '#' ? 0 : n.id};
+                                var params = {};
+                                if (n.id !== '#') {
+                                    params.id = n.id;
+                                }
+
+                                return params;
                             },
                             url: intelli.config.admin_url + '/directory/categories/tree.json?noroot'
                         },
