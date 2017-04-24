@@ -60,8 +60,6 @@ class iaCateg extends iaAbstractHelperCategoryFlat implements iaDirectoryModule
 
     public function delete($itemId)
     {
-        //$children = $this->getChildren($itemId);
-
         if ($result = parent::delete($itemId)) {
             $stmt = iaDb::convertIds($itemId, 'category_id');
             $this->iaDb->delete($stmt, 'listings_categs');
@@ -132,41 +130,7 @@ SQL;
             ? (bool)$this->iaDb->exists($wherePattern, ['slug' => $slug, 'parent' => $parentId], self::getTable())
             : (bool)$this->iaDb->exists($wherePattern . ' AND `id` != :id', ['slug' => $slug, 'parent' => $parentId, 'id' => $id], self::getTable());
     }
-/*
-    public function recount($start, $limit)
-    {
-        $this->iaDb->setTable(self::getTable());
 
-        $rows = $this->iaDb->all([iaDb::ID_COLUMN_SELECTION], iaDb::convertIds(self::ROOT_PARENT_ID, self::COL_PARENT_ID, false)
-            . ' ORDER BY `level` DESC', (int)$start, (int)$limit);
-
-        foreach ($rows as $row) {
-            $sql = <<<SQL
-SELECT COUNT(l.`id`) `num`
-  FROM `{$this->iaDb->prefix}listings` l 
-  LEFT JOIN `{$this->iaDb->prefix}members` m ON (l.`member_id` = acc.`id`) 
-WHERE l.`status`= 'active' AND (m.`status` = 'active' OR m.`status` IS NULL) 
-AND l.`category_id` = {$row['id']}
-SQL;
-            $where = sprintf('`id` IN (SELECT `category_id` FROM `%s` WHERE `parent_id` = %d)', self::getTableFlat(true), $row['id']);
-
-            $counterFlat = (int)$this->iaDb->getOne($sql);
-            $counterRecursive = (int)$this->iaDb->one('SUM(`num_listings`)', $where, iaCateg::getTable());
-
-            $crossed = (int)$this->iaDb->one('COUNT(`category_id`) `num`', iaDb::convertIds($row['id'], 'category_id'), 'listings_categs');
-            if ($crossed) {
-                $counterFlat += $crossed;
-                $counterRecursive += $crossed;
-            }
-
-            $this->iaDb->update(['num_listings' => $counterFlat, 'num_all_listings' => $counterRecursive], iaDb::convertIds($row['id']));
-        }
-
-        $this->iaDb->resetTable();
-
-        return true;
-    }
-*/
     public function recount($start, $limit)
     {
         parent::recount($start, $limit);
@@ -178,11 +142,15 @@ SQL;
 
         if ($rows) {
             $this->iaDb->setTable('listings_categs');
+
             foreach ($rows as $row) {
-                if ($crossed = (int)$this->iaDb->one('COUNT(`category_id`) `num`', iaDb::convertIds($row['id'], 'category_id'))) {
-                    $this->recountById($row['category_id'], $crossed);
+                if ($crossed = $this->iaDb->onefield('category_id', iaDb::convertIds($row['id'], 'listing_id'))) {
+                    foreach ($crossed as $categoryId) {
+                        $this->recountById($categoryId);
+                    }
                 }
             }
+
             $this->iaDb->resetTable();
         }
     }

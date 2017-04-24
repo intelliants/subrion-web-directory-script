@@ -65,17 +65,17 @@ class iaBackendController extends iaAbstractControllerModuleBackend
         return $this->getHelper()->get($columns, $where, $order, $start, $limit);
     }
 
-    protected function _entryAdd(array $entryData)
+    protected function _insert(array $entryData)
     {
         return $this->getHelper()->insert($entryData);
     }
 
-    protected function _entryUpdate(array $entryData, $entryId)
+    protected function _update(array $entryData, $entryId)
     {
         return $this->getHelper()->update($entryData, $entryId);
     }
 
-    protected function _entryDelete($entryId)
+    protected function _delete($entryId)
     {
         return (bool)$this->getHelper()->delete($entryId);
     }
@@ -135,30 +135,21 @@ class iaBackendController extends iaAbstractControllerModuleBackend
 
     protected function _postSaveEntry(array &$entry, array $data, $action)
     {
-        $this->_iaDb->setTable($this->getHelper()->getTableCrossed());
-
-        $this->_iaDb->delete(iaDb::convertIds($this->getEntryId(), 'listing_id'));
-
-        if (!empty($data['crossed_links'])) {
-            foreach (explode(',', $data['crossed_links']) as $categoryId) {
-                $this->_iaDb->insert(['listing_id' => $this->getEntryId(), 'category_id' => $categoryId]);
-                $this->_iaCateg->recountById($categoryId);
-            }
+        if (isset($data['crossed_links'])) {
+            $this->getHelper()->saveCrossedLinks($this->getEntryId(), $entry['status'], $entry['category_id'], $data['crossed_links']);
         }
-
-        $this->_iaDb->resetTable();
     }
 
     protected function _assignValues(&$iaView, array &$entryData)
     {
         parent::_assignValues($iaView, $entryData);
 
-        $iaView->assign('crossed', $this->_fetchCrossedCategories());
+        $iaView->assign('crossed', $this->_fetchCrossedCategories($this->getEntryId()));
         $iaView->assign('statuses', $this->getHelper()->getStatuses());
         $iaView->assign('tree', $this->getHelper()->getTreeVars($entryData));
     }
 
-    protected function _fetchCrossedCategories()
+    protected function _fetchCrossedCategories($entryId)
     {
         $sql = <<<SQL
 SELECT c.`id`, c.`title_:lang`
@@ -170,7 +161,7 @@ SQL;
             'table_categories' => iaCateg::getTable(),
             'table_crossed' => 'listings_categs',
             'lang' => $this->_iaCore->language['iso'],
-            'id' => $this->getEntryId()
+            'id' => (int)$entryId
         ]);
 
         return $this->_iaDb->getKeyValue($sql);

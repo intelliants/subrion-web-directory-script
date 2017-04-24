@@ -255,8 +255,8 @@ class iaListing extends abstractDirectoryDirectoryFront implements iaDirectoryMo
 
     public function updateCounters($itemId, array $itemData, $action, $previousData = null)
     {
-        $this->_saveCrossed($itemId, $itemData, $previousData, $action);
         $this->_checkIfCountersNeedUpdate($action, $itemData, $previousData, $this->_iaCateg);
+        $this->_saveCrossed($itemId, $itemData, $previousData, $action);
     }
 
     protected function _saveCrossed($itemId, array $itemData, $previousData, $action)
@@ -266,6 +266,19 @@ class iaListing extends abstractDirectoryDirectoryFront implements iaDirectoryMo
         }
 
         $this->iaDb->setTable(self::getTableCrossed());
+
+        if (!$previousData) {
+            $previousData['status'] = iaCore::STATUS_INACTIVE;
+        }
+
+        if ((iaCore::ACTION_EDIT == $action && iaCore::STATUS_ACTIVE == $previousData['status'])
+            || (iaCore::ACTION_DELETE == $action && isset($itemData['status']) && iaCore::STATUS_ACTIVE == $itemData['status'])) {
+            $crossed = $this->iaDb->all(['category_id'], iaDb::convertIds($itemId, 'listing_id'));
+
+            foreach ($crossed as $entry) {
+                $this->_iaCateg->recountById($entry['category_id'], -1);
+            }
+        }
 
         $this->iaDb->delete(iaDb::convertIds($itemId, 'listing_id'));
 
@@ -287,19 +300,9 @@ class iaListing extends abstractDirectoryDirectoryFront implements iaDirectoryMo
             $this->iaDb->insert($crossedInput);
 
             // update crossed counters
-            if (!empty($itemData['status'])) {
-                if (!$previousData) {
-                    $previousData['status'] = iaCore::STATUS_INACTIVE;
-                }
-
-                $diff = 1;
-                if (iaCore::ACTION_DELETE == $action && iaCore::STATUS_ACTIVE == $itemData['status']
-                    || (iaCore::STATUS_ACTIVE != $itemData['status'] && iaCore::STATUS_ACTIVE == $previousData['status'])) {
-                    $diff = -1;
-                }
-
+            if (isset($itemData['status']) && iaCore::STATUS_ACTIVE == $itemData['status']) {
                 foreach ($crossedInput as $entry) {
-                    $this->_iaCateg->recountById($entry['category_id'], $diff);
+                    $this->_iaCateg->recountById($entry['category_id']);
                 }
             }
         }

@@ -51,17 +51,17 @@ class iaBackendController extends iaAbstractControllerModuleBackend
         $iaView->title(iaLanguage::get($action . '_category', $iaView->title()));
     }
 
-    protected function _entryAdd(array $entryData)
+    protected function _insert(array $entryData)
     {
         return $this->getHelper()->insert($entryData);
     }
 
-    protected function _entryUpdate(array $entryData, $entryId)
+    protected function _update(array $entryData, $entryId)
     {
         return $this->getHelper()->update($entryData, $entryId);
     }
 
-    protected function _entryDelete($entryId)
+    protected function _delete($entryId)
     {
         return $this->getHelper()->delete($entryId);
     }
@@ -134,7 +134,7 @@ class iaBackendController extends iaAbstractControllerModuleBackend
         $sql = <<<SQL
 SELECT c.`id`, c.`title_:lang` 
 	FROM `:prefix:table_categories` c, `:prefix:table_crossed` cr 
-WHERE c.`id` = cr.`crossed_id` && cr.`category_id` = :id
+WHERE c.`id` = cr.`crossed_id` AND cr.`category_id` = :id
 SQL;
         $sql = iaDb::printf($sql, [
             'lang' => $this->_iaCore->language['iso'],
