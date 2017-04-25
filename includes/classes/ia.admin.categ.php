@@ -61,14 +61,8 @@ class iaCateg extends iaAbstractHelperCategoryFlat implements iaDirectoryModule
     public function delete($itemId)
     {
         if ($result = parent::delete($itemId)) {
-            $stmt = iaDb::convertIds($itemId, 'category_id');
-            $this->iaDb->delete($stmt, 'listings_categs');
-
-            $stmt = iaDb::convertIds($itemId, 'category_id');
-            $this->iaDb->delete($stmt, self::getTableCrossed());
-
-            $stmt = iaDb::convertIds($itemId, 'crossed_id');
-            $this->iaDb->delete($stmt, self::getTableCrossed());
+            $this->iaDb->delete(iaDb::convertIds($itemId, 'category_id'), 'listings_categs');
+            $this->iaDb->delete('`category_id` = :id OR `crossed_id` = :id', self::getTableCrossed(), ['id' => $itemId]);
 
             // set 'Trash' status to all the listings in this category and subcategories
             //$where = '`id` IN (SELECT `category_id` ';

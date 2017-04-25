@@ -137,7 +137,7 @@ class iaListing extends abstractDirectoryDirectoryFront implements iaDirectoryMo
 
             case 'c':
             case 'sc':
-                $subQuery = sprintf('SELECT `category_id` FROM `%s` WHERE `parent_id` = %d',
+                $subQuery = sprintf('SELECT `child_id` FROM `%s` WHERE `parent_id` = %d',
                     $this->_iaCateg->getTableFlat(true), $value);
 
                 return ['col' => ':column', 'cond' => 'IN', 'val' => '(' . $subQuery . ')', 'field' => 'category_id'];
@@ -182,7 +182,7 @@ class iaListing extends abstractDirectoryDirectoryFront implements iaDirectoryMo
     public function getByCategoryId($categoryId, $start, $limit, $order)
     {
         $where = $this->iaCore->get('display_children_listing')
-            ? 'li.`category_id` IN (SELECT `category_id` FROM `' . $this->_iaCateg->getTableFlat(true) . '` WHERE `parent_id` = ' . (int)$categoryId . ')'
+            ? 'li.`category_id` IN (SELECT `child_id` FROM `' . $this->_iaCateg->getTableFlat(true) . '` WHERE `parent_id` = ' . (int)$categoryId . ')'
             : 'li.`category_id` = ' . (int)$categoryId;
 
         $sql =
@@ -195,7 +195,7 @@ class iaListing extends abstractDirectoryDirectoryFront implements iaDirectoryMo
                 . 'LEFT JOIN `' . $this->iaDb->prefix . 'listings_categs` cr ON (cr.`listing_id` = li.`id` AND cr.`category_id` = ' . (int)$categoryId . ') '
                 . 'LEFT JOIN `' . $this->iaDb->prefix . 'members` ac ON (ac.`id` = li.`member_id`) '
             . 'WHERE li.`status` = \'active\' '
-                . '&& (' .  $where . ' OR cr.`category_id` is not NULL) && ca.`id` = li.`category_id` '
+                . '&& (' .  $where . ' OR cr.`category_id` IS NOT NULL) && ca.`id` = li.`category_id` '
                 . " ORDER BY `sponsored` DESC, `featured` DESC, $order "
                 . ($start || $limit ? " LIMIT $start, $limit " : '');
 

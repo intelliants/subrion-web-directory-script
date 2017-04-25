@@ -84,7 +84,6 @@ class iaBackendController extends iaAbstractControllerModuleBackend
 
         $entry['locked'] = (int)$data['locked'];
         $entry['status'] = $data['status'];
-        $entry['order'] = $this->_iaDb->getMaxOrder() + 1;
 
         $entry[iaCateg::COL_PARENT_ID] = isset($data['tree_id']) ? (int)$data['tree_id'] : $this->getHelper()->getRootId();
 
