@@ -73,7 +73,7 @@ class iaListing extends abstractDirectoryModuleAdmin implements iaDirectoryModul
             case iaCore::ACTION_EDIT:
                 $ownerId = empty($itemData['member_id']) ? $previousData['member_id'] : $itemData['member_id'];
 
-                if ($ownerId && iaUsers::getIdentity()->id != $ownerId) {
+                if (iaUsers::getIdentity()->id != $ownerId) {
                     $this->sendUserNotification($itemData, $itemId);
                 }
 
