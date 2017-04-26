@@ -123,9 +123,31 @@
     <config group="directory" name="directory_listings_sponsored_limit" type="text" description="Listings in Sponsored block">6</config>
 
     <!-- E-mail template for new listing submission notification (Administrators) -->
-    <config group="email_templates" name="new_listing" type="radio" values="1,0" description="New Listing Submitted">1</config>
-    <config group="email_templates" name="new_listing_subject" type="text">New listing submitted</config>
-    <config group="email_templates" name="new_listing_body" type="textarea">
+    <config group="email_templates" name="new_active_listing" type="radio" values="1,0" description="New Active Listing Submitted">1</config>
+    <config group="email_templates" name="new_active_listing_subject" type="text">Your listing at {%SITE_NAME%}</config>
+    <config group="email_templates" name="new_active_listing_body" type="textarea">
+        <![CDATA[
+<p>Thank you,</p>
+<p>Recently you have submitted the listing <em>{%TITLE%}</em> to <a href="{%SITE_URL%}">{%SITE_NAME%}</a>.</p>
+<p>It has been activated.</p>
+<p>You can view it at the following URL: <a href="{%URL%}">{%URL%}</a>.</p>
+        ]]>
+    </config>
+
+    <config group="email_templates" name="new_approval_listing" type="radio" values="1,0" description="New Approval Listing Submitted">1</config>
+    <config group="email_templates" name="new_approval_listing_subject" type="text">Your listing placed at {%SITE_NAME%}</config>
+    <config group="email_templates" name="new_approval_listing_body" type="textarea">
+        <![CDATA[
+<p>Thank you,</p>
+<p>Recently you have submitted the listing <em>{%TITLE%}</em> to <a href="{%SITE_URL%}">{%SITE_NAME%}</a>.</p>
+<p>Once it's approved by site administration, it will become available.</p>
+<p>You can view it at the following URL: <a href="{%URL%}">{%URL%}</a>.</p>
+        ]]>
+    </config>
+
+    <config group="email_templates" name="new_listing_admin" type="radio" values="1,0" description="New Listing Submitted">1</config>
+    <config group="email_templates" name="new_listing_admin_subject" type="text">New listing submitted</config>
+    <config group="email_templates" name="new_listing_admin_body" type="textarea">
         <![CDATA[
 <p>Greetings,</p>
 <p>We have a new listing "{%TITLE%}" at <a href="{%SITE_URL%}">{%SITE_NAME%}</a>.</p>

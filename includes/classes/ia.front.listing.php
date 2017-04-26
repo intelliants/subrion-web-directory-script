@@ -240,7 +240,7 @@ class iaListing extends abstractDirectoryDirectoryFront implements iaDirectoryMo
         }
 
         if ($id = parent::insert($itemData)) {
-            $this->_sendAdminNotification($id);
+            $this->_sendEmailNotification($id);
         }
 
         return $id;
@@ -310,25 +310,59 @@ class iaListing extends abstractDirectoryDirectoryFront implements iaDirectoryMo
         $this->iaDb->resetTable();
     }
 
+    protected function _fetchEmailAddress(array $listingData)
+    {
+        if (empty($listingData['email']) && empty($listingData['member_id'])) {
+            return false;
+        }
+
+        $email = $listingData['email'];
+        $name = null;
+
+        if ($owner = $this->iaCore->factory('users')->getInfo($listingData['member_id'])) {
+            empty($email) && $email = $owner['email'];
+            $name = $owner['fullname'];
+        }
+
+        return [$email, $name];
+    }
+
     /**
      * Sends email notification to administrator once a new listing is created
      *
      * @param int $listingId listing id
      */
-    protected function _sendAdminNotification($listingId)
+    protected function _sendEmailNotification($listingId)
     {
-        if ($this->iaCore->get('new_listing')) {
-            $listingData = $this->getById($listingId);
+        $listingData = $this->getById($listingId);
 
-            $iaMailer = $this->iaCore->factory('mailer');
+        if (!$listingData) {
+            return;
+        }
 
-            $iaMailer->loadTemplate('new_listing');
+        $iaMailer = $this->iaCore->factory('mailer');
+
+        if ($this->iaCore->get('new_listing_admin')) {
+            $iaMailer->loadTemplate('new_listing_admin');
             $iaMailer->setReplacements([
                 'title' => $listingData['title'],
                 'url' => IA_ADMIN_URL . 'directory/listings/edit/' . $listingData['id'] . '/'
             ]);
 
             $iaMailer->sendToAdministrators();
+        }
+
+        $emailTemplate = iaCore::STATUS_ACTIVE == $listingData['status'] ? 'active' : 'approval';
+        $emailTemplate = sprintf('new_%s_listing', $emailTemplate);;
+
+        if ($this->iaCore->get($emailTemplate)) {
+            if ($addressee = $this->_fetchEmailAddress($listingData)) {
+                $iaMailer->loadTemplate($emailTemplate);
+                $iaMailer->addAddress($addressee[0], $addressee[1]);
+                $iaMailer->setReplacements(['title' => $listingData['title'], 'url' => $listingData['link']]);
+
+                $iaMailer->send();
+            }
         }
     }
 
