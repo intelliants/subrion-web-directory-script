@@ -508,4 +508,12 @@ DROP TABLE IF EXISTS `{prefix}categs`, `{prefix}categs_crossed`, `{prefix}categs
             ]]>
         </sql>
     </uninstall>
+
+    <upgrade>
+        <sql version="4.1.3">
+            <![CDATA[
+ALTER TABLE `{prefix}categs_flat` CHANGE `category_id` `child_id` int(8) unsigned NOT NULL;
+            ]]>
+        </sql>
+    </upgrade>
 </module>
