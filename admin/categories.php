@@ -26,6 +26,7 @@ class iaBackendController extends iaAbstractControllerModuleBackend
 
     protected $_gridColumns = ['title', 'title_alias', 'num_all_listings', 'locked', 'level', 'status'];
     protected $_gridFilters = ['title' => self::LIKE, 'status' => self::EQUAL];
+    protected $_gridSorting = [];
     protected $_gridQueryMainTableAlias = 'c';
 
     protected $_tooltipsEnabled = true;
@@ -39,6 +40,7 @@ class iaBackendController extends iaAbstractControllerModuleBackend
     public function init()
     {
         $this->_gridColumns['parent_id'] = iaCateg::COL_PARENT_ID;
+        $this->_gridSorting['parent_title'] = ['title_' . $this->_iaCore->language['iso'], 'p'];
     }
 
     public function _gridQuery($columns, $where, $order, $start, $limit)

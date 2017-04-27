@@ -26,6 +26,7 @@ class iaBackendController extends iaAbstractControllerModuleBackend
 
     protected $_gridColumns = ['title', 'title_alias', 'url', 'date_added', 'date_modified', 'reported_as_broken', 'reported_as_broken_comments', 'status'];
     protected $_gridFilters = ['title' => self::LIKE, 'status' => self::EQUAL];
+    protected $_gridSorting = ['member' => ['fullname', 'm']];
     protected $_gridQueryMainTableAlias = 'l';
 
     protected $_tooltipsEnabled = true;
@@ -40,6 +41,7 @@ class iaBackendController extends iaAbstractControllerModuleBackend
     public function init()
     {
         $this->_iaCateg = $this->_iaCore->factoryModule('categ', $this->getModuleName(), iaCore::ADMIN);
+        $this->_gridSorting['category_title'] = ['title_' . $this->_iaCore->language['iso'], 'c'];
     }
 
     protected function _modifyGridParams(&$conditions, &$values, array $params)
