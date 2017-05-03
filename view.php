@@ -104,6 +104,7 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType()) {
     $iaCateg = $iaCore->factoryModule('categ', IA_CURRENT_MODULE);
 
     $category = $iaCateg->getById($listing['category_id']);
+    $iaView->assign('category', $category);
 
     $listing['item'] = $iaListing->getItemName();
 
