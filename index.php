@@ -227,7 +227,7 @@ if (iaView::REQUEST_XML == $iaView->getRequestType()) {
     $output = [
         'title' => $iaCore->get('site'),
         'description' => '',
-        'url' => IA_URL,
+        'link' => IA_URL,
         'item' => []
     ];
 
