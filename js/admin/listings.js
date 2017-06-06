@@ -4,6 +4,7 @@ Ext.onReady(function () {
             {
                 columns: [
                     'selection',
+                    {name: 'id', title: _t('id'), width: 50},
                     {name: 'title', title: _t('title'), width: 1, editor: 'text'},
                     {name: 'title_alias', title: _t('title_alias'), width: 1},
                     {name: 'url', title: _t('url'), width: 200, hidden: true},
