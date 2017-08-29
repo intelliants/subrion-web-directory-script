@@ -88,17 +88,16 @@ $(function() {
 
         if (!$(this).hasClass('disabled')) {
             var url = intelli.config.ia_url + 'actions/read.json';
-            var params = new Object();
+            var params = { };
             $.each($('input', '#send-email-box'), function() {
-                var input_name = $(this).attr('name');
-                params[input_name] = $(this).val();
+                params[$(this).attr('name')] = $(this).val();
             });
 
             params['action'] = 'send_email';
             params['email_body'] = $('#email-body').val();
 
-            $.ajaxSetup( { async: false } );
-            $.post(url, params, function(data) {
+            $.ajaxSetup({ async: false });
+            $.post(url, intelli.includeSecurityToken(params), function(data) {
                 if (data.error) {
                     $('#author-block-alert').addClass('alert-danger').removeClass('alert-success');
                 } else {
@@ -112,7 +111,7 @@ $(function() {
                 $('#author-block-alert').html(data.message.join('<br>')).show();
             });
 
-            $.ajaxSetup( { async: true } );
+            $.ajaxSetup({ async: true });
         }
     });
 });

@@ -19,11 +19,11 @@ $(function () {
         bar.text('');
         button.prop('disabled', true);
 
-        $.post(url, {action: 'pre_recount_listings'}, function (response) {
+        intelli.post(url, {action: 'pre_recount_listings'}, function (response) {
             total = response.total;
 
             var timer = setInterval(function () {
-                $.post(url, {start: start, limit: limit, action: action}, function () {
+                intelli.post(url, {start: start, limit: limit, action: action}, function () {
                     start += limit;
                     progress = Math.round(start / total * 100);
 
