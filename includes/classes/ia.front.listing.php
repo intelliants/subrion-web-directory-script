@@ -342,8 +342,7 @@ class iaListing extends abstractDirectoryModuleFront implements iaDirectoryModul
 
         $iaMailer = $this->iaCore->factory('mailer');
 
-        if ($this->iaCore->get('new_listing_admin')) {
-            $iaMailer->loadTemplate('new_listing_admin');
+        if ($iaMailer->loadTemplate('new_listing_admin')) {
             $iaMailer->setReplacements([
                 'title' => $listingData['title'],
                 'url' => IA_ADMIN_URL . 'directory/listings/edit/' . $listingData['id'] . '/'
@@ -353,11 +352,10 @@ class iaListing extends abstractDirectoryModuleFront implements iaDirectoryModul
         }
 
         $emailTemplate = iaCore::STATUS_ACTIVE == $listingData['status'] ? 'active' : 'approval';
-        $emailTemplate = sprintf('new_%s_listing', $emailTemplate);;
+        $emailTemplate = sprintf('new_%s_listing', $emailTemplate);
 
-        if ($this->iaCore->get($emailTemplate)) {
+        if ($iaMailer->loadTemplate($emailTemplate)) {
             if ($addressee = $this->_fetchEmailAddress($listingData)) {
-                $iaMailer->loadTemplate($emailTemplate);
                 $iaMailer->addAddress($addressee[0], $addressee[1]);
                 $iaMailer->setReplacements(['title' => $listingData['title'], 'url' => $listingData['link']]);
 
