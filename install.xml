@@ -122,95 +122,86 @@
     <config group="directory" name="directory_listings_featured_limit" type="text" description="Listings in Featured block">6</config>
     <config group="directory" name="directory_listings_sponsored_limit" type="text" description="Listings in Sponsored block">6</config>
 
-    <!-- E-mail template for new listing submission notification (Administrators) -->
-    <config group="email_templates" name="new_active_listing" type="radio" values="1,0" description="New Active Listing Submitted">1</config>
-    <config group="email_templates" name="new_active_listing_subject" type="text">Your listing at {%SITE_NAME%}</config>
-    <config group="email_templates" name="new_active_listing_body" type="textarea">
-        <![CDATA[
+
+    <emails>
+        <email description="Directory" divider="1"><![CDATA[]]></email>
+        <email name="new_active_listing"
+               description="New Active Listing Submitted"
+               variables="title|Car model,url|Listing details URL"
+               subject="Your listing at {$siteName}">
+            <![CDATA[
 <p>Thank you,</p>
-<p>Recently you have submitted the listing <em>{%TITLE%}</em> to <a href="{%SITE_URL%}">{%SITE_NAME%}</a>.</p>
+<p>Recently you have submitted the listing <em>{$title}</em> to <a href=&quot;{$siteUrl}&quot;>{$siteName}</a>.</p>
 <p>It has been activated.</p>
-<p>You can view it at the following URL: <a href="{%URL%}">{%URL%}</a>.</p>
-        ]]>
-    </config>
-
-    <config group="email_templates" name="new_approval_listing" type="radio" values="1,0" description="New Approval Listing Submitted">1</config>
-    <config group="email_templates" name="new_approval_listing_subject" type="text">Your listing placed at {%SITE_NAME%}</config>
-    <config group="email_templates" name="new_approval_listing_body" type="textarea">
-        <![CDATA[
+<p>You can view it at the following URL: <a href=&quot;{$url}&quot;>{$url}</a>.</p>
+                ]]>
+        </email>
+        <email name="new_approval_listing"
+               description="New Approval Listing Submitted"
+               subject="Your listing placed at {$siteName}">
+            <![CDATA[
 <p>Thank you,</p>
-<p>Recently you have submitted the listing <em>{%TITLE%}</em> to <a href="{%SITE_URL%}">{%SITE_NAME%}</a>.</p>
+<p>Recently you have submitted the listing <em>{$title}</em> to <a href=&quot;{$siteUrl}&quot;>{$siteName}</a>.</p>
 <p>Once it's approved by site administration, it will become available.</p>
-<p>You can view it at the following URL: <a href="{%URL%}">{%URL%}</a>.</p>
-        ]]>
-    </config>
-
-    <config group="email_templates" name="new_listing_admin" type="radio" values="1,0" description="New Listing Submitted">1</config>
-    <config group="email_templates" name="new_listing_admin_subject" type="text">New listing submitted</config>
-    <config group="email_templates" name="new_listing_admin_body" type="textarea">
-        <![CDATA[
+<p>You can view it at the following URL: <a href=&quot;{$url}&quot;>{$url}</a>.</p>
+                ]]>
+        </email>
+        <email name="new_listing_admin"
+               description="New Listing Submitted"
+               subject="New listing submitted">
+            <![CDATA[
 <p>Greetings,</p>
-<p>We have a new listing "{%TITLE%}" at <a href="{%SITE_URL%}">{%SITE_NAME%}</a>.</p>
-<p>For more details check the url: <a href="{%URL%}">{%URL%}</a></p>
-        ]]>
-    </config>
-
-    <!-- E-mail template for listing activation notification -->
-    <config group="email_templates" type="divider" name="directory_divider" description="Directory"><![CDATA[]]></config>
-    <config group="email_templates" name="listing_active" type="radio" values="1,0" description="Listing is active">1</config>
-    <config group="email_templates" name="listing_active_subject" type="text">Your listing has gone live</config>
-    <config group="email_templates" name="listing_active_body" type="textarea">
-        <![CDATA[
+<p>We have a new listing &quot;{$title}&quot; at <a href=&quot;{$siteUrl}&quot;>{$siteName}</a>.</p>
+<p>For more details check the url: <a href=&quot;{$url}&quot;>{$url}</a></p>
+                ]]>
+        </email>
+        <email name="listing_active"
+               description="Listing is active"
+               subject="Your listing has gone live">
+            <![CDATA[
 <p>Greetings,</p>
-<p>Your listing "{%TITLE%}" at <a href="{%SITE_URL%}">{%SITE_NAME%}</a> went live.</p>
-<p>In order to view your listing please refer to the URL: <a href="{%URL%}">{%URL%}</a></p>
-        ]]>
-    </config>
-
-    <!-- E-mail template for listing suspension notification -->
-    <config group="email_templates" name="listing_suspended" type="radio" values="1,0" description="Listing is suspended">1</config>
-    <config group="email_templates" name="listing_suspended_subject" type="text">Your listing has been suspended</config>
-    <config group="email_templates" name="listing_suspended_body" type="textarea">
-        <![CDATA[
+<p>Your listing &quot;{$title}&quot; at <a href=&quot;{$siteUrl}&quot;>{$siteName}</a> went live.</p>
+<p>In order to view your listing please refer to the URL: <a href=&quot;{$url}&quot;>{$url}</a></p>
+                ]]>
+        </email>
+        <email name="listing_suspended"
+               description="Listing is suspended"
+               subject="Your listing has been suspended">
+            <![CDATA[
 <p>Greetings,</p>
-<p>Your listing "{%TITLE%}" at <a href="{%SITE_URL%}">{%SITE_NAME%}</a> has been suspended.</p>
+<p>Your listing &quot;{$title}&quot; at <a href=&quot;{$siteUrl}&quot;>{$siteName}</a> has been suspended.</p>
 <p>If you do not know the reason of the suspension or if you want to reactivate your listing, please contact an administrator of the site.</p>
-        ]]>
-    </config>
-
-    <!-- E-mail template for listing banning notification -->
-    <config group="email_templates" name="listing_banned" type="radio" values="1,0" description="Listing is banned">1</config>
-    <config group="email_templates" name="listing_banned_subject" type="text">Your listing has been banned</config>
-    <config group="email_templates" name="listing_banned_body" type="textarea">
-        <![CDATA[
+                ]]>
+        </email>
+        <email name="listing_banned"
+               description="Listing is banned"
+               subject="Your listing has been banned">
+            <![CDATA[
 <p>Greetings,</p>
-<p>Your listing "{%TITLE%}" at <a href="{%SITE_URL%}">{%SITE_NAME%}</a> has been banned.</p>
+<p>Your listing &quot;{$title}&quot; at <a href=&quot;{$siteUrl}&quot;>{$siteName}</a> has been banned.</p>
 <p>If you do not know the reason of the banning or if you want to reactivate your listing, please contact an administrator of the site.</p>
-        ]]>
-    </config>
-
-    <!-- E-mail template for listing deletion notification -->
-    <config group="email_templates" name="listing_removed" type="radio" values="1,0" description="Listing is removed">1</config>
-    <config group="email_templates" name="listing_removed_subject" type="text">Your listing has been removed</config>
-    <config group="email_templates" name="listing_removed_body" type="textarea">
-        <![CDATA[
+                ]]>
+        </email>
+        <email name="listing_removed"
+               description="Listing is removed"
+               subject="Your listing has been removed">
+            <![CDATA[
 <p>Greetings,</p>
-<p>Your listing "{%TITLE%}" at <a href="{%SITE_URL%}">{%SITE_NAME%}</a> has been removed.</p>
+<p>Your listing &quot;{$title}&quot; at <a href=&quot;{$siteUrl}&quot;>{$siteName}</a> has been removed.</p>
 <p>If you do not know the reason of the deletion or if you want to recover your listing, please contact an administrator of the site.</p>
-        ]]>
-    </config>
-
-    <!-- E-mail template for reported as broken listing notification -->
-    <config group="email_templates" type="radio" name="reported_as_broken" values="1,0" description="Link marked as broken">1</config>
-    <config group="email_templates" type="text" name="reported_as_broken_subject">Listing is marked as broken</config>
-    <config group="email_templates" type="textarea" name="reported_as_broken_body">
-        <![CDATA[
+                ]]>
+        </email>
+        <email name="reported_as_broken"
+               description="Link marked as broken"
+               subject="Listing is marked as broken">
+            <![CDATA[
 <p>Greetings,</p>
-<p>Listing "{%TITLE%}" marked as broken.</p>
+<p>Listing &quot;{$title}&quot; marked as broken.</p>
 <p>Comments:</p>
-<p>{%COMMENTS%}</p>
-        ]]>
-    </config>
+<p>{$comments}</p>
+                ]]>
+        </email>
+    </emails>
 
     <fields_groups>
         <group item="listings" name="general" title="General"><![CDATA[]]></group>
