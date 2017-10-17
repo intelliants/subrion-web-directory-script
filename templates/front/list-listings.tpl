@@ -46,7 +46,7 @@
                 </p>
                 <div class="clearfix"></div>
             {/if}
-            <p><span class="fa fa-clock-o"></span> {$listing.date_added|date_format:$core.config.date_format}</p>
+            <p><span class="fa fa-clock-o"></span> {$listing.date_added|date_format}</p>
             <p><span class="fa fa-eye"></span> {$listing.views_num} {lang key='views'}</p>
         </div>
 
