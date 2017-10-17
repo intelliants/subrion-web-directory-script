@@ -24,11 +24,7 @@ class iaCateg extends iaAbstractFrontHelperCategoryFlat
 
     protected $_moduleName = 'directory';
 
-    protected $_itemName = 'categs';
-
-    protected $_urlPatterns = [
-        'default' => ':base:title_alias'
-    ];
+    protected $_itemName = 'categ';
 
     public $coreSearchEnabled = true;
     public $coreSearchOptions = [
@@ -36,11 +32,12 @@ class iaCateg extends iaAbstractFrontHelperCategoryFlat
     ];
 
 
-    public function url($action, array $data)
+    public function getUrl(array $data)
     {
         $baseUrl = ($this->getModuleName() == $this->iaCore->get('default_package'))
             ? IA_URL
             : $this->iaCore->modulesData[$this->getModuleName()]['url'];
+
         $slug = isset($data['category_alias'])
             ? $data['category_alias']
             : $data['title_alias'];
@@ -129,7 +126,7 @@ SQL;
 
     protected function _getCrossed($where)
     {
-        $this->iaCore->factoryModule('listing', $this->getModuleName());
+        $this->iaCore->factoryItem('listing');
 
         $sql = <<<SQL
 SELECT c.`id`, c.`title_:lang` `title` 

@@ -22,7 +22,7 @@ class iaListing extends abstractDirectoryModuleAdmin implements iaDirectoryModul
     protected static $_table = 'listings';
     protected static $_tableCrossed = 'listings_categs';
 
-    protected $_itemName = 'listings';
+    protected $_itemName = 'listing';
 
     protected $_statuses = [iaCore::STATUS_ACTIVE, iaCore::STATUS_INACTIVE, iaCore::STATUS_APPROVAL, self::STATUS_BANNED, self::STATUS_SUSPENDED];
 
@@ -66,7 +66,7 @@ class iaListing extends abstractDirectoryModuleAdmin implements iaDirectoryModul
     public function updateCounters($itemId, array $itemData, $action, $previousData = null)
     {
         $this->_checkIfCountersNeedUpdate($action, $itemData, $previousData,
-            $this->iaCore->factoryModule('categ', $this->getModuleName(), iaCore::ADMIN));
+            $this->iaCore->factoryItem('categ'));
         $this->_checkCrossedLinksCounters($itemId, $itemData, $previousData, $action);
 
         switch ($action) {
@@ -108,7 +108,7 @@ class iaListing extends abstractDirectoryModuleAdmin implements iaDirectoryModul
         }
 
         if (isset($diff)) {
-            $iaCateg = $this->iaCore->factoryModule('categ', $this->getModuleName(), iaCore::ADMIN);
+            $iaCateg = $this->iaCore->factoryItem('categ');
 
             foreach ($crossedLinks as $entry) {
                 $iaCateg->recountById($entry['category_id'], $diff);
@@ -118,7 +118,7 @@ class iaListing extends abstractDirectoryModuleAdmin implements iaDirectoryModul
 
     public function saveCrossedLinks($itemId, $status, $mainCategoryId, $data)
     {
-        $iaCateg = $this->iaCore->factoryModule('categ', $this->getModuleName(), iaCore::ADMIN);
+        $iaCateg = $this->iaCore->factoryItem('categ');
 
         $this->iaDb->setTable(self::getTableCrossed());
 
@@ -273,7 +273,7 @@ SQL;
 
     public function getTreeVars(array $entryData)
     {
-        $iaCateg = $this->iaCore->factoryModule('categ', $this->getModuleName(), iaCore::ADMIN);
+        $iaCateg = $this->iaCore->factoryItem('categ');
 
         $category = empty($entryData['category_id'])
             ? $iaCateg->getRoot()

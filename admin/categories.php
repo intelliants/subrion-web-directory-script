@@ -20,7 +20,6 @@
 class iaBackendController extends iaAbstractControllerModuleBackend
 {
     protected $_name = 'categories';
-    protected $_itemName = 'categs';
 
     protected $_helperName = 'categ';
 
@@ -168,7 +167,7 @@ SQL;
                 case 'pre_recount_listings':
                     $this->getHelper()->resetCounters();
 
-                    $this->_iaCore->factoryModule('listing', $this->getModuleName(), iaCore::ADMIN);
+                    $this->_iaCore->factoryItem('listing');
                     $output['total'] = $this->_iaDb->one(iaDb::STMT_COUNT_ROWS,
                         iaDb::convertIds(iaCore::STATUS_ACTIVE, 'status'), iaListing::getTable());
             }

@@ -24,10 +24,12 @@ class iaCateg extends iaAbstractHelperCategoryFlat implements iaDirectoryModule
 
     protected $_moduleName = 'directory';
 
-    protected $_itemName = 'categs';
+    protected $_itemName = 'categ';
     protected $_statuses = [iaCore::STATUS_ACTIVE, iaCore::STATUS_INACTIVE];
 
     protected $_activityLog = ['item' => 'category'];
+
+    protected $_slugColumnName = 'title_alias';
 
     protected $_recountOptions = [
         'listingsTable' => 'listings'

@@ -17,7 +17,7 @@
  *
  ******************************************************************************/
 
-$iaCateg = $iaCore->factoryModule('categ', IA_CURRENT_MODULE);
+$iaCateg = $iaCore->factoryItem('categ');
 
 if (iaView::REQUEST_JSON == $iaView->getRequestType()) {
     $output = [];
@@ -54,7 +54,7 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType()) {
 
     $order = '';
 
-    $iaListing = $iaCore->factoryModule('listing', IA_CURRENT_MODULE);
+    $iaListing = $iaCore->factoryItem('listing');
 
     $listings = [];
     $orders = ['date_added-asc', 'date_added-desc', 'rank-desc', 'rank-asc', 'title-desc', 'title-asc'];
@@ -209,7 +209,7 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType()) {
 }
 
 if (iaView::REQUEST_XML == $iaView->getRequestType()) {
-    $iaListing = $iaCore->factoryModule('listing', IA_CURRENT_MODULE);
+    $iaListing = $iaCore->factoryItem('listing');
 
     $limit = (int)$iaCore->get('directory_listings_perpage', 10);
 

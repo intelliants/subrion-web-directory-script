@@ -17,7 +17,7 @@
  *
  ******************************************************************************/
 
-$iaListing = $iaCore->factoryModule('listing', 'directory');
+$iaListing = $iaCore->factoryItem('listing');
 
 if ($listings = $iaDb->all(['id', 'domain', 'alexa_rank'], "`domain` != ''", 0, null, iaListing::getTable())) {
     include_once IA_MODULES . 'directory/includes/alexarank.inc.php';

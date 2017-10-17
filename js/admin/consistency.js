@@ -1,4 +1,4 @@
-$(function () {
+$(function() {
     $('#js-cmd-recount-listings').on('click', function (e) {
         e.preventDefault();
 

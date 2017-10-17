@@ -20,13 +20,12 @@
 class iaBackendController extends iaAbstractControllerModuleBackend
 {
     protected $_name = 'listings';
-    protected $_itemName = 'listings';
 
     protected $_helperName = 'listing';
 
     protected $_gridColumns = ['title', 'title_alias', 'url', 'date_added', 'date_modified', 'reported_as_broken', 'reported_as_broken_comments', 'status'];
     protected $_gridFilters = ['title' => self::LIKE, 'status' => self::EQUAL];
-    protected $_gridSorting = ['member' => ['fullname', 'm']];
+    protected $_gridSorting = ['member' => ['fullname', 'm'], 'category_title' => ['title', 'c', 'categ']];
     protected $_gridQueryMainTableAlias = 'l';
 
     protected $_tooltipsEnabled = true;
@@ -40,11 +39,10 @@ class iaBackendController extends iaAbstractControllerModuleBackend
 
     public function init()
     {
-        $this->_iaCateg = $this->_iaCore->factoryModule('categ', $this->getModuleName(), iaCore::ADMIN);
-        $this->_gridSorting['category_title'] = ['title_' . $this->_iaCore->language['iso'], 'c'];
+        $this->_iaCateg = $this->_iaCore->factoryItem('categ');
     }
 
-    protected function _modifyGridParams(&$conditions, &$values, array $params)
+    protected function _gridModifyParams(&$conditions, &$values, array $params)
     {
         if (!empty($params['text'])) {
             $langCode = $this->_iaCore->language['iso'];

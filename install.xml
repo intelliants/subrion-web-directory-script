@@ -4,9 +4,9 @@
     <summary>This package is intended to create web directory on your Subrion powered website.</summary>
     <author>Intelliants LLC</author>
     <contributor>Intelliants LLC</contributor>
-    <version>4.1.3</version>
-    <date>2017-04-27</date>
-    <compatibility>4.1.3.12</compatibility>
+    <version>4.2.0</version>
+    <date>2017-10-18</date>
+    <compatibility>4.2.0</compatibility>
     <url>listings</url>
 
     <screenshots>
@@ -21,8 +21,8 @@
     </screenshots>
 
     <items>
-        <item pages="favorites,view_member" main="view_listing,add_listing,edit_listing">listings</item>
-        <item payable="0">categs</item>
+        <item table_name="listings" pages="favorites,view_member" main="view_listing,add_listing,edit_listing">listing</item>
+        <item table_name="categs" payable="0">categ</item>
     </items>
 
     <actions>
@@ -122,7 +122,6 @@
     <config group="directory" name="directory_listings_featured_limit" type="text" description="Listings in Featured block">6</config>
     <config group="directory" name="directory_listings_sponsored_limit" type="text" description="Listings in Sponsored block">6</config>
 
-
     <emails>
         <email description="Directory" divider="1"><![CDATA[]]></email>
         <email name="new_active_listing"
@@ -204,31 +203,31 @@
     </emails>
 
     <fields_groups>
-        <group item="listings" name="general" title="General"><![CDATA[]]></group>
-        <group item="categs" name="general" title="General"><![CDATA[]]></group>
+        <group item="listing" name="general" title="General"><![CDATA[]]></group>
+        <group item="categ" name="general" title="General"><![CDATA[]]></group>
     </fields_groups>
 
     <fields>
-        <field name="title" item="listings" type="text" group="general" length="70" required="1" multilingual="1"
+        <field name="title" item="listing" type="text" group="general" length="70" required="1" multilingual="1"
                page="add_listing,edit_listing,view_member,view_listing,favorites,rss_listings">Title</field>
-        <field name="url" item="listings" type="text" group="general" length="70" required="1" default="http://"
+        <field name="url" item="listing" type="text" group="general" length="70" required="1" default="http://"
                page="add_listing,edit_listing,view_member,view_listing,favorites,rss_listings">URL</field>
-        <field name="description" item="listings" type="textarea" group="general" editor="1" required="1" multilingual="1"
+        <field name="description" item="listing" type="textarea" group="general" editor="1" required="1" multilingual="1"
                page="add_listing,edit_listing,view_listing,rss_listings">Description</field>
-        <field name="reciprocal" item="listings" type="text" group="general" length="70" default="http://"
+        <field name="reciprocal" item="listing" type="text" group="general" length="70" default="http://"
                page="add_listing,edit_listing,view_listing,favorites">Reciprocal URL</field>
-        <field name="email" item="listings" type="text" group="general" length="70"
+        <field name="email" item="listing" type="text" group="general" length="70"
                page="add_listing,edit_listing">Email</field>
-        <field name="meta_description" item="listings" type="textarea" group="general" editor="0" adminonly="1" multilingual="1">Meta-Description</field>
-        <field name="meta_keywords" item="listings" type="text" group="general" length="70" required="0" adminonly="1" multilingual="1">Meta-Keywords</field>
+        <field name="meta_description" item="listing" type="textarea" group="general" editor="0" adminonly="1" multilingual="1">Meta-Description</field>
+        <field name="meta_keywords" item="listing" type="text" group="general" length="70" required="0" adminonly="1" multilingual="1">Meta-Keywords</field>
 
-        <field name="title" item="categs" type="text" group="general" length="70" required="1" searchable="1" multilingual="1"
+        <field name="title" item="categ" type="text" group="general" length="70" required="1" searchable="1" multilingual="1"
                page="directory_home,rss_listings">Title</field>
-        <field name="description" item="categs" type="textarea" group="general" editor="1" required="0" searchable="1"
+        <field name="description" item="categ" type="textarea" group="general" editor="1" required="0" searchable="1"
                page="directory_home,rss_listings" multilingual="1">Description</field>
-        <field name="meta_description" item="categs" type="textarea" group="general" editor="0" required="0" adminonly="1" multilingual="1">Meta-Description</field>
-        <field name="meta_keywords" item="categs" type="text" group="general" length="70" required="0" adminonly="1" multilingual="1">Meta-Keywords</field>
-        <field name="icon" item="categs" type="iconpicker" group="general" default="fa-folder" adminonly="1" page="directory_home">Icon</field>
+        <field name="meta_description" item="categ" type="textarea" group="general" editor="0" required="0" adminonly="1" multilingual="1">Meta-Description</field>
+        <field name="meta_keywords" item="categ" type="text" group="general" length="70" required="0" adminonly="1" multilingual="1">Meta-Keywords</field>
+        <field name="icon" item="categ" type="iconpicker" group="general" default="fa-folder" adminonly="1" page="directory_home">Icon</field>
     </fields>
 
     <phrases>
@@ -264,13 +263,13 @@
         <phrase category="common" key="alexa_rank">Alexa Rank</phrase>
         <phrase category="common" key="all_listings_num">Number of all listings</phrase>
         <phrase category="common" key="are_you_sure_to_delete_selected_listing">Are you sure you wish to delete this listing?</phrase>
-        <phrase category="common" key="categs">Categories</phrase>
+        <phrase category="common" key="categ">Category</phrase>
         <phrase category="common" key="categories">Categories</phrase>
         <phrase category="common" key="crossed_categories">Crossed categories</phrase>
         <phrase category="common" key="directory">Directory</phrase>
         <phrase category="common" key="field_category_id">Category</phrase>
         <phrase category="common" key="limit">Limit</phrase>
-        <phrase category="common" key="listings">Listings</phrase>
+        <phrase category="common" key="listing">Listing</phrase>
         <phrase category="common" key="listing_added">Listing added.</phrase>
         <phrase category="common" key="listing_added_waiting">Thank you. Your listing has been submitted for administrator consideration. </phrase>
         <phrase category="common" key="listings_found">Listings found</phrase>
@@ -351,7 +350,7 @@
         <hook name="phpAdminDatabaseConsistencyType" page_type="admin" pages="database">
             <![CDATA[
 if ('repair_directorycats' == $type) {
-    $iaCateg = $iaCore->factoryModule('categ', 'directory', iaCore::ADMIN);
+    $iaCateg = $iaCore->factoryItem('categ');
 
     $iaCateg->rebuild();
     $iaCateg->syncLinkingData();
@@ -374,7 +373,7 @@ switch ($option) {
         break;
 
     case 'categs':
-        $iaCore->factoryModule('categ', 'directory', iaCore::ADMIN)->resetDbStructure();
+        $iaCore->factoryItem('categ')->resetDbStructure();
 }
             ]]>
         </hook>
@@ -382,7 +381,7 @@ switch ($option) {
             <![CDATA[
 {if !empty($directory_categories)}
     <div class="ia-categories">
-        {include 'ia-categories.tpl' categories=$directory_categories item='categs' id='directory-categories' show_amount=$core.config.directory_show_amount|default:true num_columns=$core.config.directory_categories_columns icons=true}
+        {include 'ia-categories.tpl' categories=$directory_categories item='categ' id='directory-categories' show_amount=$core.config.directory_show_amount|default:true num_columns=$core.config.directory_categories_columns icons=true}
     </div>
 {/if}
             ]]>
@@ -487,7 +486,7 @@ CREATE TABLE IF NOT EXISTS `{prefix}listings`(
         </sql>
         <code>
             <![CDATA[
-$iaCore->factoryModule('categ', 'directory', iaCore::ADMIN)->setupDbStructure();
+$iaCore->factoryModule('categ', 'directory')->setupDbStructure();
             ]]>
         </code>
     </install>
