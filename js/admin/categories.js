@@ -1,53 +1,51 @@
 Ext.onReady(function () {
     if (Ext.get('js-grid-placeholder')) {
-        var grid = new IntelliGrid(
-            {
-                columns: [
-                    'selection',
-                    {name: 'title', title: _t('title'), width: 1, editor: 'text'},
-                    {
-                        name: 'parent_title',
-                        title: _t('parent_category'),
-                        renderer: function (value, metadata, record) {
-                            return (record.data.level < 1)
-                                ? value
-                                : '<a href="' + window.location.href + 'edit/' + record.data.parent_id + '/">' + value + '</a>'
-                        },
-                        width: 1
+        var grid = new IntelliGrid({
+            columns: [
+                'selection',
+                {name: 'title', title: _t('title'), width: 1, editor: 'text'},
+                {
+                    name: 'parent_title',
+                    title: _t('parent_category'),
+                    renderer: function (value, metadata, record) {
+                        return (record.data.level < 1)
+                            ? value
+                            : '<a href="' + window.location.href + 'edit/' + record.data.parent_id + '/">' + value + '</a>'
                     },
-                    {name: 'title_alias', title: _t('path'), width: 1},
-                    {name: 'num_all_listings', title: _t('listings_num'), width: 140},
-                    {
-                        name: 'locked',
-                        title: _t('locked'),
-                        width: 60,
-                        align: intelli.gridHelper.constants.ALIGN_CENTER,
-                        renderer: intelli.gridHelper.renderer.check,
-                        editor: Ext.create('Ext.form.ComboBox',
-                            {
-                                typeAhead: false,
-                                editable: false,
-                                lazyRender: true,
-                                store: Ext.create('Ext.data.SimpleStore', {
-                                    fields: ['value', 'title'],
-                                    data: [[0, _t('no')], [1, _t('yes')]]
-                                }),
-                                displayField: 'title',
-                                valueField: 'value'
-                            })
-                    },
-                    {name: 'date_added', title: _t('date_added'), width: 100, hidden: true},
-                    {name: 'date_modified', title: _t('date_modified'), width: 100, hidden: true},
-                    'status',
-                    'update',
-                    'delete'
-                ],
-                fields: ['parent_id', 'level'],
-                texts: {
-                    delete_multiple: _t('are_you_sure_to_delete_selected_categs'),
-                    delete_single: _t('are_you_sure_to_delete_selected_categ')
-                }
-            }, false);
+                    width: 1
+                },
+                {name: 'title_alias', title: _t('path'), width: 1},
+                {name: 'num_all_listings', title: _t('listings_num'), width: 140},
+                {
+                    name: 'locked',
+                    title: _t('locked'),
+                    width: 60,
+                    align: intelli.gridHelper.constants.ALIGN_CENTER,
+                    renderer: intelli.gridHelper.renderer.check,
+                    editor: Ext.create('Ext.form.ComboBox', {
+                        typeAhead: false,
+                        editable: false,
+                        lazyRender: true,
+                        store: Ext.create('Ext.data.SimpleStore', {
+                            fields: ['value', 'title'],
+                            data: [[0, _t('no')], [1, _t('yes')]]
+                        }),
+                        displayField: 'title',
+                        valueField: 'value'
+                    })
+                },
+                {name: 'date_added', title: _t('date_added'), width: 100, hidden: true},
+                {name: 'date_modified', title: _t('date_modified'), width: 100, hidden: true},
+                'status',
+                'update',
+                'delete'
+            ],
+            fields: ['parent_id', 'level'],
+            texts: {
+                delete_multiple: _t('are_you_sure_to_delete_selected_categs'),
+                delete_single: _t('are_you_sure_to_delete_selected_categ')
+            }
+        }, false);
 
         grid.toolbar = new Ext.Toolbar({
             items: [
@@ -101,7 +99,7 @@ Ext.onReady(function () {
                         data: {
                             data: function (n) {
                                 var params = {};
-                                if (n.id != '#') params.id = n.id;
+                                if (n.id !== '#') params.id = n.id;
 
                                 return params;
                             },
@@ -146,11 +144,11 @@ Ext.onReady(function () {
 intelli.titleCache = '';
 intelli.fillUrlBox = function () {
     var alias = $('#field_title_alias').val();
-    var title = ('' == alias ? $('input:first', '#title_fieldzone').val() : alias);
+    var title = (alias ? alias : $('#field_categ_title').val());
     var category = $('#input-tree').val();
     var cache = title + '%%' + category;
 
-    if ('' !== title && intelli.titleCache != cache) {
+    if ('' !== title && intelli.titleCache !== cache) {
         $.get(intelli.config.admin_url + '/directory/categories/slug.json', {
             title: title,
             category: category
@@ -165,6 +163,6 @@ intelli.fillUrlBox = function () {
     intelli.titleCache = cache;
 };
 
-$(function () {
-    $('#title_fieldzone input:first, #field_title_alias').blur(intelli.fillUrlBox).blur();
+$(function() {
+    $('#field_categ_title, #field_title_alias').blur(intelli.fillUrlBox).blur();
 });

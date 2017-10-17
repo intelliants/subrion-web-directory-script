@@ -17,7 +17,7 @@
  *
  ******************************************************************************/
 
-$iaCateg = $iaCore->factoryModule('categ', IA_CURRENT_MODULE);
+$iaCateg = $iaCore->factoryItem('categ');
 
 if (iaView::REQUEST_JSON == $iaView->getRequestType()) {
     if (1 == count($iaCore->requestPath) && 'tree' == $iaCore->requestPath[0]) {
@@ -29,7 +29,7 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType()) {
     $iaField = $iaCore->factory('field');
     $iaUtil = $iaCore->factory('util');
 
-    $iaListing = $iaCore->factoryModule('listing', IA_CURRENT_MODULE);
+    $iaListing = $iaCore->factoryItem('listing');
 
     iaBreadcrumb::replace(iaLanguage::get(IA_CURRENT_MODULE),
         $iaCore->factory('page', iaCore::FRONT)->getUrlByName('directory_home'), 2);

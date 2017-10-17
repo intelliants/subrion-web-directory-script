@@ -22,7 +22,7 @@ class iaListing extends abstractDirectoryModuleFront implements iaDirectoryModul
     protected static $_table = 'listings';
     protected static $_tableCrossed = 'listings_categs';
 
-    protected $_itemName = 'listings';
+    protected $_itemName = 'listing';
 
     protected $_statuses = [iaCore::STATUS_ACTIVE, iaCore::STATUS_INACTIVE, iaCore::STATUS_APPROVAL, self::STATUS_BANNED, self::STATUS_SUSPENDED];
 
@@ -53,7 +53,7 @@ class iaListing extends abstractDirectoryModuleFront implements iaDirectoryModul
     {
         parent::init();
 
-        $this->_iaCateg = $this->iaCore->factoryModule('categ', $this->getModuleName());
+        $this->_iaCateg = $this->iaCore->factoryItem('categ');
 
         $this->_baseUrl = $this->getModuleName() == $this->iaCore->get('default_package')
             ? IA_URL

@@ -17,7 +17,7 @@
  *
  ******************************************************************************/
 
-$iaListing = $iaCore->factoryModule('listing', IA_CURRENT_MODULE);
+$iaListing = $iaCore->factoryItem('listing');
 
 if (iaView::REQUEST_JSON == $iaView->getRequestType()) {
     if ('report' == $_POST['action']) {
@@ -101,7 +101,7 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType()) {
 //		iaUtil::go_to($validUrl);
 //	}
 
-    $iaCateg = $iaCore->factoryModule('categ', IA_CURRENT_MODULE);
+    $iaCateg = $iaCore->factoryItem('categ');
 
     $category = $iaCateg->getById($listing['category_id']);
     $iaView->assign('category', $category);

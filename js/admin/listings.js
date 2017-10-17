@@ -1,37 +1,34 @@
-Ext.onReady(function () {
+Ext.onReady(function() {
     if (Ext.get('js-grid-placeholder')) {
-        var grid = new IntelliGrid(
-            {
-                columns: [
-                    'selection',
-                    {name: 'id', title: _t('id'), width: 50},
-                    {name: 'title', title: _t('title'), width: 1, editor: 'text'},
-                    {name: 'title_alias', title: _t('title_alias'), width: 1},
-                    {name: 'url', title: _t('url'), width: 200, hidden: true},
-                    {name: 'category_title', title: _t('category'), width: 140},
-                    {name: 'member', title: _t('owner'), width: 140},
-                    {name: 'date_added', title: _t('date_added'), width: 100},
-                    {name: 'date_modified', title: _t('date_modified'), width: 100},
-                    'status',
-                    {
-                        name: 'reported_as_broken', title: _t('broken'), icon: 'info', click: function (node) {
-                        Ext.MessageBox.alert(
-                            _t('reported_as_broken_comments'),
-                            node.data.reported_as_broken_comments.replace(/(?:\r\n|\r|\n)/g, '<br />')
-                        )
-                    }
-                    },
-                    'update',
-                    'delete'
-                ],
-                fields: ['reported_as_broken_comments', 'url'],
-                sorters: [{property: 'date_modified', direction: 'DESC'}],
-                statuses: ['active', 'approval', 'banned', 'suspended'],
-                texts: {
-                    delete_multiple: _t('are_you_sure_to_delete_selected_listings'),
-                    delete_single: _t('are_you_sure_to_delete_selected_listing')
-                }
-            }, false);
+        var grid = new IntelliGrid({
+            columns: [
+                'selection',
+                {name: 'id', title: _t('id'), width: 50},
+                {name: 'title', title: _t('title'), width: 1, editor: 'text'},
+                {name: 'title_alias', title: _t('title_alias'), width: 1},
+                {name: 'url', title: _t('url'), width: 200, hidden: true},
+                {name: 'category_title', title: _t('category'), width: 140},
+                {name: 'member', title: _t('owner'), width: 140},
+                {name: 'date_added', title: _t('date_added'), width: 100},
+                {name: 'date_modified', title: _t('date_modified'), width: 100},
+                'status',
+                {name: 'reported_as_broken', title: _t('broken'), icon: 'info', click: function (node) {
+                    Ext.MessageBox.alert(
+                        _t('reported_as_broken_comments'),
+                        node.data.reported_as_broken_comments.replace(/(?:\r\n|\r|\n)/g, '<br />')
+                    )
+                }},
+                'update',
+                'delete'
+            ],
+            fields: ['reported_as_broken_comments', 'url'],
+            sorters: [{property: 'date_modified', direction: 'DESC'}],
+            statuses: ['active', 'approval', 'banned', 'suspended'],
+            texts: {
+                delete_multiple: _t('are_you_sure_to_delete_selected_listings'),
+                delete_single: _t('are_you_sure_to_delete_selected_listing')
+            }
+        }, false);
 
         grid.toolbar = new Ext.Toolbar({
             items: [
@@ -94,7 +91,7 @@ Ext.onReady(function () {
         }
     }
     else {
-        $('#field_listings_title').keyup(function () {
+        $('#field_listing_title').keyup(function () {
             if ($(this).val()) {
                 $('#title_alias').show();
             }
@@ -155,7 +152,7 @@ Ext.onReady(function () {
                 });
         }
 
-        $('#field_listings_title, #field_title_alias').blur(intelli.fillUrlBox).trigger('blur');
+        $('#field_listing_title, #field_title_alias').blur(intelli.fillUrlBox).trigger('blur');
 
         $('input[name="reported_as_broken"]').change(function () {
             var $comments = $('#reported-as-broken-comments');
@@ -167,13 +164,13 @@ Ext.onReady(function () {
 intelli.titleCache = '';
 intelli.fillUrlBox = function () {
     var titleAlias = $('#field_title_alias').val();
-    var title = ('' == titleAlias ? $('#field_listings_title').val() : titleAlias);
+    var title = (titleAlias ? titleAlias : $('#field_listing_title').val());
     var category = $('#input-tree').val();
     var id = $('#js-listing-id').val();
 
     var cache = title + '%%' + category;
 
-    if ('' != title && intelli.titleCache != cache) {
+    if (title && intelli.titleCache !== cache) {
         var params = {title: title, category: category, id: id};
         if (titleAlias) params.alias = 1;
 
