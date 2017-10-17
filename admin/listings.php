@@ -23,7 +23,7 @@ class iaBackendController extends iaAbstractControllerModuleBackend
 
     protected $_helperName = 'listing';
 
-    protected $_gridColumns = ['title', 'title_alias', 'url', 'date_added', 'date_modified', 'reported_as_broken', 'reported_as_broken_comments', 'status'];
+    protected $_gridColumns = ['title', 'slug', 'url', 'date_added', 'date_modified', 'reported_as_broken', 'reported_as_broken_comments', 'status'];
     protected $_gridFilters = ['title' => self::LIKE, 'status' => self::EQUAL];
     protected $_gridSorting = ['member' => ['fullname', 'm'], 'category_title' => ['title', 'c', 'categ']];
     protected $_gridQueryMainTableAlias = 'l';
@@ -114,10 +114,10 @@ class iaBackendController extends iaAbstractControllerModuleBackend
         $entry['rank'] = min(5, max(0, (int)$data['rank']));
         $entry['category_id'] = (int)$data['tree_id'];
 
-        $entry['title_alias'] = empty($data['title_alias'])
+        $entry['slug'] = empty($data['slug'])
             ? $data['title'][iaLanguage::getMasterLanguage()->code]
-            : $data['title_alias'];
-        $entry['title_alias'] = $this->_getTitleAlias($entry['title_alias']);
+            : $data['slug'];
+        $entry['slug'] = $this->_getSlug($entry['slug']);
 
         if (iaValidate::isUrl($entry['url'])) {
             // check alexa
@@ -167,7 +167,7 @@ SQL;
         return $this->_iaDb->getKeyValue($sql);
     }
 
-    protected function _getTitleAlias($title, $convertLowercase = false)
+    protected function _getSlug($title, $convertLowercase = false)
     {
         $title = iaSanitize::alias($title);
 
@@ -180,15 +180,15 @@ SQL;
 
     protected function _getJsonSlug(array $data)
     {
-        $title = $this->_getTitleAlias(isset($data['title']) ? $data['title'] : '', isset($data['alias']));
+        $title = $this->_getSlug(isset($data['title']) ? $data['title'] : '', isset($data['slug']));
         $categorySlug = empty($data['category'])
             ? ''
-            : $this->_iaDb->one('title_alias', iaDb::convertIds($data['category']), iaCateg::getTable());
+            : $this->_iaDb->one('slug', iaDb::convertIds($data['category']), iaCateg::getTable());
 
         $slug = $this->getHelper()->url('view', [
             'id' => empty($data['id']) ? $this->_iaDb->getNextId() : $data['id'],
-            'title_alias' => $title,
-            'category_alias' => $categorySlug
+            'slug' => $title,
+            'category_slug' => $categorySlug
         ]);
 
         return ['data' => $slug];

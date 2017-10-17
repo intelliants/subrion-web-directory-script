@@ -31,11 +31,11 @@
     {/capture}
 
     {capture name='title' append='field_after'}
-        <div id="title_alias" class="row">
-            <label for="field_title_alias" class="col col-lg-2 control-label">{lang key='slug'} <a href="#" class="js-tooltip" title="{$tooltips.slug_literal}"><i class="i-info"></i></a></label>
+        <div id="slug" class="row">
+            <label for="field_listing_slug" class="col col-lg-2 control-label">{lang key='slug'} <a href="#" class="js-tooltip" title="{$tooltips.slug_literal}"><i class="i-info"></i></a></label>
             <div class="col col-lg-4">
-                <input type="text" name="title_alias" id="field_title_alias" value="{if isset($item.title_alias)}{$item.title_alias}{/if}">
-                <p class="help-block text-break-word">{lang key='page_url_will_be'}: <span class="text-danger" id="title_url">{$smarty.const.IA_URL}{if isset($item.title_alias) && isset($category.title_alias)}{$category.title_alias}{$item.title_alias}{/if}</span></p>
+                <input type="text" name="slug" id="field_listing_slug" value="{if isset($item.slug)}{$item.slug}{/if}">
+                <p class="help-block text-break-word">{lang key='page_url_will_be'}: <span class="text-danger" id="title_url">{$smarty.const.IA_URL}{if isset($item.slug) && isset($category.slug)}{$category.slug}{$item.slug}{/if}</span></p>
             </div>
         </div>
     {/capture}

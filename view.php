@@ -171,7 +171,7 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType()) {
 
     $iaCore->startHook('phpViewListingBeforeStart', [
         'listing' => $listingId,
-        'item' => 'listings',
+        'item' => $iaListing->getItemName(),
         'title' => $listing['title'],
         'desc' => substr(strip_tags($listing['description']), 0, 200),
     ]);

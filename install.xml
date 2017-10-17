@@ -53,17 +53,17 @@
     </adminpages>
 
     <pages>
-        <page group="directory" url="|PACKAGE|" name="directory_home" menus="main,directory" suburl="manage/categs" fields_item="listings">Directory</page>
-        <page group="directory" url="|PACKAGE|add/" name="add_listing" filename="manage" parent="view_listing" action="add" menus="directory" fields_item="listings">Add Listing</page>
-        <page group="directory" url="|PACKAGE|edit/" name="edit_listing" filename="manage" parent="view_listing" action="edit" readonly="1" nofollow="1" fields_item="listings">Edit Listing</page>
-        <page group="directory" url="|PACKAGE|delete/" name="delete_listing" filename="manage" parent="view_listing" action="delete" readonly="1" nofollow="1" fields_item="listings">Delete Listing</page>
-        <page group="directory" url="|PACKAGE|listing/" name="view_listing" filename="view" suburl="manage/categs" readonly="1" nofollow="1" fields_item="listings">View Listing</page>
+        <page group="directory" url="|PACKAGE|" name="directory_home" menus="main,directory" suburl="manage/categs" fields_item="listing">Directory</page>
+        <page group="directory" url="|PACKAGE|add/" name="add_listing" filename="manage" parent="view_listing" action="add" menus="directory" fields_item="listing">Add Listing</page>
+        <page group="directory" url="|PACKAGE|edit/" name="edit_listing" filename="manage" parent="view_listing" action="edit" readonly="1" nofollow="1" fields_item="listing">Edit Listing</page>
+        <page group="directory" url="|PACKAGE|delete/" name="delete_listing" filename="manage" parent="view_listing" action="delete" readonly="1" nofollow="1" fields_item="listing">Delete Listing</page>
+        <page group="directory" url="|PACKAGE|listing/" name="view_listing" filename="view" suburl="manage/categs" readonly="1" nofollow="1" fields_item="listing">View Listing</page>
         <page group="directory" url="|PACKAGE|rss/" name="rss_listings" service="1" nofollow="1">RSS Listings</page>
-        <page group="directory" url="|PACKAGE|new/" name="new_listings" menus="directory" fields_item="listings">New Listings</page>
-        <page group="directory" url="|PACKAGE|top/" name="top_listings" menus="directory" fields_item="listings">Top Listings</page>
-        <page group="directory" url="|PACKAGE|popular/" name="popular_listings" menus="directory" fields_item="listings">Popular Listings</page>
-        <page group="directory" url="|PACKAGE|random/" name="random_listings" menus="directory" fields_item="listings">Random Listings</page>
-        <page group="directory" url="profile/listings/" name="my_listings" menus="account" nofollow="1" parent="profile" fields_item="listings">My Listings</page>
+        <page group="directory" url="|PACKAGE|new/" name="new_listings" menus="directory" fields_item="listing">New Listings</page>
+        <page group="directory" url="|PACKAGE|top/" name="top_listings" menus="directory" fields_item="listing">Top Listings</page>
+        <page group="directory" url="|PACKAGE|popular/" name="popular_listings" menus="directory" fields_item="listing">Popular Listings</page>
+        <page group="directory" url="|PACKAGE|random/" name="random_listings" menus="directory" fields_item="listing">Random Listings</page>
+        <page group="directory" url="profile/listings/" name="my_listings" menus="account" nofollow="1" parent="profile" fields_item="listing">My Listings</page>
     </pages>
 
     <permissions>
@@ -409,7 +409,7 @@ $statistics['directory'] = array(
             <![CDATA[
 CREATE TABLE IF NOT EXISTS `{prefix}categs`(
     `id` int(8) unsigned NOT NULL auto_increment,
-    `title_alias` varchar(150) NOT NULL default '',
+    `slug` varchar(150) NOT NULL default '',
     `status` enum('active', 'inactive') NOT NULL default 'active',
     `order` mediumint(8) NOT NULL default 0,
     `num_cols` tinyint(4) unsigned NOT NULL default 0,
@@ -422,7 +422,7 @@ CREATE TABLE IF NOT EXISTS `{prefix}categs`(
     `featured_end` datetime NULL,
     PRIMARY KEY (`id`),
     KEY `STATUS` (`status`),
-    KEY `ALIAS` (`title_alias`),
+    KEY `SLUG` (`slug`),
     KEY `ORDER` (`order`)
 ) {mysql_version};
             ]]>
@@ -453,7 +453,7 @@ CREATE TABLE IF NOT EXISTS `{prefix}listings`(
     `id` int(8) unsigned NOT NULL auto_increment,
     `member_id` mediumint(8) unsigned NOT NULL,
     `category_id` int(8) unsigned NOT NULL,
-    `title_alias` varchar(150) NOT NULL default '',
+    `slug` varchar(150) NOT NULL default '',
     `url` tinytext NOT NULL,
     `reciprocal` tinytext NOT NULL,
     `domain` varchar(150) NOT NULL,

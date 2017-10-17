@@ -5,7 +5,7 @@ Ext.onReady(function() {
                 'selection',
                 {name: 'id', title: _t('id'), width: 50},
                 {name: 'title', title: _t('title'), width: 1, editor: 'text'},
-                {name: 'title_alias', title: _t('title_alias'), width: 1},
+                {name: 'slug', title: _t('slug'), width: 1},
                 {name: 'url', title: _t('url'), width: 200, hidden: true},
                 {name: 'category_title', title: _t('category'), width: 140},
                 {name: 'member', title: _t('owner'), width: 140},
@@ -152,7 +152,7 @@ Ext.onReady(function() {
                 });
         }
 
-        $('#field_listing_title, #field_title_alias').blur(intelli.fillUrlBox).trigger('blur');
+        $('#field_listing_title, #field_listing_slug').blur(intelli.fillUrlBox).trigger('blur');
 
         $('input[name="reported_as_broken"]').change(function () {
             var $comments = $('#reported-as-broken-comments');
@@ -163,8 +163,8 @@ Ext.onReady(function() {
 
 intelli.titleCache = '';
 intelli.fillUrlBox = function () {
-    var titleAlias = $('#field_title_alias').val();
-    var title = (titleAlias ? titleAlias : $('#field_listing_title').val());
+    var slug = $('#field_listing_slug').val();
+    var title = (slug ? slug : $('#field_listing_title').val());
     var category = $('#input-tree').val();
     var id = $('#js-listing-id').val();
 
@@ -172,7 +172,7 @@ intelli.fillUrlBox = function () {
 
     if (title && intelli.titleCache !== cache) {
         var params = {title: title, category: category, id: id};
-        if (titleAlias) params.alias = 1;
+        if (slug) params.slug = 1;
 
         $.get(intelli.config.admin_url + '/directory/listings/slug.json', params, function (response) {
             if (response.data) {

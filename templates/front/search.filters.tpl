@@ -1,4 +1,4 @@
-{if isset($filters.item) && 'listings' == $filters.item}
+{if isset($filters.item) && 'listing' == $filters.item}
     <div class="form-group">
         <label>{lang key='keywords'}</label>
         <input type="text" name="keywords" placeholder="{lang key='keywords'}" class="form-control"{if isset($filters.params.keywords)} value="{$filters.params.keywords|escape}"{/if}>

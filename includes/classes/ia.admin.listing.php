@@ -28,7 +28,7 @@ class iaListing extends abstractDirectoryModuleAdmin implements iaDirectoryModul
 
     private $_urlPatterns = [
         'default' => ':base:action/:id/',
-        'view' => ':base:category_alias:id:title_alias.html',
+        'view' => ':base:category_slug:id:slug.html',
         'edit' => ':baseedit/:id/',
         'add' => ':baseadd/',
         'my' => ':baseprofile/listings/'
@@ -170,7 +170,7 @@ class iaListing extends abstractDirectoryModuleAdmin implements iaDirectoryModul
         $stmt = 'l.`status` = :status';
         $this->iaDb->bind($stmt, ['status' => iaCore::STATUS_ACTIVE]);
 
-        if ($entries = $this->get('l.`id`, l.`title_alias`', $stmt, 'ORDER BY l.`date_modified` DESC')) {
+        if ($entries = $this->get('l.`id`, l.`slug`', $stmt, 'ORDER BY l.`date_modified` DESC')) {
             foreach ($entries as $entry) {
                 $result[] = $this->url('view', $entry);
             }
@@ -189,8 +189,8 @@ class iaListing extends abstractDirectoryModuleAdmin implements iaDirectoryModul
     {
         $data['base'] = $this->getInfo('url') . ('view' == $action ? 'listing/' : '');
         $data['action'] = $action;
-        $data['category_alias'] = (!isset($data['category_alias']) ? '' : $data['category_alias']);
-        $data['title_alias'] = (!isset($data['title_alias']) ? '' : '-' . $data['title_alias']);
+        $data['category_slug'] = (!isset($data['category_slug']) ? '' : $data['category_slug']);
+        $data['slug'] = (!isset($data['slug']) ? '' : '-' . $data['slug']);
 
         unset($data['title'], $data['category']);
 
@@ -212,7 +212,7 @@ class iaListing extends abstractDirectoryModuleAdmin implements iaDirectoryModul
     public function get($columns, $where, $order, $start = null, $limit = null)
     {
         $sql = <<<SQL
-SELECT :columns, c.`title_:lang` `category_title`, c.`title_alias` `category_alias`, m.`fullname` `member` 
+SELECT :columns, c.`title_:lang` `category_title`, c.`slug` `category_slug`, m.`fullname` `member` 
 	FROM `:prefix:table_listings` l 
 LEFT JOIN `:prefix:table_categories` c ON (l.`category_id` = c.`id`) 
 LEFT JOIN `:prefix:table_members` m ON (l.`member_id` = m.`id`) 

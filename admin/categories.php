@@ -23,7 +23,7 @@ class iaBackendController extends iaAbstractControllerModuleBackend
 
     protected $_helperName = 'categ';
 
-    protected $_gridColumns = ['title', 'title_alias', 'num_all_listings', 'locked', 'level', 'status'];
+    protected $_gridColumns = ['title', 'slug', 'num_all_listings', 'locked', 'level', 'status'];
     protected $_gridFilters = ['title' => self::LIKE, 'status' => self::EQUAL];
     protected $_gridSorting = [];
     protected $_gridQueryMainTableAlias = 'c';
@@ -70,7 +70,7 @@ class iaBackendController extends iaAbstractControllerModuleBackend
     protected function _setDefaultValues(array &$entry)
     {
         $entry = [
-            'title_alias' => '',
+            'slug' => '',
             'status' => iaCore::STATUS_ACTIVE,
             'featured' => false,
             'locked' => false,
@@ -88,10 +88,10 @@ class iaBackendController extends iaAbstractControllerModuleBackend
 
         $entry[iaCateg::COL_PARENT_ID] = isset($data['tree_id']) ? (int)$data['tree_id'] : $this->getHelper()->getRootId();
 
-        $entry['title_alias'] = empty($data['title_alias']) ? $data['title'][iaLanguage::getMasterLanguage()->code] : $data['title_alias'];
-        $entry['title_alias'] = $this->getHelper()->getSlug($entry['title_alias'], $entry[iaCateg::COL_PARENT_ID]);
+        $entry['slug'] = empty($data['slug']) ? $data['title'][iaLanguage::getMasterLanguage()->code] : $data['slug'];
+        $entry['slug'] = $this->getHelper()->getSlug($entry['slug'], $entry[iaCateg::COL_PARENT_ID]);
 
-        if ($this->getHelper()->exists($entry['title_alias'], $entry[iaCateg::COL_PARENT_ID], $this->getEntryId())) {
+        if ($this->getHelper()->exists($entry['slug'], $entry[iaCateg::COL_PARENT_ID], $this->getEntryId())) {
             $this->addMessage('directory_category_already_exists');
         }
 
@@ -122,8 +122,8 @@ class iaBackendController extends iaAbstractControllerModuleBackend
     {
         parent::_assignValues($iaView, $entryData);
 
-        $alias = explode(IA_URL_DELIMITER, substr($entryData['title_alias'], 0, -1));
-        $entryData['title_alias'] = end($alias);
+        $slug = explode(IA_URL_DELIMITER, substr($entryData['slug'], 0, -1));
+        $entryData['slug'] = end($slug);
 
         $iaView->assign('crossed', $this->_fetchCrossed());
         $iaView->assign('tree', $this->getHelper()->getTreeVars($this->getEntryId(), $entryData, $this->getPath()));
@@ -151,7 +151,7 @@ SQL;
     {
         $title = $this->getHelper()->getSlug($data['title'], (int)$data['category']);
 
-        return ['data' => $this->getHelper()->url('default', ['title_alias' => $title])];
+        return ['data' => $this->getHelper()->url('default', ['slug' => $title])];
     }
 
     protected function _getJsonConsistency(array $data)

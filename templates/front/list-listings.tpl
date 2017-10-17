@@ -18,8 +18,8 @@
 
     <div class="ia-item__content">
         <div class="ia-item__actions">
-            {printFavorites item=$listing itemtype='listings' guests=true}
-            {accountActions item=$listing itemtype='listings'}
+            {printFavorites item=$listing itemtype=$listing.item guests=true}
+            {accountActions item=$listing itemtype=$listing.item}
 
             <a href="{$listing.link}">{lang key='details'} <span class="fa fa-angle-double-right"></span></a>
         </div>
@@ -27,7 +27,7 @@
         <div class="ia-item__title">
             {* if !empty($listing.crossed)}@ {/if*}
             {if !$core.config.directory_redirect_to_site}
-                {ia_url type='link' item='listings' data=$listing text=$listing.title}
+                <a href="{$listing.link}">{$listing.title|escape}</a>
             {else}
                 <a href="{$listing.url}" target="_blank">{$listing.title|escape}</a>
             {/if}

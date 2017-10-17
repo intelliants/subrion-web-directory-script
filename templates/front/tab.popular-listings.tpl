@@ -3,10 +3,10 @@
         <div class="ia-item ia-item--border-bottom">
             <div class="ia-item__content">
                 <div class="ia-item__title">
-                    {if !$core.config.directory_redirect_to_site}
-                        {ia_url type='link' item='listings' data=$listing text=$listing.title}
+                    {if $core.config.directory_redirect_to_site}
+                        <a href="{$listing.url}" target="_blank">{$listing.title|escape}</a>
                     {else}
-                        <a href="{$listing.url}" target="_blank">{$listing.title}</a>
+                        <a href="{$listing.link}" target="_blank">{$listing.title|escape}</a>
                     {/if}
                 </div>
                 <p>{$listing.url}</p>

@@ -29,14 +29,12 @@ class iaCateg extends iaAbstractHelperCategoryFlat implements iaDirectoryModule
 
     protected $_activityLog = ['item' => 'category'];
 
-    protected $_slugColumnName = 'title_alias';
-
     protected $_recountOptions = [
         'listingsTable' => 'listings'
     ];
 
     private $_urlPatterns = [
-        'default' => ':base:title_alias'
+        'default' => ':base:slug'
     ];
 
     //public $dashboardStatistics = ['icon' => 'folder', 'url' => 'directory/categories/'];
@@ -49,11 +47,11 @@ class iaCateg extends iaAbstractHelperCategoryFlat implements iaDirectoryModule
         $where = $this->_cols('`status` = :status AND `:col_pid` != :root_pid ORDER BY `level`, `title_' . $this->iaView->language . '`');
         $this->iaDb->bind($where, ['status' => iaCore::STATUS_ACTIVE]);
 
-        if ($entries = $this->iaDb->all(['title_alias'], $where, null, null, self::getTable())) {
+        if ($entries = $this->iaDb->all(['slug'], $where, null, null, self::getTable())) {
             $baseUrl = $this->getInfo('url');
 
             foreach ($entries as $entry) {
-                $result[] = $baseUrl . $entry['title_alias'];
+                $result[] = $baseUrl . $entry['slug'];
             }
         }
 
@@ -110,8 +108,8 @@ SQL;
         $data['base'] = IA_URL_DELIMITER != $this->getInfo('url') ? $this->getInfo('url') : '';
         $data['action'] = $action;
 
-        $data['title_alias'] = isset($params['title_alias']) ? $params['title_alias'] : '';
-        $data['title_alias'] = isset($params['category_alias']) ? $params['category_alias'] : $params['title_alias'];
+        $data['slug'] = isset($params['slug']) ? $params['slug'] : '';
+        $data['slug'] = isset($params['category_slug']) ? $params['category_slug'] : $params['slug'];
 
         isset($this->_urlPatterns[$action]) || $action = 'default';
 
@@ -120,7 +118,7 @@ SQL;
 
     public function exists($slug, $parentId, $id = null)
     {
-        $wherePattern = self::_cols('`title_alias` = :slug AND `:col_pid` = :parent');
+        $wherePattern = self::_cols('`slug` = :slug AND `:col_pid` = :parent');
 
         empty($id)
             ? (bool)$this->iaDb->exists($wherePattern, ['slug' => $slug, 'parent' => $parentId], self::getTable())
@@ -166,8 +164,8 @@ SQL;
             if (!$parent) {
                 $parent = $this->getById($parentId, false);
             }
-            if (!empty($parent['title_alias'])) {
-                $slug = $parent['title_alias'] . $slug;
+            if (!empty($parent['slug'])) {
+                $slug = $parent['slug'] . $slug;
             }
         }
 
@@ -208,7 +206,7 @@ SQL;
 
     protected function _updateSlug(array &$category)
     {
-        $category['title_alias'] = $this->getSlug($category['title_' . $this->iaView->language], $category[self::COL_PARENT_ID]);
+        $category['slug'] = $this->getSlug($category['title_' . $this->iaView->language], $category[self::COL_PARENT_ID]);
     }
 
     protected function _updateBreadcrumbs(array &$category)
@@ -220,11 +218,11 @@ SQL;
 
         foreach ($this->getParents($category['id']) as $p) {
             if ($p[self::COL_PARENT_ID] != self::ROOT_PARENT_ID) {
-                $breadcrumbs[$p[$titleKey]] = $baseUrl . $p['title_alias'];
+                $breadcrumbs[$p[$titleKey]] = $baseUrl . $p['slug'];
             }
         }
 
-        $breadcrumbs[$category[$titleKey]] = $baseUrl . $category['title_alias'];
+        $breadcrumbs[$category[$titleKey]] = $baseUrl . $category['slug'];
 
         $category['breadcrumb'] = serialize($breadcrumbs);
     }

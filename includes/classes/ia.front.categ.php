@@ -38,9 +38,9 @@ class iaCateg extends iaAbstractFrontHelperCategoryFlat
             ? IA_URL
             : $this->iaCore->modulesData[$this->getModuleName()]['url'];
 
-        $slug = isset($data['category_alias'])
-            ? $data['category_alias']
-            : $data['title_alias'];
+        $slug = isset($data['category_slug'])
+            ? $data['category_slug']
+            : $data['slug'];
 
         return $baseUrl . $slug;
     }
@@ -52,7 +52,7 @@ class iaCateg extends iaAbstractFrontHelperCategoryFlat
 
     public function getBySlug($slug)
     {
-        $where = '`status` = :status AND `title_alias` = :slug';
+        $where = '`status` = :status AND `slug` = :slug';
         $this->iaDb->bind($where, ['status' => iaCore::STATUS_ACTIVE, 'slug' => $slug]);
 
         return $this->getOne($where);

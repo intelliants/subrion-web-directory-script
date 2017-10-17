@@ -4,7 +4,7 @@ TRUNCATE TABLE `{prefix}categs_flat`;
 INSERT INTO `{prefix}categs` (`id`,`parent_id`,`title_{lang}`,`status`,`level`,`locked`) VALUES
 (1,0,'ROOT','active',0, 1);
 
-INSERT INTO `{prefix}categs` (`id`,`level`,`parent_id`,`title_{lang}`,`title_alias`,`breadcrumb`) VALUES
+INSERT INTO `{prefix}categs` (`id`,`level`,`parent_id`,`title_{lang}`,`slug`,`breadcrumb`) VALUES
 (2,1,1,'Arts','arts/','a:1:{s:4:\"Arts\";s:5:\"arts/\";}'),
 (3,1,1,'Business','business/','a:1:{s:8:\"Business\";s:9:\"business/\";}'),
 (4,1,1,'Computers','computers/','a:1:{s:9:\"Computers\";s:10:\"computers/\";}'),
@@ -349,7 +349,7 @@ INSERT INTO `{prefix}categs` (`id`,`level`,`parent_id`,`title_{lang}`,`title_ali
 (497,2,11,'Libraries','reference/libraries/','a:2:{s:9:\"Reference\";s:10:\"reference/\";s:9:\"Libraries\";s:20:\"reference/libraries/\";}'),
 (498,2,11,'Museums','reference/museums/','a:2:{s:9:\"Reference\";s:10:\"reference/\";s:7:\"Museums\";s:18:\"reference/museums/\";}'),
 (499,2,11,'Almanacs','reference/almanacs/','a:2:{s:9:\"Reference\";s:10:\"reference/\";s:8:\"Almanacs\";s:19:\"reference/almanacs/\";}');
-INSERT INTO `{prefix}categs` (`id`,`level`,`parent_id`,`title_en`,`title_alias`,`breadcrumb`) VALUES
+INSERT INTO `{prefix}categs` (`id`,`level`,`parent_id`,`title_en`,`slug`,`breadcrumb`) VALUES
 (500,2,11,'Archives','reference/archives/','a:2:{s:9:\"Reference\";s:10:\"reference/\";s:8:\"Archives\";s:19:\"reference/archives/\";}'),
 (501,2,11,'Ask an Expert','reference/ask-an-expert/','a:2:{s:9:\"Reference\";s:10:\"reference/\";s:13:\"Ask an Expert\";s:24:\"reference/ask-an-expert/\";}'),
 (502,2,11,'Bibliography','reference/bibliography/','a:2:{s:9:\"Reference\";s:10:\"reference/\";s:12:\"Bibliography\";s:23:\"reference/bibliography/\";}'),
@@ -695,7 +695,7 @@ INSERT INTO `{prefix}categs` (`id`,`level`,`parent_id`,`title_en`,`title_alias`,
 (102,2,15,'Sports','shopping/sports/','a:2:{s:8:\"Shopping\";s:9:\"shopping/\";s:6:\"Sports\";s:16:\"shopping/sports/\";}'),
 (103,2,15,'Tobacco','shopping/tobacco/','a:2:{s:8:\"Shopping\";s:9:\"shopping/\";s:7:\"Tobacco\";s:17:\"shopping/tobacco/\";}'),
 (104,2,15,'Tools','shopping/tools/','a:2:{s:8:\"Shopping\";s:9:\"shopping/\";s:5:\"Tools\";s:15:\"shopping/tools/\";}');
-INSERT INTO `{prefix}categs` (`id`,`level`,`parent_id`,`title_en`,`title_alias`,`breadcrumb`) VALUES
+INSERT INTO `{prefix}categs` (`id`,`level`,`parent_id`,`title_en`,`slug`,`breadcrumb`) VALUES
 (105,2,15,'Toys and Games','shopping/toys-and-games/','a:2:{s:8:\"Shopping\";s:9:\"shopping/\";s:14:\"Toys and Games\";s:24:\"shopping/toys-and-games/\";}'),
 (106,2,15,'Travel','shopping/travel/','a:2:{s:8:\"Shopping\";s:9:\"shopping/\";s:6:\"Travel\";s:16:\"shopping/travel/\";}'),
 (107,2,15,'Vehicles','shopping/vehicles/','a:2:{s:8:\"Shopping\";s:9:\"shopping/\";s:8:\"Vehicles\";s:18:\"shopping/vehicles/\";}'),
@@ -961,7 +961,7 @@ INSERT INTO `{prefix}categs` (`id`,`level`,`parent_id`,`title_en`,`title_alias`,
 (850,3,77,'Vintage','shopping/clothing/vintage/','a:3:{s:8:\"Shopping\";s:9:\"shopping/\";s:8:\"Clothing\";s:18:\"shopping/clothing/\";s:7:\"Vintage\";s:26:\"shopping/clothing/vintage/\";}'),
 (851,3,77,'Wigs','shopping/clothing/wigs/','a:3:{s:8:\"Shopping\";s:9:\"shopping/\";s:8:\"Clothing\";s:18:\"shopping/clothing/\";s:4:\"Wigs\";s:23:\"shopping/clothing/wigs/\";}'),
 (896,3,78,'Biometrics','shopping/computers/biometrics/','a:3:{s:8:\"Shopping\";s:9:\"shopping/\";s:9:\"Computers\";s:19:\"shopping/computers/\";s:10:\"Biometrics\";s:30:\"shopping/computers/biometrics/\";}');
-INSERT INTO `{prefix}categs` (`id`,`level`,`parent_id`,`title_en`,`title_alias`,`breadcrumb`) VALUES
+INSERT INTO `{prefix}categs` (`id`,`level`,`parent_id`,`title_en`,`slug`,`breadcrumb`) VALUES
 (897,3,78,'Consultancy','shopping/computers/consultancy/','a:3:{s:8:\"Shopping\";s:9:\"shopping/\";s:9:\"Computers\";s:19:\"shopping/computers/\";s:11:\"Consultancy\";s:31:\"shopping/computers/consultancy/\";}'),
 (898,3,78,'Data Warehousing','shopping/computers/data-warehousing/','a:3:{s:8:\"Shopping\";s:9:\"shopping/\";s:9:\"Computers\";s:19:\"shopping/computers/\";s:16:\"Data Warehousing\";s:36:\"shopping/computers/data-warehousing/\";}'),
 (899,3,78,'Hardware Retailers','shopping/computers/hardware-retailers/','a:3:{s:8:\"Shopping\";s:9:\"shopping/\";s:9:\"Computers\";s:19:\"shopping/computers/\";s:18:\"Hardware Retailers\";s:38:\"shopping/computers/hardware-retailers/\";}'),
@@ -1199,7 +1199,7 @@ INSERT INTO `{prefix}categs` (`id`,`level`,`parent_id`,`title_en`,`title_alias`,
 (1809,3,375,'Personal Pages','arts/bodyart/personal-pages/','a:3:{s:4:\"Arts\";s:5:\"arts/\";s:7:\"Bodyart\";s:13:\"arts/bodyart/\";s:14:\"Personal Pages\";s:28:\"arts/bodyart/personal-pages/\";}'),
 (1810,3,375,'Piercing','arts/bodyart/piercing/','a:3:{s:4:\"Arts\";s:5:\"arts/\";s:7:\"Bodyart\";s:13:\"arts/bodyart/\";s:8:\"Piercing\";s:22:\"arts/bodyart/piercing/\";}'),
 (1811,3,375,'Schools and Instruction','arts/bodyart/schools-and-instruction/','a:3:{s:4:\"Arts\";s:5:\"arts/\";s:7:\"Bodyart\";s:13:\"arts/bodyart/\";s:23:\"Schools and Instruction\";s:37:\"arts/bodyart/schools-and-instruction/\";}');
-INSERT INTO `{prefix}categs` (`id`,`level`,`parent_id`,`title_en`,`title_alias`,`breadcrumb`) VALUES
+INSERT INTO `{prefix}categs` (`id`,`level`,`parent_id`,`title_en`,`slug`,`breadcrumb`) VALUES
 (1812,3,375,'Shopping','arts/bodyart/shopping/','a:3:{s:4:\"Arts\";s:5:\"arts/\";s:7:\"Bodyart\";s:13:\"arts/bodyart/\";s:8:\"Shopping\";s:22:\"arts/bodyart/shopping/\";}'),
 (1813,3,375,'Studios','arts/bodyart/studios/','a:3:{s:4:\"Arts\";s:5:\"arts/\";s:7:\"Bodyart\";s:13:\"arts/bodyart/\";s:7:\"Studios\";s:21:\"arts/bodyart/studios/\";}'),
 (1814,3,375,'Tattoo','arts/bodyart/tattoo/','a:3:{s:4:\"Arts\";s:5:\"arts/\";s:7:\"Bodyart\";s:13:\"arts/bodyart/\";s:6:\"Tattoo\";s:20:\"arts/bodyart/tattoo/\";}'),
@@ -1453,7 +1453,7 @@ INSERT INTO `{prefix}categs` (`id`,`level`,`parent_id`,`title_en`,`title_alias`,
 (2125,3,389,'Trade Shows','arts/music/trade-shows/','a:3:{s:4:\"Arts\";s:5:\"arts/\";s:5:\"Music\";s:11:\"arts/music/\";s:11:\"Trade Shows\";s:23:\"arts/music/trade-shows/\";}'),
 (2126,3,389,'Tributes','arts/music/tributes/','a:3:{s:4:\"Arts\";s:5:\"arts/\";s:5:\"Music\";s:11:\"arts/music/\";s:8:\"Tributes\";s:20:\"arts/music/tributes/\";}'),
 (2127,3,389,'Venues','arts/music/venues/','a:3:{s:4:\"Arts\";s:5:\"arts/\";s:5:\"Music\";s:11:\"arts/music/\";s:6:\"Venues\";s:18:\"arts/music/venues/\";}');
-INSERT INTO `{prefix}categs` (`id`,`level`,`parent_id`,`title_en`,`title_alias`,`breadcrumb`) VALUES
+INSERT INTO `{prefix}categs` (`id`,`level`,`parent_id`,`title_en`,`slug`,`breadcrumb`) VALUES
 (2128,3,393,'Comedy','arts/performing-arts/comedy/','a:3:{s:4:\"Arts\";s:5:\"arts/\";s:15:\"Performing Arts\";s:21:\"arts/performing-arts/\";s:6:\"Comedy\";s:28:\"arts/performing-arts/comedy/\";}'),
 (2129,3,393,'Dance','arts/performing-arts/dance/','a:3:{s:4:\"Arts\";s:5:\"arts/\";s:15:\"Performing Arts\";s:21:\"arts/performing-arts/\";s:5:\"Dance\";s:27:\"arts/performing-arts/dance/\";}'),
 (2130,3,393,'Film','arts/performing-arts/film/','a:3:{s:4:\"Arts\";s:5:\"arts/\";s:15:\"Performing Arts\";s:21:\"arts/performing-arts/\";s:4:\"Film\";s:26:\"arts/performing-arts/film/\";}'),

@@ -14,7 +14,7 @@ Ext.onReady(function () {
                     },
                     width: 1
                 },
-                {name: 'title_alias', title: _t('path'), width: 1},
+                {name: 'slug', title: _t('path'), width: 1},
                 {name: 'num_all_listings', title: _t('listings_num'), width: 140},
                 {
                     name: 'locked',
@@ -143,8 +143,8 @@ Ext.onReady(function () {
 
 intelli.titleCache = '';
 intelli.fillUrlBox = function () {
-    var alias = $('#field_title_alias').val();
-    var title = (alias ? alias : $('#field_categ_title').val());
+    var slug = $('#field_categ_slug').val();
+    var title = (slug ? slug : $('#field_categ_title').val());
     var category = $('#input-tree').val();
     var cache = title + '%%' + category;
 
@@ -164,5 +164,5 @@ intelli.fillUrlBox = function () {
 };
 
 $(function() {
-    $('#field_categ_title, #field_title_alias').blur(intelli.fillUrlBox).blur();
+    $('#field_categ_title, #field_categ_slug').blur(intelli.fillUrlBox).blur();
 });

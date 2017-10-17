@@ -121,7 +121,7 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType()) {
 
         $item['category_id'] = (int)$_POST['tree_id'];
         $item['status'] = $iaCore->get('listing_auto_approval') ? iaCore::STATUS_ACTIVE : iaCore::STATUS_APPROVAL;
-        $item['title_alias'] = iaSanitize::alias($_POST['title'][$iaView->language]);
+        $item['slug'] = iaSanitize::alias($_POST['title'][$iaView->language]);
 
         $category = $iaCateg->getById($item['category_id']);
 
@@ -191,7 +191,7 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType()) {
         }
 
         if (!$error) {
-            $item['category_alias'] = $category['title_alias'];
+            $item['slug'] = $category['slug'];
             $url = (iaCore::STATUS_ACTIVE == $item['status'] ||
                 (iaUsers::hasIdentity() && iaCore::STATUS_APPROVAL == $item['status']))
                 ? $iaListing->url('view',

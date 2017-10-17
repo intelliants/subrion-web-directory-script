@@ -134,14 +134,14 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType()) {
             break;
 
         default:
-            $categoryAlias = empty($iaCore->requestPath) ? false : implode(IA_URL_DELIMITER, $iaCore->requestPath) . IA_URL_DELIMITER;
+            $categorySlug = empty($iaCore->requestPath) ? false : implode(IA_URL_DELIMITER, $iaCore->requestPath) . IA_URL_DELIMITER;
 
             $rssFeed = empty($iaCore->requestPath) ? false : implode(IA_URL_DELIMITER, $iaCore->requestPath);
 
-            $category = $iaCateg->getOne(iaDb::convertIds($categoryAlias, 'title_alias'));
+            $category = $iaCateg->getOne(iaDb::convertIds($categorySlug, 'slug'));
 
             // requested category not found
-            if ($categoryAlias && $category['id'] == $iaCateg->getRootId()) {
+            if ($categorySlug && $category['id'] == $iaCateg->getRootId()) {
                 return iaView::errorPage(iaView::ERROR_NOT_FOUND);
             }
             $iaView->set('subpage', $category['id']);
@@ -155,7 +155,7 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType()) {
 
             foreach ($iaCateg->getParents($category['id']) as $key => $parent) {
                 (0 === $key || 1 === $key) && $filters[0 == $key ? 'c' : 'sc'] = $parent['id'];
-                iaBreadcrumb::toEnd($parent['title'], $iaCateg->url('default', $parent));
+                iaBreadcrumb::toEnd($parent['title'], $parent['link']);
             }
 
             $iaView->set('filtersParams', $filters);

@@ -1,4 +1,4 @@
-{if isset($item.item) && 'listings' == $item.item}
+{if isset($item.item) && 'listing' == $item.item}
     <div class="modal fade" id="report-listing-modal" tabindex="-1" role="dialog" aria-labelledby="report-listing">
         <div class="modal-dialog" role="document">
             <div class="modal-content">

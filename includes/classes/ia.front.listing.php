@@ -36,7 +36,7 @@ class iaListing extends abstractDirectoryModuleFront implements iaDirectoryModul
 
     private $_urlPatterns = [
         'default' => ':base:action/:id/',
-        'view' => ':base:category_alias:id:title_alias.html',
+        'view' => ':base:category_slug:id:slug.html',
         'edit' => ':baseedit/:id/',
         'add' => ':baseadd/',
         'my' => ':iaurlprofile/listings/'
@@ -65,13 +65,18 @@ class iaListing extends abstractDirectoryModuleFront implements iaDirectoryModul
         return self::$_tableCrossed;
     }
 
+    public function getUrl(array $data)
+    {
+        return $this->url('view', $data);
+    }
+
     public function url($action, array $data)
     {
         $data['base'] = $this->_baseUrl . ('view' == $action ? 'listing/' : '');
         $data['iaurl'] = IA_URL;
         $data['action'] = $action;
-        $data['category_alias'] = (!isset($data['category_alias']) ? '' : $data['category_alias']);
-        $data['title_alias'] = (!isset($data['title_alias']) ? '' : '-' . $data['title_alias']);
+        $data['category_slug'] = (!isset($data['category_slug']) ? '' : $data['category_slug']);
+        $data['slug'] = (!isset($data['slug']) ? '' : '-' . $data['slug']);
 
         unset($data['title'], $data['category']);
 
@@ -89,7 +94,7 @@ class iaListing extends abstractDirectoryModuleFront implements iaDirectoryModul
     {
         $sql = 'SELECT SQL_CALC_FOUND_ROWS '
                 . 'l.*, '
-                . "c.`title_{$this->iaCore->language['iso']}` `category_title`, c.`title_alias` `category_alias`, c.`breadcrumb` `category_breadcrumb`, "
+                . "c.`title_{$this->iaCore->language['iso']}` `category_title`, c.`slug` `category_slug`, c.`breadcrumb` `category_breadcrumb`, "
                 . 'm.`fullname` `member`, m.`username` `account_username` '
             . 'FROM `' . self::getTable(true) . '` l '
             . "LEFT JOIN `{$this->iaDb->prefix}categs` c ON (l.`category_id` = c.`id`) "
@@ -189,7 +194,7 @@ class iaListing extends abstractDirectoryModuleFront implements iaDirectoryModul
             'SELECT SQL_CALC_FOUND_ROWS li.*, '
                 //. 'IF(li.`category_id` IN( ' . $cat_list . ' ), li.`category_id`, cr.`category_id`) `category`, '
                 //. 'IF(li.`category_id` = ' . $cat_id . ', 0, 1) `crossed`, '
-                . 'ca.`title_' . $this->iaCore->language['iso'] . '` `category_title`, ca.`title_alias` `category_alias`, ca.`breadcrumb` `category_breadcrumb`, '
+                . 'ca.`title_' . $this->iaCore->language['iso'] . '` `category_title`, ca.`slug` `category_slug`, ca.`breadcrumb` `category_breadcrumb`, '
                 . 'ac.`fullname` `member`, ac.`username` `account_username` '
             . 'FROM `' . $this->iaDb->prefix . 'categs` ca, ' . self::getTable(true) . ' li '
                 . 'LEFT JOIN `' . $this->iaDb->prefix . 'listings_categs` cr ON (cr.`listing_id` = li.`id` AND cr.`category_id` = ' . (int)$categoryId . ') '
@@ -236,7 +241,7 @@ class iaListing extends abstractDirectoryModuleFront implements iaDirectoryModul
         $itemData['date_modified'] = date(iaDb::DATETIME_FORMAT);
 
         if ($this->iaCore->get('directory_lowercase_urls')) {
-            $itemData['title_alias'] = strtolower($itemData['title_alias']);
+            $itemData['slug'] = strtolower($itemData['slug']);
         }
 
         if ($id = parent::insert($itemData)) {
