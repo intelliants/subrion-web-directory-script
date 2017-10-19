@@ -16,7 +16,7 @@
                     <div id="crossed-list">
                         {if $crossed}
                             {foreach $crossed as $crid => $link}
-                                <span data-id="{$crid}">{$link}</span>{if !$link@last}, {/if}
+                                <span data-id="{$crid}">{$link|escape}</span>{if !$link@last}, {/if}
                             {/foreach}
                         {else}
                             <div class="alert alert-info">{lang key='no_crossed_categories'}</div>

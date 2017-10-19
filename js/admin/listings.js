@@ -102,54 +102,53 @@ Ext.onReady(function() {
         if ($ccTree.length) {
             var nodes = $('#crossed-links').val().split(',');
 
-            $ccTree.jstree(
-                {
-                    core: {
-                        data: {
-                            data: function (n) {
-                                var params = {};
-                                if (n.id !== '#') {
-                                    params.id = n.id;
-                                }
+            $ccTree.jstree({
+                core: {
+                    data: {
+                        data: function (n) {
+                            var params = {};
+                            if (n.id !== '#') {
+                                params.id = n.id;
+                            }
 
-                                return params;
-                            },
-                            url: intelli.config.admin_url + '/directory/categories/tree.json?noroot'
+                            return params;
                         },
-                        multiple: true
+                        url: intelli.config.admin_url + '/directory/categories/tree.json?noroot'
                     },
-                    checkbox: {keep_selected_style: false, three_state: false},
-                    plugins: ['checkbox']
-                })
-                .on('load_node.jstree', function (e, data) {
-                    for (var i in nodes) data.instance.select_node(nodes[i]);
-                })
-                .on('click.jstree', function (e) {
-                    var crossedJsTree = $ccTree.jstree(true);
-                    var selectedNodes = crossedJsTree.get_selected();
+                    multiple: true
+                },
+                checkbox: {keep_selected_style: false, three_state: false},
+                plugins: ['checkbox']
+            })
+            .on('load_node.jstree', function (e, data) {
+                for (var i in nodes) data.instance.select_node(nodes[i]);
+            })
+            .on('click.jstree', function (e) {
+                var crossedJsTree = $ccTree.jstree(true);
+                var selectedNodes = crossedJsTree.get_selected();
 
-                    if (selectedNodes.length) {
-                        if (selectedNodes.length > intelli.config.listing_crossed_limit) {
-                            crossedJsTree.deselect_node(e.target);
-                            return false;
-                        }
-
-                        $('#crossed-links').val(selectedNodes.join(','));
-
-                        var titles = [];
-                        for (var i in selectedNodes) {
-                            var node = crossedJsTree.get_node(selectedNodes[i]);
-                            titles.push('<span>' + node.text + '</span>');
-                        }
-
-                        $('#crossed-list').html(titles.join(', '));
+                if (selectedNodes.length) {
+                    if (selectedNodes.length > intelli.config.listing_crossed_limit) {
+                        crossedJsTree.deselect_node(e.target);
+                        return false;
                     }
 
-                    var balance = intelli.config.listing_crossed_limit - selectedNodes.length;
-                    if (balance >= 0) {
-                        $('#crossed-limit').text(balance);
+                    $('#crossed-links').val(selectedNodes.join(','));
+
+                    var titles = [];
+                    for (var i in selectedNodes) {
+                        var node = crossedJsTree.get_node(selectedNodes[i]);
+                        titles.push('<span>' + node.text + '</span>');
                     }
-                });
+
+                    $('#crossed-list').html(titles.join(', '));
+                }
+
+                var balance = intelli.config.listing_crossed_limit - selectedNodes.length;
+                if (balance >= 0) {
+                    $('#crossed-limit').text(balance);
+                }
+            });
         }
 
         $('#field_listing_title, #field_listing_slug').blur(intelli.fillUrlBox).trigger('blur');

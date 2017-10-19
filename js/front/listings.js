@@ -1,39 +1,49 @@
-$(function () {
-    $('.js-categories-toggle').on('click', function (e) {
+$(function() {
+    $('.js-categories-toggle').on('click', function(e) {
         e.preventDefault();
         $($(this).data('toggle')).toggle();
     });
 
-    $('#tree-crossed').jstree(
-        {
-            core: {
-                data: {
-                    data: function (n) {
-                        var params = {};
-                        if (n.id != '#') {
-                            params.id = n.id;
-                        }
+    var nodes = [];
+    $('.js-checked-crossed-node').each(function() {
+        nodes.push($(this).data('id'));
+    });
 
-                        return params;
-                    },
-                    url: intelli.config.packages.directory.url + 'add/tree.json'
+    $('#tree-crossed').jstree({
+        core: {
+            data: {
+                data: function(n) {
+                    var params = {};
+                    if (n.id !== '#') {
+                        params.id = n.id;
+                    }
+
+                    return params;
                 },
-                multiple: true
+                url: intelli.config.packages.directory.url + 'add/tree.json'
             },
-            checkbox: {keep_selected_style: false},
-            plugins: ['checkbox']
-        })
-        .on('loaded.jstree', function () {
-            var tree = $('#tree-crossed').jstree(true),
-                nodes = [];
+            multiple: true
+        },
+        checkbox: {keep_selected_style: false},
+        plugins: ['checkbox']
+    })
+    .on('load_node.jstree after_open.jstree', function() {
+        var tree = $('#tree-crossed').jstree(true);
 
-            $('.js-checked-crossed-node').each(function () {
-                nodes.push($(this).data('id'));
-            });
+        for (var i in nodes) {
+            if ($.inArray(parseInt(nodes[i]), nodes) !== -1) {
+                if (tree.get_node(nodes[i])) {
+                    tree.select_node(nodes[i]);
+                    continue;
+                }
 
-            tree.select_node(nodes);
-        })
-        .on('click.jstree', crossedTreeClick);
+                tree.load_node(nodes[i], function(n) {
+                    tree.open_node(n.id);
+                })
+            }
+        }
+    })
+    .on('click.jstree', crossedTreeClick);
 });
 
 function crossedTreeClick(e) {
