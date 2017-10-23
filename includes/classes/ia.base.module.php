@@ -25,13 +25,3 @@ interface iaDirectoryModule
     const STATUS_SUSPENDED = 'suspended';
     const STATUS_TRASH = 'trash';
 }
-
-abstract class abstractDirectoryModuleAdmin extends abstractModuleAdmin implements iaDirectoryModule
-{
-    protected $_moduleName = 'directory';
-}
-
-abstract class abstractDirectoryModuleFront extends abstractModuleFront implements iaDirectoryModule
-{
-    protected $_moduleName = 'directory';
-}

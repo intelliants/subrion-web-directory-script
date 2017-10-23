@@ -17,7 +17,7 @@
  *
  ******************************************************************************/
 
-class iaListing extends abstractDirectoryModuleAdmin implements iaDirectoryModule
+class iaListing extends abstractModuleAdmin implements iaDirectoryModule
 {
     protected static $_table = 'listings';
     protected static $_tableCrossed = 'listings_categs';

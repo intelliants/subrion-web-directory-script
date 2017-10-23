@@ -17,7 +17,7 @@
  *
  ******************************************************************************/
 
-class iaListing extends abstractDirectoryModuleFront implements iaDirectoryModule
+class iaListing extends abstractModuleFront implements iaDirectoryModule
 {
     protected static $_table = 'listings';
     protected static $_tableCrossed = 'listings_categs';
