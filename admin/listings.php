@@ -153,7 +153,7 @@ class iaBackendController extends iaAbstractControllerModuleBackend
     {
         $sql = <<<SQL
 SELECT c.`id`, c.`title_:lang`
-	FROM `:prefix:table_categories` c, `:prefix:table_crossed` cr 
+  FROM `:prefix:table_categories` c, `:prefix:table_crossed` cr 
 WHERE c.`id` = cr.`category_id` && cr.`listing_id` = :id
 SQL;
         $sql = iaDb::printf($sql, [

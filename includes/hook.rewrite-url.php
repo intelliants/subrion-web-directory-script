@@ -20,13 +20,13 @@
 $package = 'directory';
 $accessGranted = false;
 $isDefaultPackage = ($package == $iaCore->get('default_package'));
-$extras = $iaCore->getModules($package);
+$module = $iaCore->getModules($package);
 $package_home = 'directory_home';
 
 if ($iaCore->checkDomain() && $isDefaultPackage) {
     $accessGranted = true;
 } elseif (!$iaCore->checkDomain()) {
-    if (isset($extras['url']) && $extras['url'] == $iaView->domainUrl) {
+    if (isset($module['url']) && $module['url'] == $iaView->domainUrl) {
         $accessGranted = true;
     }
 } elseif (count($iaCore->requestPath) > 0) {

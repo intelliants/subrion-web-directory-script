@@ -1,7 +1,7 @@
 {if !empty($listings)}
     <div class="ia-items ia-items--cards">
         {foreach $listings as $listing}
-            {include 'extra:directory/list-listings'}
+            {include 'module:directory/list-listings.tpl'}
         {/foreach}
     </div>
 {else}

@@ -17,43 +17,36 @@
  *
  ******************************************************************************/
 
-include_once IA_INCLUDES . 'utils/simplexml.class.php';
-
-class iaAlexaRank extends simplexml
+/**
+ * PHP Class to get a website Alexa Ranking
+ * @author http://www.paulund.co.uk
+ *
+ */
+class iaAlexaRank
 {
-    public function getAlexa($url)
+    public function getAlexa($domain)
     {
-        $data = $this->_fetchData($url);
-        if (is_array($data)) {
-            return $this->_findValue($data) ;
-        }
+        $data = iaUtil::getPageContent("http://data.alexa.com/data?cli=10&dat=snbamz&url=http://" . $domain);
 
-        return null;
-    }
+        $xml = new SimpleXMLElement($data);
 
-    private function _fetchData($listingUrl)
-    {
-        $url = "http://data.alexa.com/data?cli=10&dat=snbamz&url=http://%s";
-        $url = sprintf($url, $listingUrl);
-        $response = file_get_contents($url, false);
-        $data = $this->xml_load_string($response, 'array');
+        //Get popularity node
+        $popularity = $xml->xpath("//POPULARITY");
+        $reviews = $xml->xpath('//REVIEWS');
+        $speed = $xml->xpath('//SPEED');
+        $links = $xml->xpath('//LINKSIN');
+        $category = $xml->xpath('//CATS/CAT');
+        $name = $xml->xpath('//DMOZ/SITE');
 
-        return $data;
-    }
-
-    private function _findValue($data)
-    {
-        $values = [
-            'rank' => (isset($data['SD'][1]['POPULARITY']['@attributes']['TEXT']) ? ($data['SD'][1]['POPULARITY']['@attributes']['TEXT']) : null),
-            'created' => (isset($data['SD'][0]['CREATED']['@attributes']['DATE']) ? ($data['SD'][0]['CREATED']['@attributes']['DATE']) : null),
-            'email' => (isset($data['SD'][0]['EMAIL']['@attributes']['ADDR']) ? ($data['SD'][0]['EMAIL']['@attributes']['ADDR']) : null),
-            'linksin' => (isset($data['SD'][0]['LINKSIN']['@attributes']['NUM']) ? ($data['SD'][0]['LINKSIN']['@attributes']['NUM']) : null),
-            'reach' => (isset($data['SD'][1]['REACH']['@attributes']['RANK']) ? ($data['SD'][1]['REACH']['@attributes']['RANK']) : null),
-            'baseuri' => (isset($data['DMOZ']['SITE']['@attributes']['BASE']) ? ($data['DMOZ']['SITE']['@attributes']['BASE']) : null),
-            'title' => (isset($data['DMOZ']['SITE']['@attributes']['TITLE']) ? ($data['DMOZ']['SITE']['@attributes']['TITLE']) : null),
-            'description' => (isset($data['DMOZ']['SITE']['@attributes']['DESC']) ? ($data['DMOZ']['SITE']['@attributes']['DESC']) : null),
+        return [
+            'name' => (string)$name[0]['TITLE'],
+            'category' => (string)$category[0]['TITLE'],
+            'rank' => (int)$popularity[0]['TEXT'],
+            'links' => number_format((int)$links[0]['NUM'], 0),
+            'reviews_stars' => (string)$reviews[0]['AVG'],
+            'reviews_num' => (string)$reviews[0]['NUM'],
+            'speed_time' => (int)$speed[0]['TEXT'] / 1000,
+            'speed_percent' => (100 - (int)$speed[0]['PCT']) . '% of sites are faster.'
         ];
-
-        return $values;
     }
 }
