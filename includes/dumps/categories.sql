@@ -1426,7 +1426,7 @@ INSERT INTO `{prefix}categs` (`id`,`level`,`parent_id`,`title_en`,`slug`,`breadc
 (2098,3,388,'Experimental','arts/movies/experimental/','a:3:{s:4:\"Arts\";s:5:\"arts/\";s:6:\"Movies\";s:12:\"arts/movies/\";s:12:\"Experimental\";s:25:\"arts/movies/experimental/\";}'),
 (2099,3,388,'Film Societies','arts/movies/film-societies/','a:3:{s:4:\"Arts\";s:5:\"arts/\";s:6:\"Movies\";s:12:\"arts/movies/\";s:14:\"Film Societies\";s:27:\"arts/movies/film-societies/\";}'),
 (2100,3,388,'French','arts/movies/french/','a:3:{s:4:\"Arts\";s:5:\"arts/\";s:6:\"Movies\";s:12:\"arts/movies/\";s:6:\"French\";s:19:\"arts/movies/french/\";}'),
-(2101,3,388,'Gay,Lesbian,and Bisexual','arts/movies/gay-lesbian-and-bisexual/','a:3:{s:4:\"Arts\";s:5:\"arts/\";s:6:\"Movies\";s:12:\"arts/movies/\";s:26:\"Gay,Lesbian,and Bisexual\";s:37:\"arts/movies/gay-lesbian-and-bisexual/\";}'),
+(2101,3,388,'Gay, Lesbian, and Bisexual','arts/movies/gay-lesbian-and-bisexual/','a:3:{s:4:\"Arts\";s:5:\"arts/\";s:6:\"Movies\";s:12:\"arts/movies/\";s:26:\"Gay, Lesbian, and Bisexual\";s:37:\"arts/movies/gay-lesbian-and-bisexual/\";}'),
 (2102,3,388,'Jewish','arts/movies/jewish/','a:3:{s:4:\"Arts\";s:5:\"arts/\";s:6:\"Movies\";s:12:\"arts/movies/\";s:6:\"Jewish\";s:19:\"arts/movies/jewish/\";}'),
 (2103,3,388,'Short Films','arts/movies/short-films/','a:3:{s:4:\"Arts\";s:5:\"arts/\";s:6:\"Movies\";s:12:\"arts/movies/\";s:11:\"Short Films\";s:24:\"arts/movies/short-films/\";}'),
 (2104,3,389,'Benefits','arts/music/benefits/','a:3:{s:4:\"Arts\";s:5:\"arts/\";s:5:\"Music\";s:11:\"arts/music/\";s:8:\"Benefits\";s:20:\"arts/music/benefits/\";}'),
