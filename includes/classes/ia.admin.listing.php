@@ -81,7 +81,7 @@ class iaListing extends abstractModuleAdmin implements iaDirectoryModule
 
             case iaCore::ACTION_DELETE:
                 $previousData['status'] = 'removed';
-                $this->sendUserNotification($previousData);
+                $this->sendUserNotification($itemData);
         }
     }
 

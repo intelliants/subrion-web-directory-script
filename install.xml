@@ -5,7 +5,7 @@
     <author>Intelliants LLC</author>
     <contributor>Intelliants LLC</contributor>
     <version>4.2.0</version>
-    <date>2017-10-18</date>
+    <date>2018-02-01</date>
     <compatibility>4.2.0</compatibility>
     <url>listings</url>
 
@@ -328,17 +328,15 @@
     </tooltips>
 
     <blocks>
-        <!-- Directory Categories -->
         <block name="directory_categories" title="Directory Categories" position="bottom" type="smarty" header="1" sticky="0" order="1" pages="index">
             <![CDATA[{ia_hooker name="smartyFrontDirectoryCategories"}]]>
         </block>
-
-        <block name="directory_categories_tree" title="Top categories" position="left" type="smarty" collapsible="1" sticky="0" pages="directory_home" filename="block.categories-tree"><![CDATA[]]></block>
-        <block name="sponsored_listings" title="Sponsored listings" position="right" type="smarty" header="1" sticky="0" pages="directory_home,index" filename="block.sponsored-listings" classname="box--sponsored"><![CDATA[]]></block>
-        <block name="featured_listings" title="Featured listings" position="right" type="smarty" header="1" sticky="0" pages="directory_home,index" filename="block.featured-listings" classname="box--featured"><![CDATA[]]></block>
-        <block name="recent_listings" title="Recently added listings" position="bottom" type="smarty" header="0" sticky="0" order="2" pages="index" filename="block.recent-listings"><![CDATA[]]></block>
-        <block name="directory_listings_tabs" title="Directory listings tabs" position="right" type="smarty" sticky="1" pages="add_listing,profile,member_funds,my_listings,members" header="0" order="0" filename="block.listings-tabs"><![CDATA[]]></block>
-        <block name="directory_author" title="Author" position="right" type="smarty" sticky="0" header="1" pages="view_listing" collapsible="1" order="3" filename="block.author"><![CDATA[]]></block>
+        <block name="directory_categories_tree" title="Top categories" position="left" type="smarty" collapsible="1" sticky="0" pages="directory_home" filename="block.categories-tree.tpl"><![CDATA[]]></block>
+        <block name="sponsored_listings" title="Sponsored listings" position="right" type="smarty" header="1" sticky="0" pages="directory_home,index" filename="block.sponsored-listings.tpl" classname="box--sponsored"><![CDATA[]]></block>
+        <block name="featured_listings" title="Featured listings" position="right" type="smarty" header="1" sticky="0" pages="directory_home,index" filename="block.featured-listings.tpl" classname="box--featured"><![CDATA[]]></block>
+        <block name="recent_listings" title="Recently added listings" position="bottom" type="smarty" header="0" sticky="0" order="2" pages="index" filename="block.recent-listings.tpl"><![CDATA[]]></block>
+        <block name="directory_listings_tabs" title="Directory listings tabs" position="right" type="smarty" sticky="1" pages="add_listing,profile,member_funds,my_listings,members" header="0" order="0" filename="block.listings-tabs.tpl"><![CDATA[]]></block>
+        <block name="directory_author" title="Author" position="right" type="smarty" sticky="0" header="1" pages="view_listing" collapsible="1" order="3" filename="block.author.tpl"><![CDATA[]]></block>
     </blocks>
 
     <hooks>
@@ -401,7 +399,7 @@ $statistics['directory'] = array(
 );
             ]]>
         </hook>
-        <hook name="smartyViewListingBeforeFooter" type="smarty" page_type="front" filename="hook.report-modal"><![CDATA[]]></hook>
+        <hook name="smartyViewListingBeforeFooter" type="smarty" page_type="front" filename="hook.report-modal.tpl"><![CDATA[]]></hook>
     </hooks>
 
     <install>
