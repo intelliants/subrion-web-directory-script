@@ -112,6 +112,11 @@ class iaListing extends abstractModuleFront implements iaDirectoryModule
         return $rows;
     }
 
+    public function getFavorites($ids)
+    {
+        return $this->get('l.id IN (' . implode(',', $ids) . ')');
+    }
+
     public function coreSearch($stmt, $start, $limit, $order)
     {
         $stmt .= " AND l.`status` = '" . iaCore::STATUS_ACTIVE . "'";
