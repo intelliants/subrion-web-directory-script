@@ -2,7 +2,7 @@
 /******************************************************************************
  *
  * Subrion Web Directory Script
- * Copyright (C) 2017 Intelliants, LLC <https://intelliants.com>
+ * Copyright (C) 2018 Intelliants, LLC <https://intelliants.com>
  *
  * This file is part of Subrion Web Directory Script.
  *
