@@ -148,8 +148,9 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType()) {
                     include IA_MODULES . $iaCore->modulesData['directory']['name'] . IA_DS . 'includes/alexarank.inc.php';
                     $iaAlexaRank = new iaAlexaRank();
 
-                    $alexaData = $iaAlexaRank->getAlexa($item['domain']);
-                    $data['alexa_rank'] = $alexaData['rank'];
+                    if ($alexaData = $iaAlexaRank->getAlexa($item['domain'])) {
+                        $data['alexa_rank'] = $alexaData['rank'];
+                    }
                 }
             }
 

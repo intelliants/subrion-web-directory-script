@@ -26,9 +26,15 @@ class iaAlexaRank
 {
     public function getAlexa($domain)
     {
+        libxml_use_internal_errors(true);
+
         $data = iaUtil::getPageContent("http://data.alexa.com/data?cli=10&dat=snbamz&url=http://" . $domain);
 
-        $xml = new SimpleXMLElement($data);
+        try {
+            $xml = new SimpleXMLElement($data);
+        } catch (Exception $exception) {
+            return false;
+        }
 
         //Get popularity node
         $popularity = $xml->xpath("//POPULARITY");
