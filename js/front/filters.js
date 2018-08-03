@@ -12,7 +12,7 @@ $(function () {
         intelli.flags.doNotRespond || intelli.search.run();
 
         if (value != '') {
-            $.getJSON(intelli.config.packages.directory.url + 'directory/read.json', {id: value}, function (response) {
+            $.getJSON(intelli.config.packages.directory.url + 'top/read.json', {id: value}, function (response) {
                 if (response && response.length > 0) {
                     var d = $scSelect.data('value');
                     $.each(response, function (index, item) {
