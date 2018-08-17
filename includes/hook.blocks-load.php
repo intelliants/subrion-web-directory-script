@@ -78,8 +78,8 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType()) {
     }
 
     if ($iaView->blockExists('filters') && $iaListing->getItemName() == $iaView->get('filtersItemName')) {
-        $categories = $iaCateg->getAll("`status` = 'active' AND `level` = 1 ORDER BY `title_{$iaCore->language['iso']}`",
-            ['id', 'title' => 'title_' . $iaCore->language['iso'], 'slug']);
+        $fields = ['id', 'title' => 'title_' . $iaView->language, 'slug'];
+        $categories =  $iaCateg->getTopLevel($fields, ['title', 'asc']);
 
         $iaView->assign('directoryFiltersCategories', $categories ? $categories : []);
     }

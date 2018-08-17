@@ -22,7 +22,7 @@ $iaCateg = $iaCore->factoryItem('categ');
 if (iaView::REQUEST_JSON == $iaView->getRequestType()) {
     $output = [];
 
-    if (isset($_GET['id']) && ($children = $iaCateg->getChildren($_GET['id']))) {
+    if (isset($_GET['id']) && ($children = $iaCateg->getChildren($_GET['id'],false , ['title', 'asc']))) {
         foreach ($children as $child) {
             $output[] = ['id' => $child['id'], 'text' => $child['title']];
         }
