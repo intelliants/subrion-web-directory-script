@@ -16,16 +16,16 @@
             {if !empty($author.facebook) || !empty($author.twitter) || !empty($author.gplus) || !empty($author.linkedin)}
                 <p class="text-center">
                     {if !empty($author.facebook)}
-                        <a href="{$author.facebook|escape:'url'}" class="fa-stack fa-lg"><i class="fa fa-circle fa-stack-2x"></i><i class="fa fa-facebook fa-stack-1x fa-inverse"></i></a>
+                        <a href="{$author.facebook|escape}" class="fa-stack fa-lg" target="_blank"><i class="fa fa-circle fa-stack-2x"></i><i class="fa fa-facebook fa-stack-1x fa-inverse"></i></a>
                     {/if}
                     {if !empty($author.twitter)}
-                        <a href="{$author.twitter|escape:'url'}" class="fa-stack fa-lg"><i class="fa fa-circle fa-stack-2x"></i><i class="fa fa-twitter fa-stack-1x fa-inverse"></i></a>
+                        <a href="{$author.twitter|escape}" class="fa-stack fa-lg" target="_blank"><i class="fa fa-circle fa-stack-2x"></i><i class="fa fa-twitter fa-stack-1x fa-inverse"></i></a>
                     {/if}
                     {if !empty($author.gplus)}
-                        <a href="{$author.gplus|escape:'url'}" class="fa-stack fa-lg"><i class="fa fa-circle fa-stack-2x"></i><i class="fa fa-google-plus fa-stack-1x fa-inverse"></i></a>
+                        <a href="{$author.gplus|escape}" class="fa-stack fa-lg" target="_blank"><i class="fa fa-circle fa-stack-2x"></i><i class="fa fa-google-plus fa-stack-1x fa-inverse"></i></a>
                     {/if}
                     {if !empty($author.linkedin)}
-                        <a href="{$author.linkedin|escape:'url'}" class="fa-stack fa-lg"><i class="fa fa-circle fa-stack-2x"></i><i class="fa fa-linkedin fa-stack-1x fa-inverse"></i></a>
+                        <a href="{$author.linkedin|escape}" class="fa-stack fa-lg" target="_blank"><i class="fa fa-circle fa-stack-2x"></i><i class="fa fa-linkedin fa-stack-1x fa-inverse"></i></a>
                     {/if}
                 </p>
             {/if}
