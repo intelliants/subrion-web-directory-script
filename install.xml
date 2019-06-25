@@ -227,7 +227,7 @@
                page="directory_home,rss_listings" multilingual="1">Description</field>
         <field item="categ" name="meta_description" type="textarea" group="general" editor="0" required="0" adminonly="1" multilingual="1">Meta-Description</field>
         <field item="categ" name="meta_keywords" type="text" group="general" length="70" required="0" adminonly="1" multilingual="1">Meta-Keywords</field>
-        <field item="categ" name="icon" type="iconpicker" group="general" default="fa-folder" adminonly="1" page="directory_home">Icon</field>
+        <field item="categ" name="icon" type="iconpicker" group="general" default="fa-folder-open" adminonly="1" page="directory_home">Icon</field>
     </fields>
 
     <phrases>

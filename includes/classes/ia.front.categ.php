@@ -68,8 +68,8 @@ class iaCateg extends iaAbstractFrontHelperCategoryFlat
 	WHERE :where ORDER BY c.`level`, c.`title_:lang`) 
 UNION ALL 
 (SELECT :fields, '1' `crossed` FROM `:prefix:table_categories` c 
-LEFT JOIN `:prefix:table_crossed_categories` cr ON (c.`id` = cr.`crossed_id`) 
-WHERE cr.`category_id` = :id ORDER BY c.`title_:lang`) 
+LEFT JOIN `:prefix:table_crossed_categories` cr ON (c.`id` = cr.`category_id`) 
+WHERE cr.`crossed_id` = :id ORDER BY c.`title_:lang`) 
 ORDER BY `:order`
 SQL;
         $sql = iaDb::printf($sql, [
@@ -111,6 +111,7 @@ SQL;
 
     public function getCrossedByIds($ids)
     {
+
         // sanitizing
         $array = [];
         foreach (explode(',', $ids) as $id) {
