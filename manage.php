@@ -125,6 +125,17 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType()) {
 
         $category = $iaCateg->getById($item['category_id']);
 
+        $planOptions = $this->iaDb->row('value', 'plan_id = "' . $_POST['plan_id'] . '" ', 'payment_plans_options_values');
+        $crossed_links = substr_count($_POST['crossed_links'], ',') + 1;
+        if(empty($_POST['plan_id'])) {
+            $planOptions['value'] = $iaCore->get('listing_crossed_limit');
+        }
+
+        if($planOptions['value'] < $crossed_links) {
+            $error = true;
+            $messages[] = iaLanguage::get('error_crossed_links_listing');
+        }
+
         if (!$category) {
             $error = true;
             $messages[] = iaLanguage::get('invalid_category');

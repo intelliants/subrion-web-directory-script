@@ -287,6 +287,7 @@
         <phrase category="frontend" key="error_add_listing">Unknown error occured during listing submission. Please contact the site administrator if you have this error again.</phrase>
         <phrase category="frontend" key="error_duplicate_field">Listing with specified :field has been already submitted.</phrase>
         <phrase category="frontend" key="error_locked_category">You are not allowed to submit into a locked category.</phrase>
+        <phrase category="frontend" key="error_crossed_links_listing">Multiple categories limit has been exceeded.</phrase>
         <phrase category="frontend" key="invalid_category">Invalid category.</phrase>
         <phrase category="frontend" key="keywords">Keywords</phrase>
         <phrase category="frontend" key="limit_is_exceeded">You may post a limited number of listings.</phrase>
@@ -338,6 +339,10 @@
         <block name="directory_listings_tabs" title="Directory listings tabs" position="right" type="smarty" sticky="1" pages="add_listing,profile,member_funds,my_listings,members" header="0" order="0" filename="block.listings-tabs.tpl"><![CDATA[]]></block>
         <block name="directory_author" title="Author" position="right" type="smarty" sticky="0" header="1" pages="view_listing" collapsible="1" order="3" filename="block.author.tpl"><![CDATA[]]></block>
     </blocks>
+
+    <plan_options>
+        <option item="listing" name="multiple_cats_limit" type="int" default="5">Multiple categories limit</option>
+    </plan_options>
 
     <hooks>
         <hook name="phpCoreUrlRewrite" filename="hook.rewrite-url.php" page_type="front"><![CDATA[]]></hook>
