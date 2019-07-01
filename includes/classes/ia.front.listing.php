@@ -93,12 +93,13 @@ class iaListing extends abstractModuleFront implements iaDirectoryModule
     public function get($where, $start = null, $limit = null, $order = null, $prioritizedSorting = false)
     {
         $sql = 'SELECT SQL_CALC_FOUND_ROWS '
-                . 'l.*, '
+                . 'DISTINCT l.*, '
                 . "c.`title_{$this->iaCore->language['iso']}` `category_title`, c.`slug` `category_slug`, c.`breadcrumb` `category_breadcrumb`, "
                 . 'm.`fullname` `member`, m.`username` `account_username` '
             . 'FROM `' . self::getTable(true) . '` l '
             . "LEFT JOIN `{$this->iaDb->prefix}categs` c ON (l.`category_id` = c.`id`) "
             . "LEFT JOIN `{$this->iaDb->prefix}members` m ON (l.`member_id` = m.`id`) "
+            . "LEFT JOIN `{$this->iaDb->prefix}listings_categs` lc ON (lc.`listing_id` = l.`id`)"
             . 'WHERE ' . ($where ? $where . ' AND' : '') . " l.`status` != 'banned' "
             . 'ORDER BY ' . ($prioritizedSorting ? 'l.`sponsored` DESC, l.`featured` DESC, ' : '')
             . ($order ? $order : 'l.`date_modified` DESC') . ' '
@@ -147,10 +148,11 @@ class iaListing extends abstractModuleFront implements iaDirectoryModule
 
             case 'c':
             case 'sc':
-                $subQuery = sprintf('SELECT `child_id` FROM `%s` WHERE `parent_id` = %d',
+                $subQuery = sprintf('SELECT `child_id` FROM `%s` WHERE `parent_id` = %d)',
                     $this->_iaCateg->getTableFlat(true), $value);
+                $subQuery .= " OR lc.`category_id` = $value";
 
-                return ['col' => ':column', 'cond' => 'IN', 'val' => '(' . $subQuery . ')', 'field' => 'category_id'];
+                return ['col' => ':column', 'cond' => 'IN', 'val' => '(' . $subQuery, 'field' => 'category_id'];
         }
     }
 
