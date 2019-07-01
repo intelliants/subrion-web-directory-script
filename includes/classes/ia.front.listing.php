@@ -426,8 +426,12 @@ class iaListing extends abstractModuleFront implements iaDirectoryModule
         $result = true;
 
         if (iaUsers::MEMBERSHIP_ADMINISTRATOR != iaUsers::getIdentity()->usergroup_id) {
-            $listingCount = $this->iaDb->one_bind(iaDb::STMT_COUNT_ROWS, '`member_id` = :member', ['member' => $memberId], self::getTable());
-
+            if (iaUsers::hasIdentity()) {
+                $listingCount = $this->iaDb->one_bind(iaDb::STMT_COUNT_ROWS, '`member_id` = :member', ['member' => $memberId], self::getTable());
+            } else {
+                $ip = iaUtil::getIp(true);
+                $listingCount = $this->iaDb->one_bind(iaDb::STMT_COUNT_ROWS, '`member_id` = :member AND `ip` = :ip', ['member' => 0, 'ip' => $ip], self::getTable());
+            }
             $result = ($listingCount < $this->iaCore->get('directory_listing_limit'));
         }
 

@@ -144,11 +144,12 @@ if (iaView::REQUEST_HTML == $iaView->getRequestType()) {
             $messages[] = iaLanguage::get('error_locked_category');
         }
 
-        if (!$iaListing->isSubmissionAllowed($item['member_id'])) {
-            $error = true;
-            $messages[] = iaLanguage::get('limit_is_exceeded');
+        if (iaCore::ACTION_ADD == $pageAction) {
+            if (!$iaListing->isSubmissionAllowed($item['member_id'])) {
+                $error = true;
+                $messages[] = iaLanguage::get('limit_is_exceeded');
+            }
         }
-
         if (!$error) {
             // get domain name and URL status
             $item['domain'] = $iaListing->getDomain($item['url']);
